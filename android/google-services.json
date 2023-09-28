@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "848498097413",
+    "project_id": "hotcard-ff104",
+    "storage_bucket": "hotcard-ff104.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:848498097413:android:3f8dff3c7817be9989cb6c",
+        "android_client_info": {
+          "package_name": "com.tapp.hotcard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "848498097413-olot8vllsmgjjk2llh5rk81sukllqhue.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tapp.hotcard",
+            "certificate_hash": "2838c0628d4f7628d94f24e36dd9f32beee7c494"
+          }
+        },
+        {
+          "client_id": "848498097413-v0bc0l2opubifla4bep3setb9abc9ne5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSdAY0btx2wzn07dSKa_kjVy-dvKDMeDI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "848498097413-rs0pa63tj81hibb1jtn9thjj5oqr5ftf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "848498097413-okkngt60e24pv5l7dihla1g1hv73lsao.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tapp.hotcard"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
