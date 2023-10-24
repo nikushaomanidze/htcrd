@@ -372,7 +372,7 @@ const Map<String, String> ukUA = {
   "cardCencellation": "Ви впевнені, що бажаєте скасувати картку?",
   "cardCencellationCosts":
       "Комісія за скасування бронювання становить 10 ларі.",
-  "costsAndDate": "Вартість 1 місяця 10 ларі, мінімальний термін 1 рік.",
+  "costsAndDate": "Вартість 1 місяця 10 ларі.",
   "upgrade": "оновлення",
   "activate": "активація",
   "sorryForinconvenience": "Вибачте за незручності, перезавантажте програму",

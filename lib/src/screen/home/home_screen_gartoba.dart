@@ -170,8 +170,8 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                           ),
                           Slider(
                             value: _currentSliderValue,
-                            max: 15,
-                            divisions: 150,
+                            max: 50,
+                            divisions: _currentSliderValue <= 10 ? 500 : 100,
                             activeColor: const Color.fromARGB(255, 221, 153, 6),
                             label: _currentSliderValue < 1
                                 ? "${_currentSliderValue.toStringAsFixed(1)} ${AppTags.km.tr}"

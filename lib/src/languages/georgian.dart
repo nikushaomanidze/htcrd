@@ -365,8 +365,7 @@ const Map<String, String> kaGE = {
   "activeCard": "ნამდვილად გსურთ ბარათის გააქტიურება?",
   "cardCencellation": "ნამდვილად გსურთ ბარათის გაუქმება?",
   "cardCencellationCosts": "გაუქმების ღირებულება შეადგენს 10 ლარს.",
-  "costsAndDate":
-      "1 თვის ღირებულება შეადგენს 10 ლარს და მინიმალური ვადა არის 1 წელი.",
+  "costsAndDate": "1 თვის ღირებულება შეადგენს 10 ლარს.",
   "upgrade": "განახლება",
   "activate": "გააქტიურება",
   "sorryForinconvenience":

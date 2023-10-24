@@ -15,7 +15,7 @@ class SearchController extends GetxController {
   search(String searchValue) async {
     _isSearching(true);
     await Repository().getSearchProducts(searchKey: searchValue).then((value) {
-      if (value.data!.isNotEmpty) {
+      if (value.products!.isNotEmpty || value.restaurants!.isNotEmpty) {
         _searchResult.value = value;
         AnalyticsHelper().setAnalyticsData(
             screenName: "SearchScreen",
@@ -24,7 +24,8 @@ class SearchController extends GetxController {
               "searchTag": searchValue,
             });
       } else {
-        searchResult.data = [];
+        searchResult.products = [];
+        searchResult.restaurants = [];
       }
       _isSearching(false);
     });
@@ -36,7 +37,8 @@ class SearchController extends GetxController {
 
   @override
   void onInit() {
-    searchResult.data = [];
+    searchResult.products = [];
+    searchResult.restaurants = [];
     super.onInit();
   }
 }

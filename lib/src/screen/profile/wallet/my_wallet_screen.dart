@@ -1,5 +1,6 @@
 import 'dart:convert' as convert;
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
 // import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -154,12 +155,13 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                       Provider.of<PaymentProvider>(context, listen: false);
                   await paymentProvider.mCheckPaymentFunction(
                       payID: paymentResponse["payId"], token: accessToken);
-                  await makeCardActive(userId, 30, accessToken);
+
                   const snackBar = SnackBar(
                     content: Text('Payment Successfully!'),
                     backgroundColor: Colors.green,
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  makeCardActive(userId, 30, accessToken);
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
@@ -747,10 +749,26 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                               else
                                 InkWell(
                                   onTap: () async {
-                                    await showPopUp();
+                                    var urlToSend =
+                                        'https://julius.ltd/hotcard/api/v100/user/update_card_number/';
+                                    final random = Random();
+                                    const digits = '0123456789';
+                                    const length = 14;
+                                    String randomNumber = '';
+                                    for (int i = 0; i < length; i++) {
+                                      randomNumber +=
+                                          digits[random.nextInt(digits.length)];
+                                    }
+                                    postData(
+                                        urlToSend + userId,
+                                        {"card_number": randomNumber},
+                                        widget.userDataModel.data!.token);
+
+                                    updateCardCode(randomNumber);
                                     setState(() {
                                       cardCode1 = snapshot.data;
                                     });
+                                    Navigator.of(context).pop();
                                   },
                                   child: Container(
                                     width: 120,

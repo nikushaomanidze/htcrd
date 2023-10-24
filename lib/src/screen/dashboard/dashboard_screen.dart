@@ -239,15 +239,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        Text(
-                          textAlign: TextAlign.center,
-                          AppTags.topDeals.tr,
-                          maxLines: 2,
-                          style: TextStyle(
+                        FittedBox(
+                          fit: BoxFit
+                              .scaleDown, // This scales the text down to fit within the available space
+                          child: Text(
+                            AppTags.topDeals.tr,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
                               fontSize: 11,
                               color:
                                   currentTab == 2 ? Colors.orange : Colors.grey,
-                              fontFamily: 'metro-reg'),
+                              fontFamily: 'metro-reg',
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -322,16 +326,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        Text(
-                          textAlign: TextAlign.center,
-                          AppTags.socialNetworks.tr,
-                          maxLines: 2,
-                          style: TextStyle(
-                              fontSize: 11,
-                              color: isPressed == true
-                                  ? Colors.orange
-                                  : Colors.grey,
-                              fontFamily: 'metro-reg'),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            AppTags.socialNetworks.tr,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20, // Set your maximum font size here
+                              color:
+                                  currentTab == 2 ? Colors.orange : Colors.grey,
+                              fontFamily: 'metro-reg',
+                            ),
+                            softWrap:
+                                true, // This allows the text to wrap onto multiple lines if necessary
+                            maxLines:
+                                2, // Limits the text to a maximum of 2 lines
+                          ), // This scales the text down to fit within the available space
                         )
                       ],
                     ),

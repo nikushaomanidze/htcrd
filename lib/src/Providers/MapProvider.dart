@@ -4,7 +4,9 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hot_card/src/screen/home/category/product_by_category_screen.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/GetCategoryLocationModel.dart';
@@ -64,10 +66,35 @@ class MapProvider with ChangeNotifier {
             Marker(
               infoWindow: InfoWindow(
                 title: e.title,
-                onTap: () {
-                  print('clicked');
-                  navigateTo(double.parse(e.latlong!.split(",")[0]),
-                      double.parse(e.latlong!.split(",")[1]));
+                onTap: () async {
+                  Get.to(ProductByCategory(
+                    id: e.id,
+                    title: e.title.toString(),
+                    imgurl: e.banner.toString(),
+                    category: e.categoryFilter.toString(),
+                    latlong: e.latlong.toString(),
+                    number: e.number.toString(),
+                    soc_fb: e.soc_fb.toString(),
+                    soc_in: e.soc_in.toString(),
+                    soc_yt: e.soc_yt.toString(),
+                  ));
+                  // Navigator.of(context).push(
+                  //   MaterialPageRoute(
+                  //     builder: (_) => ProductByCategory(
+                  // id: e.id,
+                  // title: e.title.toString(),
+                  // imgurl: e.banner.toString(),
+                  // category: e.categoryFilter.toString(),
+                  // latlong: e.latlong.toString(),
+                  // number: e.number.toString(),
+                  // soc_fb: e.soc_fb.toString(),
+                  // soc_in: e.soc_in.toString(),
+                  // soc_yt: e.soc_yt.toString(),
+                  //     ),
+                  //   ),
+                  // );
+                  // navigateTo(double.parse(e.latlong!.split(",")[0]),
+                  //     double.parse(e.latlong!.split(",")[1]));
                 },
               ),
               onTap: () {},
@@ -92,33 +119,6 @@ class MapProvider with ChangeNotifier {
     );
     this.restaurantMarkers = restaurantMarkers;
     notifyListeners();
-  }
-
-  ShowDialogFunction(
-      {required BuildContext context,
-      required String restaurantName,
-      required dynamic distance,
-      required String lat,
-      required String long}) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(restaurantName),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Distance : ${distance.toStringAsFixed(2)} KM"),
-            TextButton.icon(
-                onPressed: () {
-                  navigateTo(double.parse(lat), double.parse(long));
-                },
-                icon: const Icon(Icons.map),
-                label: const Text("Open On Maps"))
-          ],
-        ),
-      ),
-    );
   }
 
   GetCategoryLocationModel? getCategoryLocationModel;

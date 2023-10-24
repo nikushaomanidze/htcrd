@@ -377,7 +377,7 @@ class _ProfileContentState extends State<ProfileContent> {
                                                   style: isMobile(context)
                                                       ? TextStyle(
                                                           color: const Color
-                                                                  .fromARGB(255,
+                                                              .fromARGB(255,
                                                               255, 255, 255),
                                                           fontFamily: 'bpg',
                                                           fontSize: 18.sp,
@@ -558,7 +558,8 @@ class _ProfileContentState extends State<ProfileContent> {
               //     child:
               //         mobileViewTile("order_history", AppTags.orderHistory.tr)),
               // divider(),
-              1 <= 100
+              _profileContentController.profileDataModel.value.data!.userId! <=
+                      100
                   ? InkWell(
                       onTap: () {
                         Get.toNamed(Routes.voucherList);
@@ -566,7 +567,10 @@ class _ProfileContentState extends State<ProfileContent> {
                       child:
                           mobileViewTile("voucher_color", AppTags.voucher.tr))
                   : Container(),
-              1 <= 100 ? divider() : Container(),
+              _profileContentController.profileDataModel.value.data!.userId! <=
+                      100
+                  ? divider()
+                  : Container(),
               InkWell(
                   onTap: () {
                     Get.toNamed(Routes.changePassword);

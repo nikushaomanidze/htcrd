@@ -70,11 +70,24 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       daysLeft = data['data']['available_subscription_days'] ?? 'Inactive';
-
-      return daysLeft;
+      if (daysLeft > 0) {
+        return daysLeft;
+      } else {
+        daysLeft = 'Inactive';
+        return daysLeft;
+      }
     } else {
+      daysLeft = 'Inactive';
       throw Exception('Failed to load data');
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Call your function here
+    fetchCardNumber(LocalDataHelper().getUserToken().toString());
   }
 
   void _launchGram() async {
@@ -196,8 +209,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
 
   int page = 0;
   int productId = 0;
-  int dickHead = 0;
-  int dickHead2 = 0;
+  int dvar = 0;
 
   int maxFreeDish = 3;
 
@@ -404,13 +416,13 @@ class _ProductByCategoryState extends State<ProductByCategory> {
         "https://julius.ltd/hotcard/api/v100/products-by-category/${categoryId.toString()}"));
 
     if (response.statusCode == 200) {
-      if (dickHead < 1) {
+      if (dvar < 1) {
         for (int i = 0; i < json.decode(response.body)['data'].length; i++) {
           quantity.add(0);
           var res = json.decode(response.body);
           ids.add(res['data'][i]['id']);
         }
-        dickHead += 1;
+        dvar += 1;
       } else {}
       return json.decode(response.body);
     } else {
@@ -436,6 +448,37 @@ class _ProductByCategoryState extends State<ProductByCategory> {
           .toList();
     } else {
       return getCheaperProducts(categoryId, price);
+    }
+  }
+
+  Future<void> updateUserBalance(
+      String authorizationToken, double value) async {
+    final String apiUrl =
+        'https://julius.ltd/hotcard/api/v100/user/update_balance_value/';
+
+    final Map<String, String> headers = {
+      'Authorization': 'Bearer $authorizationToken',
+      'Content-Type': 'application/json',
+    };
+
+    final Map<String, String> body = {
+      'value': value.toString(),
+      'type': 'add',
+    };
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      // Request was successful
+      print('Balance updated successfully.');
+    } else {
+      // Request failed
+      print('Failed to update balance. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
     }
   }
 
@@ -488,6 +531,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
 
   int finalIndex = 25;
   double mainDishPrice = 0;
+  double totalMainPrice = 0;
   int additionalfinalIndex = 250;
   int additionalfinalId = 250;
   int selectedQty = 0;
@@ -517,225 +561,57 @@ class _ProductByCategoryState extends State<ProductByCategory> {
         floatingActionButton: SizedBox(
           width: 70,
           height: 70,
-          child: FloatingActionButton(
-            onPressed: () {
-              setState(() {
-                daysLeft != null && daysLeft != 'Inactive'
-                    ? Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => QrPage(
-                                qty: quantity, ids: ids, adds: additionals)),
-                      )
-                    : Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ProfileContent()),
-                      );
-                currentTab = 0; // Set the selected tab index
-              });
-            },
-            backgroundColor: const Color.fromARGB(255, 239, 127, 26),
-            child: const Icon(Icons.done, size: 45),
+          child: Column(
+            children: [
+              FloatingActionButton(
+                onPressed: () {
+                  daysLeft != 'Inactive'
+                      ? updateUserBalance(
+                          LocalDataHelper().getUserToken().toString(),
+                          totalMainPrice)
+                      : null;
+                  setState(() {
+                    daysLeft != 'Inactive'
+                        ? Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => QrPage(
+                                    qty: quantity,
+                                    ids: ids,
+                                    adds: additionals)),
+                          )
+                        : Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ProfileContent()),
+                          );
+
+                    currentTab = 0; // Set the selected tab index
+                  });
+                },
+                backgroundColor: const Color.fromARGB(255, 239, 127, 26),
+                child: const Icon(Icons.done_rounded, size: 45),
+              ),
+              const SizedBox(
+                height: 15,
+              )
+            ],
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: const Color.fromARGB(255, 74, 75, 77).withOpacity(0.11),
-                spreadRadius: 15,
-                blurRadius: 15,
-                offset: const Offset(0, 3), // Set the desired shadow offset
-              ),
-            ],
-          ),
-          child: BottomAppBar(
-            elevation: 0,
-            shape: const CircularNotchedRectangle(),
-            color: Colors.white,
-            notchMargin: 20,
-            child: SizedBox(
-              height: 90,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  SizedBox(
-                    width: 70,
-                    child: MaterialButton(
-                      minWidth: 5,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const MapScreen()),
-                        );
-                        setState(() {
-                          currentTab = 1; // Set the selected tab index
-                        });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ImageIcon(
-                            size: 20,
-                            const AssetImage('assets/images/map.png'),
-                            color:
-                                currentTab == 1 ? Colors.orange : Colors.grey,
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            textAlign: TextAlign.center,
-                            AppTags.map.tr,
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontSize: 11,
-                                color: currentTab == 1
-                                    ? Colors.orange
-                                    : Colors.grey,
-                                fontFamily: 'metro-reg'),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 85,
-                    child: MaterialButton(
-                      minWidth: 5,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AllCategory()),
-                        );
-                        setState(() {
-                          currentTab = 2; // Set the selected tab index
-                        });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ImageIcon(
-                            size: 20,
-                            const AssetImage('assets/images/bag.png'),
-                            color:
-                                currentTab == 2 ? Colors.orange : Colors.grey,
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            textAlign: TextAlign.center,
-                            AppTags.topDeals.tr,
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontSize: 11,
-                                color: currentTab == 2
-                                    ? Colors.orange
-                                    : Colors.grey,
-                                fontFamily: 'metro-reg'),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  MaterialButton(
-                    minWidth: 15,
-                    onPressed: () {
-                      setState(() {
-                        currentTab = 1; // Set the selected tab index
-                      });
-                    },
-                    child: const Column(),
-                  ),
-                  const Spacer(),
-                  SizedBox(
-                    width: 85,
-                    child: MaterialButton(
-                      minWidth: 5,
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ProfileContent()),
-                        );
-                        setState(() {
-                          currentTab = 3; // Set the selected tab index
-                        });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ImageIcon(
-                            size: 20,
-                            const AssetImage('assets/images/userimage.png'),
-                            color:
-                                currentTab == 3 ? Colors.orange : Colors.grey,
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            textAlign: TextAlign.center,
-                            AppTags.profile.tr,
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontSize: 11,
-                                color: currentTab == 3
-                                    ? Colors.orange
-                                    : Colors.grey,
-                                fontFamily: 'metro-reg'),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 70,
-                    child: MaterialButton(
-                      minWidth: 5,
-                      onPressed: () {
-                        _showPopup(context);
-                        setState(() {
-                          currentTab = 4; // Set the selected tab index
-                        });
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ImageIcon(
-                            size: 20,
-                            const AssetImage('assets/images/more.png'),
-                            color:
-                                currentTab == 4 ? Colors.orange : Colors.grey,
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            textAlign: TextAlign.center,
-                            AppTags.socialNetworks.tr,
-                            maxLines: 2,
-                            style: TextStyle(
-                                fontSize: 11,
-                                color: currentTab == 4
-                                    ? Colors.orange
-                                    : Colors.grey,
-                                fontFamily: 'metro-reg'),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      const Color.fromARGB(255, 74, 75, 77).withOpacity(0.11),
+                  spreadRadius: 15,
+                  blurRadius: 15,
+                  offset: const Offset(0, 3), // Set the desired shadow offset
+                ),
+              ],
             ),
-          ),
-        ),
+            child: const SizedBox()),
         body: Stack(children: [
           Container(
             decoration: BoxDecoration(
@@ -981,6 +857,11 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                         () {
                                                                       active_ac =
                                                                           true;
+                                                                      differentAdditionalDishes -=
+                                                                          1;
+                                                                      additionals
+                                                                          .remove(
+                                                                              additionalfinalId);
                                                                       finalIndex =
                                                                           index;
                                                                       quantity[index] >=
@@ -997,10 +878,8 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                               index) &&
                                                                           (quantity[index] !=
                                                                               0)) {
-                                                                        differentDishes +=
+                                                                        differentDishes -=
                                                                             1;
-                                                                        addedIndexes
-                                                                            .add(index);
                                                                       } else if (quantity[
                                                                               index] ==
                                                                           0) {
@@ -1023,7 +902,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                           child: Center(
                                                                               child: Icon(
                                                                             size:
-                                                                                18,
+                                                                                20,
                                                                             Icons.remove,
                                                                             color: finalIndex == index
                                                                                 ? Colors.white
@@ -1059,9 +938,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                     active_ac =
                                                                         true;
                                                                     if (differentAdditionalDishes ==
-                                                                            3 &&
-                                                                        !addedIndexes
-                                                                            .contains(index)) {
+                                                                        3) {
                                                                       setState(
                                                                           () {
                                                                         if (addedIndexes
@@ -1102,10 +979,8 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                     } else {
                                                                       setState(
                                                                           () {
-                                                                        if (daysLeft !=
-                                                                                null &&
-                                                                            daysLeft !=
-                                                                                'Inactive') {
+                                                                        if (daysLeft ==
+                                                                            'Inactive') {
                                                                           Navigator
                                                                               .push(
                                                                             context,
@@ -1116,6 +991,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                               index;
 
                                                                           mainDishPrice = double.parse(snapshot
+                                                                              .data!['data'][index]['formatted_price']
+                                                                              .toString());
+                                                                          totalMainPrice += double.parse(snapshot
                                                                               .data!['data'][index]['formatted_price']
                                                                               .toString());
                                                                           switchnum =
@@ -1144,7 +1022,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                     child: Center(
                                                                         child: Icon(
                                                                       Icons.add,
-                                                                      size: 18,
+                                                                      size: 20,
                                                                       color: finalIndex ==
                                                                               index
                                                                           ? Colors
@@ -1340,7 +1218,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                                     width: 50,
                                                                                                     child: Icon(
                                                                                                       Icons.add,
-                                                                                                      size: 18,
+                                                                                                      size: 20,
                                                                                                       color: Color.fromARGB(255, 252, 96, 17),
                                                                                                     ),
                                                                                                   ),
@@ -1436,7 +1314,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 135, top: 110),
-              child: Container(
+              child: SizedBox(
                 width: 45,
                 child: IconButton(
                     onPressed: () {
@@ -1448,7 +1326,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 85, top: 110),
-              child: Container(
+              child: SizedBox(
                 width: 45,
                 child: IconButton(
                     onPressed: () {
@@ -1460,7 +1338,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 35, top: 110),
-              child: Container(
+              child: SizedBox(
                 width: 45,
                 child: IconButton(
                     onPressed: () {

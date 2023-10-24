@@ -1,10 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:hot_card/src/data/local_data_helper.dart';
 import 'package:hot_card/src/screen/profile/profile_without_login_screen.dart';
 
 import '../../utils/app_tags.dart';
 
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
@@ -26,7 +29,11 @@ import 'category/all_category_screen.dart';
 import 'category/product_by_category_screen.dart';
 import 'home_screen.dart';
 import 'home_screen_cafe.dart';
+
 import '../Map/Widget/GetCurrentLocation.dart';
+
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'dart:io';
 
 class MtlaHome extends StatefulWidget {
   const MtlaHome({super.key});
@@ -49,6 +56,50 @@ class _MtlaHomeState extends State<MtlaHome> {
     return permission == LocationPermission.whileInUse;
   }
 
+  Future<List<dynamic>> cacheApiResponse() async {
+    String url =
+        'https://julius.ltd/hotcard/api/v100/category/all'; // Replace with your API endpoint URL
+
+    DefaultCacheManager manager = DefaultCacheManager();
+
+    FileInfo? fileInfo = await manager.getFileFromCache(url);
+
+    if (fileInfo != null && fileInfo.file.existsSync()) {
+      // API response is cached, you can read and parse the JSON data
+      String cachedData = await fileInfo.file.readAsString();
+      Map<String, dynamic> jsonData = jsonDecode(cachedData);
+      final categories = jsonData['data']['categories'];
+      return categories;
+    } else {
+      // API response is not cached, make the API request and cache it
+      final apiResponse = await makeApiRequest(url);
+      if (apiResponse != null) {
+        File file = await manager.putFile(
+            url, Uint8List.fromList(apiResponse.bodyBytes));
+        // Now, you can parse the JSON data
+        Map<String, dynamic> jsonData = jsonDecode(apiResponse.body);
+        final categories = jsonData['data']['categories'];
+        return categories;
+      } else {
+        // Handle the case when the API request fails
+        return []; // Return an empty list or handle the error accordingly
+      }
+    }
+  }
+
+// Replace this function with your API request logic
+  Future<http.Response?> makeApiRequest(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        return response;
+      }
+    } catch (e) {
+      print('API Request Error: $e');
+    }
+    return null;
+  }
+
   Future<List<dynamic>> fetchCategories() async {
     final response = await http
         .get(Uri.parse('https://julius.ltd/hotcard/api/v100/category/all'));
@@ -57,7 +108,7 @@ class _MtlaHomeState extends State<MtlaHome> {
       final jsonResponse = json.decode(response.body);
       final categories = jsonResponse['data']['categories'];
       // List<dynamic> filteredCategories = [];
-
+      print(categories.toString());
       return categories;
     } else {
       fetchCategories();
@@ -355,9 +406,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                 topLeft: Radius.circular(10),
                                 topRight: Radius.circular(10))),
                         child: Center(
-                          child: profileContentController
-                                      .profileDataModel.value.data !=
-                                  null
+                          child: LocalDataHelper().getUserToken() != null
                               ? FittedBox(
                                   fit: BoxFit.scaleDown,
                                   child: Row(
@@ -384,9 +433,9 @@ class _MtlaHomeState extends State<MtlaHome> {
                                               myWalletController
                                                           .myWalletModel
                                                           .value
-                                                          .data!
-                                                          .balance!
-                                                          .balance !=
+                                                          .data
+                                                          ?.balance
+                                                          ?.balance !=
                                                       null
                                                   ? '${'${myWalletController.myWalletModel.value.data!.balance!.balance}'} ₾'
                                                   : '0 ₾',
@@ -492,7 +541,8 @@ class _MtlaHomeState extends State<MtlaHome> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => HomeScreenCafeContent()),
+                                builder: (context) =>
+                                    const HomeScreenCafeContent()),
                           );
                         },
                         child: Center(
@@ -679,246 +729,420 @@ class _MtlaHomeState extends State<MtlaHome> {
             const SizedBox(
               height: 5,
             ),
-            homeScreenContentController.homeDataModel.value.data != null
-                // && _cartController.addToCartListModel.data != null
-                ? Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 200,
-                          width: MediaQuery.of(context).size.width - 20,
-                          child: FutureBuilder<List<dynamic>>(
-                            future: fetchCategories(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                List<dynamic>? categories = snapshot.data;
-                                List<dynamic> filteredCategories = categories!
-                                    .where((category) =>
-                                        category['slug'] != 'restornebi' &&
-                                        category['slug'] != 'gartoba')
-                                    .toList();
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 200,
+                    width: MediaQuery.of(context).size.width - 20,
+                    child: FutureBuilder<List<dynamic>>(
+                      future: cacheApiResponse(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<dynamic>? categories = snapshot.data;
+                          List<dynamic> filteredCategories = categories!
+                              .where((category) =>
+                                  category['slug'] != 'restornebi' &&
+                                  category['slug'] != 'gartoba')
+                              .toList();
 
-                                // Render the list of categories as needed
-                                return NotificationListener<
-                                    OverscrollIndicatorNotification>(
-                                  onNotification: (overscroll) {
-                                    overscroll
-                                        .disallowIndicator(); // This will prevent the overscroll glow effect
-                                    return false;
-                                  },
-                                  child: ListView.builder(
-                                    itemCount: filteredCategories.length,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (context, index) {
-                                      return Row(
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Center(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 10),
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      Navigator.of(context)
-                                                          .push(
-                                                        MaterialPageRoute(
-                                                          builder: (_) =>
-                                                              ProductByCategory(
-                                                            id: filteredCategories[
-                                                                index]['id'],
-                                                            title:
-                                                                filteredCategories[
-                                                                        index]
-                                                                    ['title'],
-                                                            number:
-                                                                filteredCategories[
-                                                                        index]
-                                                                    ['number'],
-                                                            soc_fb:
-                                                                filteredCategories[
-                                                                        index]
-                                                                    ['soc_fb'],
-                                                            soc_yt:
-                                                                filteredCategories[
-                                                                        index]
-                                                                    ['soc_yt'],
-                                                            soc_in:
-                                                                filteredCategories[
-                                                                        index]
-                                                                    ['soc_in'],
-                                                            category:
-                                                                filteredCategories[
-                                                                        index][
-                                                                    'category_filter'],
-                                                            imgurl:
-                                                                filteredCategories[
-                                                                        index]
-                                                                    ['banner'],
-                                                            latlong:
-                                                                filteredCategories[
-                                                                        index]
-                                                                    ['latlong'],
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: Column(
-                                                      children: [
-                                                        const SizedBox(
-                                                          height: 20,
-                                                        ),
-                                                        Container(
-                                                          width: 250,
-                                                          height: 130,
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .all(
-                                                                      Radius.circular(
-                                                                          10)),
-                                                              image: DecorationImage(
-                                                                  image: filteredCategories[index]['banner'] !=
-                                                                          null
-                                                                      ? NetworkImage(filteredCategories[index][
-                                                                          'banner'])
-                                                                      : const NetworkImage(
-                                                                          'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'),
-                                                                  fit: BoxFit
-                                                                      .cover)),
-                                                        ),
-                                                      ],
+                          // Render the list of categories as needed
+                          return NotificationListener<
+                              OverscrollIndicatorNotification>(
+                            onNotification: (overscroll) {
+                              overscroll
+                                  .disallowIndicator(); // This will prevent the overscroll glow effect
+                              return false;
+                            },
+                            child: ListView.builder(
+                              itemCount: filteredCategories.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return Row(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 10),
+                                            child: InkWell(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        ProductByCategory(
+                                                      id: filteredCategories[
+                                                          index]['id'],
+                                                      title: filteredCategories[
+                                                          index]['title'],
+                                                      number:
+                                                          filteredCategories[
+                                                              index]['number'],
+                                                      soc_fb:
+                                                          filteredCategories[
+                                                              index]['soc_fb'],
+                                                      soc_yt:
+                                                          filteredCategories[
+                                                              index]['soc_yt'],
+                                                      soc_in:
+                                                          filteredCategories[
+                                                              index]['soc_in'],
+                                                      category:
+                                                          filteredCategories[
+                                                                  index][
+                                                              'category_filter'],
+                                                      imgurl:
+                                                          filteredCategories[
+                                                              index]['banner'],
+                                                      latlong:
+                                                          filteredCategories[
+                                                              index]['latlong'],
                                                     ),
                                                   ),
+                                                );
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  Container(
+                                                    width: 250,
+                                                    height: 130,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            const BorderRadius.all(
+                                                                Radius.circular(
+                                                                    10)),
+                                                        image: DecorationImage(
+                                                            image: filteredCategories[index]
+                                                                        [
+                                                                        'banner'] !=
+                                                                    null
+                                                                ? NetworkImage(
+                                                                    filteredCategories[index]
+                                                                        [
+                                                                        'banner'])
+                                                                : const NetworkImage(
+                                                                    'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'),
+                                                            fit: BoxFit.cover)),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        SizedBox(
+                                          width: 250,
+                                          child: Text(
+                                            filteredCategories[index]['title']
+                                                .toString(),
+                                            maxLines: 1,
+                                            textAlign: TextAlign.left,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: AppThemeData
+                                                .todayDealTitleStyle
+                                                .copyWith(
+                                                    color: const Color.fromARGB(
+                                                        255, 43, 42, 42),
+                                                    fontFamily: 'metro-bold',
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w500),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        SizedBox(
+                                          width: 250,
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              filteredCategories[index]
+                                                          ['category_filter'] ==
+                                                      'ტრადიციული'
+                                                  ? AppTags.traditional.tr
+                                                  : filteredCategories[index][
+                                                              'category_filter'] ==
+                                                          'სუში'
+                                                      ? AppTags.sushi.tr
+                                                      : filteredCategories[index][
+                                                                  'category_filter'] ==
+                                                              'პიცა'
+                                                          ? AppTags.pizza.tr
+                                                          : filteredCategories[index]
+                                                                      [
+                                                                      'category_filter'] ==
+                                                                  'ზღვის პროდუქტები'
+                                                              ? AppTags
+                                                                  .seafood.tr
+                                                              : filteredCategories[index]['category_filter'] ==
+                                                                      'ბურგერები'
+                                                                  ? AppTags
+                                                                      .burgers
+                                                                      .tr
+                                                                  : filteredCategories[index]['category_filter'] ==
+                                                                          'აზიური'
+                                                                      ? AppTags
+                                                                          .asian
+                                                                          .tr
+                                                                      : filteredCategories[index]['category_filter'] ==
+                                                                              'საცხობი'
+                                                                          ? AppTags.bakery.tr
+                                                                          : filteredCategories[index]['category_filter'] == 'დესერტი'
+                                                                              ? AppTags.dessert.tr
+                                                                              : filteredCategories[index]['category_filter'] == 'მექსიკური'
+                                                                                  ? AppTags.mexican.tr
+                                                                                  : filteredCategories[index]['category_filter'] == 'შაურმა'
+                                                                                      ? AppTags.shawarma.tr
+                                                                                      : AppTags.vegetarian.tr,
+                                              maxLines: 1,
+                                              textAlign: TextAlign.center,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: AppThemeData
+                                                  .todayDealTitleStyle
+                                                  .copyWith(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              128,
+                                                              128,
+                                                              128),
+                                                      fontFamily: 'bpg',
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w300),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          final errorCode = snapshot.error.toString();
+                          if (snapshot.hasData) {
+                            List<dynamic>? categories = snapshot.data;
+                            List<dynamic> filteredCategories = categories!
+                                .where((category) =>
+                                    category['slug'] != 'restornebi' &&
+                                    category['slug'] != 'gartoba')
+                                .toList();
+
+                            // Render the list of categories as needed
+                            return NotificationListener<
+                                OverscrollIndicatorNotification>(
+                              onNotification: (overscroll) {
+                                overscroll
+                                    .disallowIndicator(); // This will prevent the overscroll glow effect
+                                return false;
+                              },
+                              child: ListView.builder(
+                                itemCount: filteredCategories.length,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  return Row(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Center(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 10),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          ProductByCategory(
+                                                        id: filteredCategories[
+                                                            index]['id'],
+                                                        title:
+                                                            filteredCategories[
+                                                                index]['title'],
+                                                        number:
+                                                            filteredCategories[
+                                                                    index]
+                                                                ['number'],
+                                                        soc_fb:
+                                                            filteredCategories[
+                                                                    index]
+                                                                ['soc_fb'],
+                                                        soc_yt:
+                                                            filteredCategories[
+                                                                    index]
+                                                                ['soc_yt'],
+                                                        soc_in:
+                                                            filteredCategories[
+                                                                    index]
+                                                                ['soc_in'],
+                                                        category:
+                                                            filteredCategories[
+                                                                    index][
+                                                                'category_filter'],
+                                                        imgurl:
+                                                            filteredCategories[
+                                                                    index]
+                                                                ['banner'],
+                                                        latlong:
+                                                            filteredCategories[
+                                                                    index]
+                                                                ['latlong'],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Column(
+                                                  children: [
+                                                    const SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    Container(
+                                                      width: 250,
+                                                      height: 130,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              const BorderRadius.all(
+                                                                  Radius.circular(
+                                                                      10)),
+                                                          image: DecorationImage(
+                                                              image: filteredCategories[index]
+                                                                          [
+                                                                          'banner'] !=
+                                                                      null
+                                                                  ? NetworkImage(
+                                                                      filteredCategories[index]
+                                                                          [
+                                                                          'banner'])
+                                                                  : const NetworkImage(
+                                                                      'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'),
+                                                              fit: BoxFit.cover)),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              SizedBox(
-                                                width: 250,
-                                                child: Text(
-                                                  filteredCategories[index]
-                                                          ['title']
-                                                      .toString(),
-                                                  maxLines: 1,
-                                                  textAlign: TextAlign.left,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: AppThemeData
-                                                      .todayDealTitleStyle
-                                                      .copyWith(
-                                                          color: const Color
-                                                              .fromARGB(
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          SizedBox(
+                                            width: 250,
+                                            child: Text(
+                                              filteredCategories[index]['title']
+                                                  .toString(),
+                                              maxLines: 1,
+                                              textAlign: TextAlign.left,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: AppThemeData
+                                                  .todayDealTitleStyle
+                                                  .copyWith(
+                                                      color:
+                                                          const Color.fromARGB(
                                                               255, 43, 42, 42),
-                                                          fontFamily:
-                                                              'metro-bold',
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w500),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 5,
-                                              ),
-                                              SizedBox(
-                                                width: 250,
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    filteredCategories[index][
+                                                      fontFamily: 'metro-bold',
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          SizedBox(
+                                            width: 250,
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                filteredCategories[index][
+                                                            'category_filter'] ==
+                                                        'ტრადიციული'
+                                                    ? AppTags.traditional.tr
+                                                    : filteredCategories[index][
                                                                 'category_filter'] ==
-                                                            'ტრადიციული'
-                                                        ? AppTags.traditional.tr
-                                                        : filteredCategories[index][
+                                                            'სუში'
+                                                        ? AppTags.sushi.tr
+                                                        : filteredCategories[index]
+                                                                    [
                                                                     'category_filter'] ==
-                                                                'სუში'
-                                                            ? AppTags.sushi.tr
+                                                                'პიცა'
+                                                            ? AppTags.pizza.tr
                                                             : filteredCategories[index]
                                                                         [
                                                                         'category_filter'] ==
-                                                                    'პიცა'
+                                                                    'ზღვის პროდუქტები'
                                                                 ? AppTags
-                                                                    .pizza.tr
-                                                                : filteredCategories[index]
-                                                                            [
-                                                                            'category_filter'] ==
-                                                                        'ზღვის პროდუქტები'
+                                                                    .seafood.tr
+                                                                : filteredCategories[index]['category_filter'] ==
+                                                                        'ბურგერები'
                                                                     ? AppTags
-                                                                        .seafood
+                                                                        .burgers
                                                                         .tr
                                                                     : filteredCategories[index]['category_filter'] ==
-                                                                            'ბურგერები'
-                                                                        ? AppTags
-                                                                            .burgers
-                                                                            .tr
-                                                                        : filteredCategories[index]['category_filter'] == 'აზიური'
-                                                                            ? AppTags.asian.tr
-                                                                            : filteredCategories[index]['category_filter'] == 'საცხობი'
-                                                                                ? AppTags.bakery.tr
-                                                                                : filteredCategories[index]['category_filter'] == 'დესერტი'
-                                                                                    ? AppTags.dessert.tr
-                                                                                    : filteredCategories[index]['category_filter'] == 'მექსიკური'
-                                                                                        ? AppTags.mexican.tr
-                                                                                        : filteredCategories[index]['category_filter'] == 'შაურმა'
-                                                                                            ? AppTags.shawarma.tr
-                                                                                            : AppTags.vegetarian.tr,
-                                                    maxLines: 1,
-                                                    textAlign: TextAlign.center,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: AppThemeData
-                                                        .todayDealTitleStyle
-                                                        .copyWith(
-                                                            color: const Color
-                                                                .fromARGB(255,
-                                                                128, 128, 128),
-                                                            fontFamily: 'bpg',
-                                                            fontSize: 12,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w300),
-                                                  ),
-                                                ),
+                                                                            'აზიური'
+                                                                        ? AppTags.asian.tr
+                                                                        : filteredCategories[index]['category_filter'] == 'საცხობი'
+                                                                            ? AppTags.bakery.tr
+                                                                            : filteredCategories[index]['category_filter'] == 'დესერტი'
+                                                                                ? AppTags.dessert.tr
+                                                                                : filteredCategories[index]['category_filter'] == 'მექსიკური'
+                                                                                    ? AppTags.mexican.tr
+                                                                                    : filteredCategories[index]['category_filter'] == 'შაურმა'
+                                                                                        ? AppTags.shawarma.tr
+                                                                                        : AppTags.vegetarian.tr,
+                                                maxLines: 1,
+                                                textAlign: TextAlign.center,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: AppThemeData
+                                                    .todayDealTitleStyle
+                                                    .copyWith(
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            255, 128, 128, 128),
+                                                        fontFamily: 'bpg',
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w300),
                                               ),
-                                            ],
+                                            ),
                                           ),
                                         ],
-                                      );
-                                    },
-                                  ),
-                                );
-                              } else if (snapshot.hasError) {
-                                final errorCode = snapshot.error.toString();
-                                return Center(
-                                    child: Text(
-                                  "${AppTags.internetConnection.tr}! Error Code: $errorCode",
-                                  style: const TextStyle(
-                                      color: Colors.black, fontSize: 24),
-                                ));
-                              }
-                              // By default, show a loading spinner
-                              return const Center(
-                                child: SizedBox(
-                                    width: 50,
-                                    height: 50,
-                                    child: SizedBox(
-                                      child: CircularProgressIndicator(),
-                                    )),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                        }
+                        // By default, show a loading spinner
+                        return const Center(
+                          child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: SizedBox(
+                                child: SpinKitDancingSquare(
+                                  color: Colors.blue,
+                                  size: 50.0,
+                                ),
+                              )),
+                        );
+                      },
                     ),
-                  )
-                : const Center(
-                    child: CircularProgressIndicator(),
-                  )
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),

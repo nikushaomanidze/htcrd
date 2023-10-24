@@ -2,30 +2,115 @@ class SearchProductModel {
   SearchProductModel({
     this.success,
     this.message,
-    this.data,
+    this.products,
+    this.restaurants,
   });
 
   SearchProductModel.fromJson(dynamic json) {
     success = json['success'];
     message = json['message'];
+
     if (json['data'] != null) {
-      data = [];
-      json['data'].forEach((v) {
-        data?.add(SearchProductData.fromJson(v));
-      });
+      if (json['data']['products'] != null) {
+        products = [];
+        json['data']['products'].forEach((v) {
+          products?.add(SearchProductData.fromJson(v));
+        });
+      }
+
+      if (json['data']['restaurants'] != null) {
+        restaurants = [];
+        json['data']['restaurants'].forEach((v) {
+          restaurants?.add(SearchRestaurantData.fromJson(v));
+        });
+      }
     }
   }
+
   bool? success;
   String? message;
-  List<SearchProductData>? data;
+  List<SearchProductData>? products;
+  List<SearchRestaurantData>? restaurants;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['success'] = success;
     map['message'] = message;
-    if (data != null) {
-      map['data'] = data?.map((v) => v.toJson()).toList();
+
+    if (products != null) {
+      map['data'] = {
+        'products': products?.map((v) => v.toJson()).toList(),
+      };
     }
+
+    if (restaurants != null) {
+      if (map['data'] == null) {
+        map['data'] = {};
+      }
+      map['data']['restaurants'] = restaurants?.map((v) => v.toJson()).toList();
+    }
+
+    return map;
+  }
+}
+
+class SearchRestaurantData {
+  SearchRestaurantData({
+    this.id,
+    this.parent_id,
+    this.slug,
+    this.title,
+    this.banner,
+    this.image,
+    this.latlong,
+    this.category_filter,
+    this.number,
+    this.soc_fb,
+    this.soc_yt,
+    this.soc_in,
+  });
+
+  SearchRestaurantData.fromJson(dynamic json) {
+    id = json['id'];
+    parent_id = json['parent_id'];
+    slug = json['slug'];
+    title = json['title'];
+    banner = json['banner'];
+    image = json['image'];
+    latlong = json['latlong'];
+    category_filter = json['category_filter'];
+    number = json['number'];
+    soc_fb = json['soc_fb'];
+    soc_yt = json['soc_yt'];
+    soc_in = json['soc_in'];
+  }
+  int? id;
+  int? parent_id;
+  String? slug;
+  String? title;
+  String? banner;
+  String? image;
+  String? latlong;
+  String? category_filter;
+  String? number;
+  String? soc_fb;
+  String? soc_yt;
+  String? soc_in;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['id'] = id;
+    map['parent_id'] = parent_id;
+    map['slug'] = slug;
+    map['title'] = title;
+    map['banner'] = banner;
+    map['image'] = image;
+    map['latlong'] = latlong;
+    map['category_filter'] = category_filter;
+    map['number'] = number;
+    map['soc_fb'] = soc_fb;
+    map['soc_yt'] = soc_yt;
+    map['soc_in'] = soc_in;
     return map;
   }
 }

@@ -63,6 +63,11 @@ class Category {
   List<Category>? subCategories;
   List<dynamic>? childCategories;
   String? latlong;
+  String? categoryFilter;
+  String? number;
+  String? soc_fb;
+  String? soc_yt;
+  String? soc_in;
 
   Category({
     required this.id,
@@ -75,6 +80,11 @@ class Category {
     this.subCategories,
     this.childCategories,
     this.latlong,
+    this.categoryFilter,
+    this.number,
+    this.soc_fb,
+    this.soc_yt,
+    this.soc_in,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) => Category(
@@ -85,6 +95,11 @@ class Category {
         banner: json["banner"],
         title: json["title"],
         image: json["image"],
+        categoryFilter: json['category_filter'],
+        number: json['number'],
+        soc_fb: json['soc_fb'],
+        soc_yt: json['soc_yt'],
+        soc_in: json['soc_in'],
         subCategories: json["sub_categories"] == null
             ? []
             : List<Category>.from(
@@ -110,5 +125,10 @@ class Category {
             ? []
             : List<dynamic>.from(childCategories!.map((x) => x)),
         "latlong": latlong,
+        'category_filter': categoryFilter,
+        'number': number,
+        'soc_fb': soc_fb,
+        'soc_yt': soc_yt,
+        'soc_in': soc_in,
       };
 }

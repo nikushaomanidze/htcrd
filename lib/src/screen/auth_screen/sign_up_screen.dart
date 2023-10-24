@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'dart:async';
 
 import '../../../config.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -31,6 +32,29 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   bool switchValue = false;
   late String code;
+  bool isButtonDisabled = false;
+  int remainingTime = 60; // Initial time in seconds
+
+  void startCountdown() {
+    setState(() {
+      isButtonDisabled = true;
+    });
+
+    const oneSecond = Duration(seconds: 1);
+    Timer.periodic(oneSecond, (timer) {
+      if (remainingTime == 0) {
+        timer.cancel();
+        setState(() {
+          isButtonDisabled = false;
+        });
+      } else {
+        setState(() {
+          remainingTime--;
+        });
+      }
+    });
+  }
+
   var htext = "Do You Own Card?";
   final AuthController authController = Get.find<AuthController>();
 
@@ -221,13 +245,25 @@ class _SignupScreenState extends State<SignupScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(right: 10.0),
                   child: TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // print(authController.phoneControllers.text);
+
                       sendSmsOffice(
                         'f83c88afe19b4bddb22d3394e3b02a55',
                         authController.phoneControllers.text,
                         code,
                       );
+                      setState(() {
+                        startCountdown();
+                        // isButtonDisabled = true;
+                      });
+                      // // Wait for 1 minute
+                      // await Future.delayed(Duration(minutes: 1));
+
+                      // // Enable the button
+                      // setState(() {
+                      //   isButtonDisabled = false;
+                      // });
                     },
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero,
@@ -239,7 +275,9 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     ),
                     child: Text(
-                      AppTags.sendCode.tr,
+                      isButtonDisabled
+                          ? remainingTime.toString()
+                          : AppTags.sendCode.tr,
                       style: const TextStyle(
                         color: Color(0xffe07527),
                         fontFamily: 'bpg',
