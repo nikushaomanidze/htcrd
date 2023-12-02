@@ -201,7 +201,6 @@ class _MtlaHomeState extends State<MtlaHome> {
                       // Close the popup
                       signOut();
                       _launchFb();
-
                     },
                     child: Text(AppTags.contact.tr),
                   ),
