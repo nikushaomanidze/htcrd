@@ -12,24 +12,28 @@ class ForgotPasswordController extends GetxController {
   var isVisibleA = true.obs;
   var isVisibleB = true.obs;
 
-
   isVisibleUpdateA() {
     isVisibleA.value = !isVisibleA.value;
   }
+
   isVisibleUpdateB() {
     isVisibleB.value = !isVisibleB.value;
   }
 
   Future forgotPasswordSendOtp({String? email}) async {
-    isLoader.value=false;
+    isLoader.value = false;
     await Repository().postForgetPasswordGetData(email: email).then((value) {
-      isValue.value = value.success!;
+      if (value != null && value.success != null) {
+        isValue.value = value.success!;
+      } else {
+        // Handle the case where value or value.success is null
+      }
       isLoader.value = true;
     });
   }
 
   Future forgotPasswordConfirmSentOtp({String? email, String? otp}) async {
-    isLoader.value=false;
+    isLoader.value = false;
     await Repository()
         .postForgetPasswordConfirmOTP(email: email, otp: otp)
         .then((value) {
@@ -39,32 +43,31 @@ class ForgotPasswordController extends GetxController {
             otp: otp,
             code: LocalDataHelper().getForgotPasswordCode()));
         isLoader.value = true;
-      }else{
+      } else {
         isLoader.value = true;
       }
     });
   }
 
-  Future setNewPassword({
-    String? code,
-    String? email,
-    String? password,
-    String? confirmPassword,
-    String? otp
-  }) async{
-    isLoader.value=false;
+  Future setNewPassword(
+      {String? code,
+      String? email,
+      String? password,
+      String? confirmPassword,
+      String? otp}) async {
+    isLoader.value = false;
     await Repository()
         .postForgetPassword(
-      code: code,
-      email: email,
-      otp: otp,
-      password: password,
-      confirmPassword: confirmPassword)
+            code: code,
+            email: email,
+            otp: otp,
+            password: password,
+            confirmPassword: confirmPassword)
         .then((value) {
-      if(value!=true){
+      if (value != true) {
         Get.off(LoginScreen());
         isLoader.value = true;
-      }else{
+      } else {
         isLoader.value = true;
       }
     });

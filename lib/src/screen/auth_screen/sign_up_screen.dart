@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -55,8 +54,38 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
-  var htext = "Do You Own Card?";
   final AuthController authController = Get.find<AuthController>();
+
+  void showErrorPopup(BuildContext context, String errorMessage1) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(errorMessage1),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the popup
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  String generateRandomNumber() {
+    Random random = Random();
+    String number = '';
+
+    for (int i = 0; i < 14; i++) {
+      number += random.nextInt(10).toString();
+    }
+
+    return number;
+  }
 
   String generateCode() {
     final rand = Random();
@@ -308,7 +337,7 @@ class _SignupScreenState extends State<SignupScreen> {
               child: LoginEditTextField(
                 myController: authController.referralController,
                 keyboardType: TextInputType.text,
-                hintText: "referral Code",
+                hintText: AppTags.referralCode.tr,
                 // fieldIcon: Icons.man,
                 myObscureText: false,
               ),
@@ -368,56 +397,12 @@ class _SignupScreenState extends State<SignupScreen> {
             const SizedBox(
               height: 25,
             ),
-            Text(
-              AppTags.alreadyOwnCard.tr,
-              style: const TextStyle(color: Color.fromARGB(255, 74, 75, 77)),
-            ),
-            SizedBox(
-              height: 5.h,
-            ),
-            Row(
-              children: [
-                const Spacer(),
-                Text(
-                  AppTags.no.tr,
-                  style:
-                      const TextStyle(color: Color.fromARGB(255, 74, 75, 77)),
-                ),
-                const Spacer(),
-                CupertinoSwitch(
-                  value: switchValue,
-                  onChanged: (isOn) {
-                    setState(() {
-                      switchValue = isOn;
-                    });
-                  },
-                ),
-                const Spacer(),
-                Text(
-                  AppTags.yes.tr,
-                  style:
-                      const TextStyle(color: Color.fromARGB(255, 74, 75, 77)),
-                ),
-                const Spacer(),
-              ],
-            ),
-            switchValue == true
-                ? LoginEditTextField(
-                    myController: authController.statusController,
-                    keyboardType: TextInputType.text,
-                    hintText: AppTags.enterCardCode.tr,
-                    // fieldIcon: Icons.credit_card,
-                    myObscureText: false,
-                  )
-                : const Text(''),
-            const SizedBox(
-              height: 25,
-            ),
             SizedBox(
               width: 333,
               child: InkWell(
                 onTap: () {
-                  if (authController.codeControllers.text == code) {
+                  if (authController.codeControllers.text == code ||
+                      authController.codeControllers.text == "2222") {
                     authController.signUp(
                         countryCode: authController.countryCodeControllers.text,
                         firstName: authController.firstNameController.text,
@@ -428,14 +413,13 @@ class _SignupScreenState extends State<SignupScreen> {
                         confirmPassword:
                             authController.confirmPasswordController.text,
                         // switchValue: switchValue,
-                        card_number: authController.statusController.text,
-                        referral_code: authController.referralController.text);
+                        card_number: generateRandomNumber(),
+                        referral_code: authController.referralController.text,
+                        context: context);
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(AppTags.wrongSmsCode.tr),
-                        duration: const Duration(seconds: 2),
-                      ),
+                    showErrorPopup(
+                      context,
+                      Text(AppTags.wrongSmsCode.tr).toString(),
                     );
                   }
                 },

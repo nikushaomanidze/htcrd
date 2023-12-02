@@ -1,8 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:hot_card/src/utils/app_tags.dart';
@@ -13,9 +16,14 @@ class QrPage extends StatefulWidget {
   final List qty;
   final List ids;
   final List adds;
+  final String idd;
 
   const QrPage(
-      {super.key, required this.qty, required this.ids, required this.adds});
+      {super.key,
+      required this.qty,
+      required this.ids,
+      required this.adds,
+      required this.idd});
 
   @override
   State<QrPage> createState() => _QrPageState();
@@ -28,17 +36,11 @@ class _QrPageState extends State<QrPage> {
   @override
   void initState() {
     super.initState();
-    // Future.delayed(const Duration(seconds: 5), () {
-    //   setState(() {
-    //     qrCodeData =
-    //         'https://julius.ltd/APIS/hotcard.php?param1=value1&param2=value2';
-    //   });
-    // });
   }
 
   Future fetchUserProfile() async {
     final response = await http.get(Uri.parse(
-        'https://julius.ltd/hotcard/api/v100/user/profile?token=${LocalDataHelper().getUserToken()}'));
+        '${NetworkService.apiUrl}/user/profile?token=${LocalDataHelper().getUserToken()}'));
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
@@ -61,8 +63,8 @@ class _QrPageState extends State<QrPage> {
   Future<List<dynamic>> fetchDataFromApi(Map<int, dynamic> data) async {
     List<dynamic> results = [];
     for (int id in data.keys) {
-      final response = await http.get(
-          Uri.parse('https://julius.ltd/hotcard/api/v100/product-details/$id'));
+      final response = await http
+          .get(Uri.parse('${NetworkService.apiUrl}/product-details/$id'));
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = json.decode(response.body);
         results.add(responseData);
@@ -72,8 +74,8 @@ class _QrPageState extends State<QrPage> {
   }
 
   Future<dynamic> fetchData(String id) async {
-    final response = await http.get(
-        Uri.parse('https://julius.ltd/hotcard/api/v100/product-details/$id'));
+    final response = await http
+        .get(Uri.parse('${NetworkService.apiUrl}/product-details/$id'));
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -86,6 +88,7 @@ class _QrPageState extends State<QrPage> {
     List qty = widget.qty;
     List ids = widget.ids;
     List adds = widget.adds;
+    String idd = widget.idd;
 
     Map combined = Map.fromIterables(ids, qty);
 
@@ -105,10 +108,9 @@ class _QrPageState extends State<QrPage> {
         sachurkebi[item] = 1;
       }
     }
-    String sastring = '';
+    Map<String, dynamic> jsonMap = json.decode(idd);
     return Scaffold(
       backgroundColor: const Color(0xffe07527),
-      // floatingActionButton: FloatingActionButton(onPressed: () {}),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -161,11 +163,6 @@ class _QrPageState extends State<QrPage> {
                                 ));
                           }),
                         );
-
-                        // return Container(
-                        //     height: 300,
-                        //     child: SingleChildScrollView(
-                        //         child: Text(snapshot.data.toString())));
                       } else if (snapshot.hasError) {
                         return Text("${snapshot.error}");
                       }
@@ -205,8 +202,6 @@ class _QrPageState extends State<QrPage> {
                           children:
                               List.generate(snapshot.data!.length, (index) {
                             var element = snapshot.data![index];
-                            sastring +=
-                                'gift$index=${element['data']['title']}&';
                             return SizedBox(
                                 height: 50,
                                 child: SingleChildScrollView(
@@ -217,13 +212,21 @@ class _QrPageState extends State<QrPage> {
                                 )));
                           }),
                         );
-
-                        // return Container(
-                        //     height: 300,
-                        //     child: SingleChildScrollView(
-                        //         child: Text(snapshot.data.toString())));
                       } else if (snapshot.hasError) {
-                        return Text("ggg${snapshot.error}gggg");
+                        return Column(
+                          children:
+                              List.generate(snapshot.data!.length, (index) {
+                            var element = snapshot.data![index];
+                            return SizedBox(
+                                height: 50,
+                                child: SingleChildScrollView(
+                                    child: Text(
+                                  '${element['data']['title']} x ${sachurkebi[element['data']['id']].toString()}',
+                                  style: const TextStyle(
+                                      fontFamily: 'bpg', color: Colors.white),
+                                )));
+                          }),
+                        );
                       }
 
                       return const CircularProgressIndicator();
@@ -239,62 +242,15 @@ class _QrPageState extends State<QrPage> {
                 const SizedBox(
                   height: 15,
                 ),
-                FutureBuilder(
-                  future: forEach(combinedWithoutZero),
-                  builder: (context, snapshot) {
-                    try {
-                      if (snapshot.hasData) {
-                        Map<String, dynamic> titleToData = {};
-
-                        for (var item in snapshot.data!) {
-                          String title = item['data']['title'];
-                          titleToData[title] = item['data'];
-                        }
-
-                        String itemsString = '';
-                        List<int> valuesList =
-                            combinedWithoutZero.values.toList();
-                        int lindex = 0;
-                        int slindex = 1;
-                        for (var item in snapshot.data!) {
-                          String title =
-                              item['data']['title'].replaceAll(' ', '%20');
-                          itemsString +=
-                              'order$slindex=$title=${valuesList[lindex]}&';
-                          slindex++;
-                        }
-                        if (itemsString.isNotEmpty) {
-                          itemsString =
-                              itemsString.substring(0, itemsString.length - 1);
-                        }
-
-                        sastring = sastring.replaceAll(' ', '%20');
-                        return Center(
-                            child: itemsString.isNotEmpty && sastring.isNotEmpty
-                                ? QrImageView(
-                                    data:
-                                        'https://julius.ltd/APIS/hotcard.php?$itemsString&$sastring',
-                                    version: QrVersions.auto,
-                                    size: 200.0,
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: const Color(0xffe07527),
-                                  )
-                                : const CircularProgressIndicator());
-                      } else {
-                        return const Center(
-                            child: SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: CircularProgressIndicator()));
-                      }
-                    } catch (e) {
-                      return const Center(
-                          child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: CircularProgressIndicator()));
-                    }
-                  },
+                Center(
+                  child: QrImageView(
+                    data:
+                        'https://julius.ltd/hotcard/api/v100/invoice-view/${jsonMap['data']['id']}',
+                    version: QrVersions.auto,
+                    size: 200.0,
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xffe07527),
+                  ),
                 ),
                 const SizedBox(
                   height: 15,
@@ -304,9 +260,7 @@ class _QrPageState extends State<QrPage> {
                   endTime: DateTime.now().millisecondsSinceEpoch +
                       60000, // 60 seconds
                   textStyle: const TextStyle(fontSize: 48, color: Colors.white),
-                  onEnd: () {
-                    // print('Countdown ended');
-                  },
+                  onEnd: () {},
                 )),
               ],
             )

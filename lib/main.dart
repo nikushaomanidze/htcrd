@@ -65,9 +65,9 @@ class MyApp extends StatelessWidget {
             initialBinding: InitBindings(),
             locale: storage.languageCode != null
                 ? Locale(storage.languageCode!, storage.countryCode)
-                : const Locale('en', 'US'),
+                : const Locale('ka', 'GE'),
             translations: AppTranslations(),
-            fallbackLocale: const Locale('en', 'US'),
+            fallbackLocale: const Locale('ka', 'GE'),
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               primarySwatch: Colors.blue,

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -46,6 +47,12 @@ class LanguageController extends GetxController {
     // Update storage
     storage.write('languageCode', languageCode);
     storage.write('countryCode', countryCode);
+    if (kDebugMode) {
+      print('language code = $languageCode');
+    }
+    if (kDebugMode) {
+      print('country code = $countryCode');
+    }
   }
 
   List<Languages> getAppLanguageList() {

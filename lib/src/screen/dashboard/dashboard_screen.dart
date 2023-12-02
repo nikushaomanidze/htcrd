@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../../controllers/profile_content_controller.dart';
 import 'package:hot_card/src/screen/home/category/all_category_screen.dart';
+import 'package:hot_card/src/screen/profile/wallet/my_wallet_screen.dart';
 // import 'package:hot_card/src/screen/home/home_screen.dart';
 import 'package:hot_card/src/utils/app_tags.dart';
 
@@ -12,8 +17,6 @@ import '../Map/MapScreens.dart';
 import '../home/mtla_home.dart';
 import '../profile/profile_screen.dart';
 
-import 'package:url_launcher/url_launcher.dart';
-
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
 
@@ -22,124 +25,27 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  void _launchFb() async {
-    String url = 'https://www.facebook.com/hotcard.ge';
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  void _launchGram() async {
-    String url = 'https://www.instagram.com/hotcard.ge/';
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  void _launchTiktok() async {
-    String url = 'https://www.tiktok.com/@hotcard.ge';
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  void _showPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(35.0),
-          ),
-          title: Center(
-            child: Text(
-              AppTags.socialNetworks.tr,
-              style: const TextStyle(fontFamily: 'bpg'),
-            ),
-          ),
-          content: SizedBox(
-            height: 150, // set a fixed height
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    _launchFb();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(75.0),
-                      image: DecorationImage(
-                        image: Image.asset('assets/images/fb.png').image,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    width: 70,
-                    height: 70,
-                  ),
-                ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    _launchGram();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(75.0),
-                      image: DecorationImage(
-                        image: Image.asset('assets/images/gram.png').image,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    width: 70,
-                    height: 70,
-                  ),
-                ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    _launchTiktok();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(75.0),
-                      image: DecorationImage(
-                        image: Image.asset('assets/images/tiktok.png').image,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    width: 70,
-                    height: 70,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   final homeController = Get.find<DashboardController>();
   final cartContentController = Get.put(CartContentController());
   final PageStorageBucket bucket = PageStorageBucket();
   int currentTab = 0;
   bool isPressed = false;
 
-  final List<Widget> screens = [
-    const MtlaHome(),
-    const MapScreen(),
-    const AllCategory(),
-    const ProfileContent(),
-  ];
+  final ProfileContentController _profileContentController =
+      Get.put(ProfileContentController());
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [
+      const MtlaHome(),
+      const MapScreen(),
+      const AllCategory(),
+      const ProfileContent(),
+      _profileContentController.user!.value.data != null
+          ? MyWalletScreen(userDataModel: _profileContentController.user!.value)
+          : const ProfileContent(),
+    ];
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
@@ -163,16 +69,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(255, 74, 75, 77).withOpacity(0.11),
-              spreadRadius: 15,
-              blurRadius: 15,
-              offset: const Offset(0, 3), // Set the desired shadow offset
-            ),
-          ],
-        ),
+        decoration: Platform.isAndroid
+            ? BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color:
+                        const Color.fromARGB(255, 74, 75, 77).withOpacity(0.11),
+                    spreadRadius: 15,
+                    blurRadius: 15,
+                    offset: const Offset(0, 3), // Set the desired shadow offset
+                  ),
+                ],
+              )
+            : const BoxDecoration(),
         child: BottomAppBar(
           shape: const CircularNotchedRectangle(),
           color: Colors.white,
@@ -212,7 +121,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               fontSize: 11,
                               color:
                                   currentTab == 1 ? Colors.orange : Colors.grey,
-                              fontFamily: 'metro-reg'),
+                              fontFamily: 'bpg'),
                         )
                       ],
                     ),
@@ -249,7 +158,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               fontSize: 11,
                               color:
                                   currentTab == 2 ? Colors.orange : Colors.grey,
-                              fontFamily: 'metro-reg',
+                              fontFamily: 'bpg',
                             ),
                           ),
                         )
@@ -289,15 +198,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        Text(
-                          textAlign: TextAlign.center,
-                          AppTags.profile.tr,
-                          maxLines: 2,
-                          style: TextStyle(
-                              fontSize: 11,
-                              color:
-                                  currentTab == 3 ? Colors.orange : Colors.grey,
-                              fontFamily: 'metro-reg'),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            AppTags.profile.tr,
+                            maxLines: 2,
+                            style: TextStyle(
+                                fontSize: 11,
+                                color: currentTab == 3
+                                    ? Colors.orange
+                                    : Colors.grey,
+                                fontFamily: 'bpg'),
+                            softWrap:
+                                true, // This allows the text to wrap onto multiple lines if necessary
+                          ),
                         )
                       ],
                     ),
@@ -308,10 +223,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: MaterialButton(
                     minWidth: 5,
                     onPressed: () {
-                      _showPopup(context);
+                      // _showPopup(context);
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: ((context) => MyWalletScreen(
+                      //             userDataModel:
+                      //                 _profileContentController.user!.value))));
                       setState(() {
                         isPressed = true;
-                        currentTab = 0;
+                        currentTab = 4;
                       });
                     },
                     child: Column(
@@ -319,30 +240,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         ImageIcon(
                           size: 20,
-                          const AssetImage('assets/images/more.png'),
-                          color:
-                              isPressed == true ? Colors.orange : Colors.grey,
+                          const AssetImage('assets/images/credit-card.png'),
+                          color: currentTab == 4 ? Colors.orange : Colors.grey,
                         ),
                         const SizedBox(
                           height: 5,
                         ),
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            AppTags.socialNetworks.tr,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 20, // Set your maximum font size here
-                              color:
-                                  currentTab == 2 ? Colors.orange : Colors.grey,
-                              fontFamily: 'metro-reg',
-                            ),
-                            softWrap:
-                                true, // This allows the text to wrap onto multiple lines if necessary
-                            maxLines:
-                                2, // Limits the text to a maximum of 2 lines
-                          ), // This scales the text down to fit within the available space
-                        )
+                        Text(
+                          AppTags.dashboardCard.tr,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 9.5,
+                            color:
+                                currentTab == 4 ? Colors.orange : Colors.grey,
+                            fontFamily: 'bpg',
+                          ),
+                          softWrap: true,
+                          maxLines: 2,
+                        ),
                       ],
                     ),
                   ),

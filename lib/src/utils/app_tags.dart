@@ -348,6 +348,9 @@ class AppTags {
   static const String relatedProducts = "relatedProducts";
   static const String popularVideo = "popularVideo";
   static const String contact = "contact";
+  static const String understand = "understand";
+  static const String popupdescription = "popupdescription";
+  static const String popuptitle = "popuptitle";
 
   static const String active = "active";
   static const String day = "day";
@@ -355,10 +358,12 @@ class AppTags {
   static const String totallySaved = "totallySaved";
   static const String topObjects = "topObjects";
   static const String socialNetworks = "socialNetworks";
+  static const String dashboardCard = "dashboardCard";
   static const String seeAll = "seeAll";
   static const String internetConnection = "internetConnection";
   static const String authorization = "authorization";
   static const String restaurants = "restaurants";
+  static const String objects = "objects";
   static const String cafeBars = "cafeBars";
   static const String fun = "fun";
   static const String map = "map";
@@ -399,6 +404,7 @@ class AppTags {
   static const String orUse = "orUse";
   static const String sendCode = "sendCode";
   static const String enterCode = "enterCode";
+  static const String referralCode = "referralCode";
   static const String alreadyOwnCard = "alreadyOwnCard";
   static const String enterCardCode = "enterCardCode";
   static const String wrongSmsCode = "wrongSmsCode";
@@ -422,13 +428,16 @@ class AppTags {
   static const String cardCencellation = "cardCencellation";
   static const String cardCencellationCosts = "cardCencellationCosts";
   static const String costsAndDate = "costsAndDate";
+  static const String costsAndDate20 = "costsAndDate20";
   static const String upgrade = "upgrade";
   static const String activate = "activate";
   static const String sorryForinconvenience = "sorryForinconvenience";
+  static const String gartoba = "Gartoba";
   static const String save = "save";
   static const String yourCode = "yourCode";
   static const String totally = "totally";
   static const String km = "km";
   static const String mm = "mm";
   static const String searchFood = "searchFood";
+  static const String goToMainPage = "goToMainPage";
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables, deprecated_member_use
+
 import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 
 import '../../_route/routes.dart';
@@ -66,7 +69,7 @@ class _ProfileContentState extends State<ProfileContent> {
 
   Future<String> fetchCardNumber(String token) async {
     final response = await http.get(
-      Uri.parse('https://julius.ltd/hotcard/api/v100/user/profile'),
+      Uri.parse('${NetworkService.apiUrl}/user/profile'),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -96,6 +99,16 @@ class _ProfileContentState extends State<ProfileContent> {
                 _profileContentController.profileDataModel.value.data != null
             ? _mainUi(userDataModel)
             : const ProfileWithoutLoginScreen(),
+      ),
+    );
+  }
+
+  void navigateToMyWallet(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyWalletScreen(
+            userDataModel: _profileContentController.user!.value),
       ),
     );
   }
@@ -290,116 +303,116 @@ class _ProfileContentState extends State<ProfileContent> {
                       const SizedBox(
                         height: 5,
                       ),
-                      FutureBuilder<String>(
-                        future: fetchCardNumber(
-                            LocalDataHelper().getUserToken().toString()),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData &&
-                              snapshot.data != 'Not Available') {
-                            return InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => MyWalletScreen(
-                                      userDataModel: userDataModel,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                transform:
-                                    Matrix4.translationValues(0.0, -20.0, 0.0),
-                                alignment: Alignment.bottomCenter,
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 43, 43, 43),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(10)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppThemeData.headlineTextColor
-                                          .withOpacity(0.1),
-                                      spreadRadius: 0.r,
-                                      blurRadius: 30.r,
-                                      offset: const Offset(
-                                          0, 15), // changes position of shadow
-                                    ),
-                                  ],
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(20.r),
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height: userDataModel.data!.phone == ""
-                                            ? 0.h
-                                            : 00.h,
-                                      ),
-                                      Row(
-                                        children: [
-                                          const Spacer(),
-                                          Text(
-                                            _profileContentController
-                                                        .profileDataModel
-                                                        .value
-                                                        .data!
-                                                        .cardStatus !=
-                                                    'Inactive'
-                                                ? "${AppTags.active.tr} $daysLeft ${AppTags.day.tr}"
-                                                : AppTags.nonActive.tr,
-                                            style: isMobile(context)
-                                                ? TextStyle(
-                                                    color: const Color.fromARGB(
-                                                        255, 255, 255, 255),
-                                                    fontFamily: 'bpg',
-                                                    fontSize: 14.sp,
-                                                    overflow: TextOverflow.clip,
-                                                  )
-                                                : AppThemeData
-                                                    .titleTextStyle_11Tab,
-                                          ),
-                                          const SizedBox(
-                                            width: 15,
-                                          )
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 60.h,
-                                      ),
-                                      userDataModel.data!.email == ""
-                                          ? const SizedBox()
-                                          : Row(
-                                              children: [
-                                                SizedBox(
-                                                  width: 20.w,
-                                                ),
-                                                Text(
-                                                  snapshot.data.toString(),
-                                                  style: isMobile(context)
-                                                      ? TextStyle(
-                                                          color: const Color
-                                                              .fromARGB(255,
-                                                              255, 255, 255),
-                                                          fontFamily: 'bpg',
-                                                          fontSize: 18.sp,
-                                                          overflow:
-                                                              TextOverflow.clip,
-                                                        )
-                                                      : AppThemeData
-                                                          .titleTextStyle_11Tab,
-                                                ),
-                                              ],
-                                            ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          } else if (snapshot.hasError) {
-                            return const SizedBox();
-                          }
-                          return const SizedBox();
-                        },
-                      ),
+                      // FutureBuilder<String>(
+                      //   future: fetchCardNumber(
+                      //       LocalDataHelper().getUserToken().toString()),
+                      //   builder: (context, snapshot) {
+                      //     if (snapshot.hasData &&
+                      //         snapshot.data != 'Not Available') {
+                      //       return InkWell(
+                      //         onTap: () {
+                      //           Navigator.of(context).push(
+                      //             MaterialPageRoute(
+                      //               builder: (context) => MyWalletScreen(
+                      //                 userDataModel: userDataModel,
+                      //               ),
+                      //             ),
+                      //           );
+                      //         },
+                      //         child: Container(
+                      //           transform:
+                      //               Matrix4.translationValues(0.0, -20.0, 0.0),
+                      //           alignment: Alignment.bottomCenter,
+                      //           decoration: BoxDecoration(
+                      //             color: const Color.fromARGB(255, 43, 43, 43),
+                      //             borderRadius: const BorderRadius.all(
+                      //                 Radius.circular(10)),
+                      //             boxShadow: [
+                      //               BoxShadow(
+                      //                 color: AppThemeData.headlineTextColor
+                      //                     .withOpacity(0.1),
+                      //                 spreadRadius: 0.r,
+                      //                 blurRadius: 30.r,
+                      //                 offset: const Offset(
+                      //                     0, 15), // changes position of shadow
+                      //               ),
+                      //             ],
+                      //           ),
+                      //           child: Padding(
+                      //             padding: EdgeInsets.all(20.r),
+                      //             child: Column(
+                      //               children: [
+                      //                 SizedBox(
+                      //                   height: userDataModel.data!.phone == ""
+                      //                       ? 0.h
+                      //                       : 00.h,
+                      //                 ),
+                      //                 Row(
+                      //                   children: [
+                      //                     const Spacer(),
+                      //                     Text(
+                      //                       _profileContentController
+                      //                                   .profileDataModel
+                      //                                   .value
+                      //                                   .data!
+                      //                                   .cardStatus !=
+                      //                               'Inactive'
+                      //                           ? "${AppTags.active.tr} $daysLeft ${AppTags.day.tr}"
+                      //                           : AppTags.nonActive.tr,
+                      //                       style: isMobile(context)
+                      //                           ? TextStyle(
+                      //                               color: const Color.fromARGB(
+                      //                                   255, 255, 255, 255),
+                      //                               fontFamily: 'bpg',
+                      //                               fontSize: 14.sp,
+                      //                               overflow: TextOverflow.clip,
+                      //                             )
+                      //                           : AppThemeData
+                      //                               .titleTextStyle_11Tab,
+                      //                     ),
+                      //                     const SizedBox(
+                      //                       width: 15,
+                      //                     )
+                      //                   ],
+                      //                 ),
+                      //                 SizedBox(
+                      //                   height: 60.h,
+                      //                 ),
+                      //                 userDataModel.data!.email == ""
+                      //                     ? const SizedBox()
+                      //                     : Row(
+                      //                         children: [
+                      //                           SizedBox(
+                      //                             width: 20.w,
+                      //                           ),
+                      //                           Text(
+                      //                             snapshot.data.toString(),
+                      //                             style: isMobile(context)
+                      //                                 ? TextStyle(
+                      //                                     color: const Color
+                      //                                         .fromARGB(255,
+                      //                                         255, 255, 255),
+                      //                                     fontFamily: 'bpg',
+                      //                                     fontSize: 18.sp,
+                      //                                     overflow:
+                      //                                         TextOverflow.clip,
+                      //                                   )
+                      //                                 : AppThemeData
+                      //                                     .titleTextStyle_11Tab,
+                      //                           ),
+                      //                         ],
+                      //                       ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       );
+                      //     } else if (snapshot.hasError) {
+                      //       return const SizedBox();
+                      //     }
+                      //     return const SizedBox();
+                      //   },
+                      // ),
                     ],
                   ),
                 ),
@@ -407,22 +420,22 @@ class _ProfileContentState extends State<ProfileContent> {
           isMobile(context)
               ? mobileView(userDataModel)
               : tabView(userDataModel),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
-            child: InkWell(
-              onTap: () {
-                accountDeleteDialogue(userDataModel);
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(AppTags.deleteYourAccount.tr,
-                      style: AppThemeData.todayDealNewStyleTab
-                          .copyWith(fontSize: 12.sp, fontFamily: 'bpg'))
-                ],
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
+          //   child: InkWell(
+          //     onTap: () {
+          //       accountDeleteDialogue(userDataModel);
+          //     },
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Text(AppTags.deleteYourAccount.tr,
+          //             style: AppThemeData.todayDealNewStyleTab
+          //                 .copyWith(fontSize: 12.sp, fontFamily: 'bpg'))
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       );
   //Mobile view
@@ -559,7 +572,7 @@ class _ProfileContentState extends State<ProfileContent> {
               //         mobileViewTile("order_history", AppTags.orderHistory.tr)),
               // divider(),
               _profileContentController.profileDataModel.value.data!.userId! <=
-                      100
+                      10000
                   ? InkWell(
                       onTap: () {
                         Get.toNamed(Routes.voucherList);
@@ -568,7 +581,7 @@ class _ProfileContentState extends State<ProfileContent> {
                           mobileViewTile("voucher_color", AppTags.voucher.tr))
                   : Container(),
               _profileContentController.profileDataModel.value.data!.userId! <=
-                      100
+                      10000
                   ? divider()
                   : Container(),
               InkWell(
@@ -580,16 +593,17 @@ class _ProfileContentState extends State<ProfileContent> {
               divider(),
               InkWell(
                   onTap: () {
-                    Get.toNamed(Routes.settings);
+                    Get.toNamed(Routes.settings,
+                        arguments: {'dataModel': userDataModel});
                   },
                   child: mobileViewTile("setting", AppTags.settings.tr)),
-              divider(),
-              InkWell(
-                  onTap: () {
-                    logoutDialogue();
-                  },
-                  child: mobileViewTile("logout", AppTags.logOut.tr)),
-              SizedBox(height: 10.h),
+              // divider(),
+              // InkWell(
+              //     onTap: () {
+              //       logoutDialogue();
+              //     },
+              //     child: mobileViewTile("logout", AppTags.logOut.tr)),
+              SizedBox(height: 25.h),
             ],
           ),
         ),
@@ -740,13 +754,7 @@ class _ProfileContentState extends State<ProfileContent> {
                 },
                 child: tabViewTile("setting", AppTags.settings.tr),
               ),
-              divider(),
-              InkWell(
-                onTap: () {
-                  logoutDialogue();
-                },
-                child: tabViewTile("logout", AppTags.logOut.tr),
-              ),
+
               SizedBox(height: 10.h),
             ],
           ),

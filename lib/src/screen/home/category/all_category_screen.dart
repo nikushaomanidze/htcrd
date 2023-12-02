@@ -90,165 +90,180 @@ class _AllCategoryState extends State<AllCategory> {
                           .disallowIndicator(); // This will prevent the overscroll glow effect
                       return false;
                     },
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 8),
-                      shrinkWrap: true,
-                      physics:
-                          const ClampingScrollPhysics(), // Add this line to disable the scrolling physics of the ListView
-                      itemCount: filteredCategories!.length,
-                      itemBuilder: (context, index) {
-                        return Center(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 0.w, left: 1.w),
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => ProductByCategory(
-                                          id: filteredCategories![index].id,
-                                          title:
-                                              filteredCategories![index].title,
-                                          category: filteredCategories![index]
-                                              .categoryFilter,
-                                          number:
-                                              filteredCategories![index].number,
-                                          soc_fb:
-                                              filteredCategories![index].soc_fb,
-                                          soc_yt:
-                                              filteredCategories![index].soc_yt,
-                                          soc_in:
-                                              filteredCategories![index].soc_in,
-                                          imgurl:
-                                              filteredCategories![index].banner,
-                                          latlong: filteredCategories![index]
-                                              .latlong,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 20),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 155,
-                                        decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(5)),
-                                          image: DecorationImage(
-                                            image: filteredCategories![index]
-                                                        .banner !=
-                                                    null
-                                                ? NetworkImage(allCategoryModel!
-                                                    .data!
-                                                    .categories![index]
-                                                    .banner!)
-                                                : const NetworkImage(
-                                                    'https://www.streamingmedia.com/Images/ArticleImages/ArticleImage.14143.jpg'),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            8, 8, 0, 0),
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            filteredCategories![index]
-                                                .title!
-                                                .toString(),
-                                            maxLines: 1,
-                                            textAlign: TextAlign.left,
-                                            style: AppThemeData
-                                                .todayDealTitleStyle
-                                                .copyWith(
-                                              fontFamily: 'bpg',
-                                              color: Colors.black,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600,
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 8),
+                          shrinkWrap: true,
+                          physics:
+                              const ClampingScrollPhysics(), // Add this line to disable the scrolling physics of the ListView
+                          itemCount: filteredCategories!.length,
+                          itemBuilder: (context, index) {
+                            return Center(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(right: 0.w, left: 1.w),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => ProductByCategory(
+                                              id: filteredCategories![index].id,
+                                              title: filteredCategories![index]
+                                                  .title,
+                                              category:
+                                                  filteredCategories![index]
+                                                      .categoryFilter,
+                                              number: filteredCategories![index]
+                                                  .number,
+                                              soc_fb: filteredCategories![index]
+                                                  .soc_fb,
+                                              soc_yt: filteredCategories![index]
+                                                  .soc_yt,
+                                              soc_in: filteredCategories![index]
+                                                  .soc_in,
+                                              imgurl: filteredCategories![index]
+                                                  .banner,
+                                              latlong:
+                                                  filteredCategories![index]
+                                                      .latlong,
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            8, 3, 0, 0),
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            filteredCategories![index]
-                                                        .categoryFilter
-                                                        .toString() ==
-                                                    'ტრადიციული'
-                                                ? AppTags.traditional.tr
-                                                : filteredCategories![index]
+                                        );
+                                      },
+                                      child: Column(
+                                        children: [
+                                          const SizedBox(height: 20),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: 155,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(5)),
+                                              image: DecorationImage(
+                                                image: filteredCategories![
+                                                                index]
+                                                            .banner !=
+                                                        null
+                                                    ? NetworkImage(
+                                                        filteredCategories![
+                                                                index]
+                                                            .banner)
+                                                    : const NetworkImage(
+                                                        'https://www.streamingmedia.com/Images/ArticleImages/ArticleImage.14143.jpg'),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                8, 8, 0, 0),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                filteredCategories![index]
+                                                    .title!
+                                                    .toString(),
+                                                maxLines: 1,
+                                                textAlign: TextAlign.left,
+                                                style: AppThemeData
+                                                    .todayDealTitleStyle
+                                                    .copyWith(
+                                                  fontFamily: 'bpg',
+                                                  color: Colors.black,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                8, 3, 0, 0),
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                filteredCategories![index]
                                                             .categoryFilter
                                                             .toString() ==
-                                                        'სუში'
-                                                    ? AppTags.sushi.tr
+                                                        ''
+                                                    ? ''
                                                     : filteredCategories![index]
                                                                 .categoryFilter
                                                                 .toString() ==
-                                                            'პიცა'
-                                                        ? AppTags.pizza.tr
+                                                            'ტრადიციული'
+                                                        ? AppTags.traditional.tr
                                                         : filteredCategories![index]
                                                                     .categoryFilter
                                                                     .toString() ==
-                                                                'ზღვის პროდუქტები'
-                                                            ? AppTags.seafood.tr
-                                                            : filteredCategories![index]
+                                                                'სუში'
+                                                            ? AppTags.sushi.tr
+                                                            : filteredCategories![
+                                                                            index]
                                                                         .categoryFilter
                                                                         .toString() ==
-                                                                    'ბურგერები'
+                                                                    'პიცა'
                                                                 ? AppTags
-                                                                    .burgers.tr
+                                                                    .pizza.tr
                                                                 : filteredCategories![index]
                                                                             .categoryFilter
                                                                             .toString() ==
-                                                                        'აზიური'
+                                                                        'ზღვის პროდუქტები'
                                                                     ? AppTags
-                                                                        .asian
+                                                                        .seafood
                                                                         .tr
-                                                                    : filteredCategories![index].categoryFilter.toString() ==
-                                                                            'საცხობი'
+                                                                    : filteredCategories![index]
+                                                                                .categoryFilter
+                                                                                .toString() ==
+                                                                            'ბურგერები'
                                                                         ? AppTags
-                                                                            .bakery
+                                                                            .burgers
                                                                             .tr
                                                                         : filteredCategories![index].categoryFilter.toString() ==
-                                                                                'დესერტი'
-                                                                            ? AppTags.dessert.tr
-                                                                            : filteredCategories![index].categoryFilter.toString() == 'მექსიკური'
-                                                                                ? AppTags.mexican.tr
-                                                                                : filteredCategories![index].categoryFilter.toString() == 'შაურმა'
-                                                                                    ? AppTags.shawarma.tr
-                                                                                    : AppTags.vegetarian.tr,
-                                            maxLines: 1,
-                                            textAlign: TextAlign.left,
-                                            style: AppThemeData
-                                                .todayDealTitleStyle
-                                                .copyWith(
-                                              fontFamily: 'bpg',
-                                              color: const Color.fromARGB(
-                                                  255, 78, 78, 78),
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
+                                                                                'აზიური'
+                                                                            ? AppTags.asian.tr
+                                                                            : filteredCategories![index].categoryFilter.toString() == 'საცხობი'
+                                                                                ? AppTags.bakery.tr
+                                                                                : filteredCategories![index].categoryFilter.toString() == 'დესერტი'
+                                                                                    ? AppTags.dessert.tr
+                                                                                    : filteredCategories![index].categoryFilter.toString() == 'მექსიკური'
+                                                                                        ? AppTags.mexican.tr
+                                                                                        : filteredCategories![index].categoryFilter.toString() == 'შაურმა'
+                                                                                            ? AppTags.shawarma.tr
+                                                                                            : AppTags.vegetarian.tr,
+                                                maxLines: 1,
+                                                textAlign: TextAlign.left,
+                                                style: AppThemeData
+                                                    .todayDealTitleStyle
+                                                    .copyWith(
+                                                  fontFamily: 'bpg',
+                                                  color: const Color.fromARGB(
+                                                      255, 78, 78, 78),
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                        );
-                      },
+                            );
+                          },
+                        ),
+                        const SizedBox(
+                          height: 92,
+                        )
+                      ],
                     ),
                   ),
                 ),

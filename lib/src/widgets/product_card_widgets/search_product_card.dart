@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:hot_card/src/screen/home/category/product_by_category_screen.dart';
 import 'package:ribbon_widget/ribbon_widget.dart';
 
 import '../../../config.dart';
-import '../../_route/routes.dart';
 import '../../controllers/cart_content_controller.dart';
 import '../../controllers/currency_converter_controller.dart';
 import '../../controllers/home_screen_controller.dart';
@@ -46,12 +46,18 @@ class SearchProductCard extends StatelessWidget {
         ),
         child: InkWell(
           onTap: () {
-            Get.toNamed(
-              Routes.detailsPage,
-              parameters: {
-                'productId': data.id!.toString(),
-              },
-            );
+            Get.to(ProductByCategory(
+              id: data.categoryId,
+              title: data.categoryTitle,
+              category: data.categoryFilter,
+              imgurl:
+                  'https://julius.ltd/hotcard/public/${data.categoryBanner!['image_835x200']}',
+              latlong: data.categoryLatlong,
+              number: data.categoryNumber,
+              soc_fb: data.categoryFb,
+              soc_in: data.categoryIg,
+              soc_yt: data.categoryYt,
+            ));
           },
           child: Stack(
             children: [
@@ -118,28 +124,28 @@ class SearchProductCard extends StatelessWidget {
                                     : Container(),
                           ],
                         ),
-                        data.specialDiscount == null
-                            ? const SizedBox()
-                            : SizedBox(width: 5.w),
-                        data.currentStock == 0
-                            ? Container(
-                                height: 20.h,
-                                decoration: BoxDecoration(
-                                  color: AppThemeData.productBoxDecorationColor
-                                      .withOpacity(0.06),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(3.r)),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    AppTags.stockOut.tr,
-                                    style: isMobile(context)
-                                        ? AppThemeData.todayDealNewStyle
-                                        : AppThemeData.todayDealNewStyleTab,
-                                  ),
-                                ),
-                              )
-                            : const SizedBox(),
+                        // data.specialDiscount == null
+                        //     ? const SizedBox()
+                        //     : SizedBox(width: 5.w),
+                        // data.currentStock == 0
+                        //     ? Container(
+                        //         height: 20.h,
+                        //         decoration: BoxDecoration(
+                        //           color: AppThemeData.productBoxDecorationColor
+                        //               .withOpacity(0.06),
+                        //           borderRadius:
+                        //               BorderRadius.all(Radius.circular(3.r)),
+                        //         ),
+                        //         child: Center(
+                        //           child: Text(
+                        //             AppTags.stockOut.tr,
+                        //             style: isMobile(context)
+                        //                 ? AppThemeData.todayDealNewStyle
+                        //                 : AppThemeData.todayDealNewStyleTab,
+                        //           ),
+                        //         ),
+                        //       )
+                        //     : const SizedBox(),
                       ],
                     ),
                   ),
@@ -461,7 +467,6 @@ class SearchRestaurantCard extends StatelessWidget {
   late final SearchRestaurantData data;
   final currencyConverterController = Get.find<CurrencyConverterController>();
   final homeController = Get.put(HomeScreenController());
-  final _cartController = Get.find<CartContentController>();
 
   @override
   Widget build(BuildContext context) {
@@ -489,12 +494,17 @@ class SearchRestaurantCard extends StatelessWidget {
         ),
         child: InkWell(
           onTap: () {
-            Get.toNamed(
-              Routes.detailsPage,
-              parameters: {
-                'productId': data.id!.toString(), //edit
-              },
-            );
+            Get.to(ProductByCategory(
+              id: data.id,
+              category: data.category_filter,
+              imgurl: data.banner,
+              latlong: data.latlong,
+              number: data.number,
+              soc_fb: data.soc_fb,
+              soc_in: data.soc_in,
+              soc_yt: data.soc_yt,
+              title: data.title,
+            ));
           },
           child: Stack(
             children: [

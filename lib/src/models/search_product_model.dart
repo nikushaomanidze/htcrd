@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 class SearchProductModel {
   SearchProductModel({
     this.success,
@@ -120,6 +122,15 @@ class SearchProductData {
     this.id,
     this.slug,
     this.title,
+    this.categoryId,
+    this.categoryBanner,
+    this.categoryTitle,
+    this.categoryFilter,
+    this.categoryLatlong,
+    this.categoryNumber,
+    this.categoryYt,
+    this.categoryIg,
+    this.categoryFb,
     this.shortDescription,
     this.specialDiscountType,
     this.specialDiscount,
@@ -142,6 +153,15 @@ class SearchProductData {
     id = json['id'];
     slug = json['slug'];
     title = json['title'];
+    categoryId = json['category_id'];
+    categoryBanner = json['category_banner'];
+    categoryTitle = json['category_title'];
+    categoryFilter = json['category_filter'];
+    categoryLatlong = json['category_latlong'];
+    categoryNumber = json['category_number'];
+    categoryYt = json['category_socyt'];
+    categoryIg = json['category_socig'];
+    categoryFb = json['category_socfb'];
     shortDescription = json['short_description'];
     specialDiscountType = json['special_discount_type'];
     specialDiscount = json['special_discount'];
@@ -162,6 +182,15 @@ class SearchProductData {
   int? id;
   String? slug;
   String? title;
+  int? categoryId;
+  dynamic categoryBanner;
+  dynamic categoryTitle;
+  dynamic categoryFilter;
+  dynamic categoryLatlong;
+  dynamic categoryNumber;
+  dynamic categoryYt;
+  dynamic categoryIg;
+  dynamic categoryFb;
   String? shortDescription;
   String? specialDiscountType;
   String? specialDiscount;
@@ -184,6 +213,17 @@ class SearchProductData {
     map['id'] = id;
     map['slug'] = slug;
     map['title'] = title;
+    map['category_id'] = categoryId;
+    map['category_banner'] = categoryBanner;
+
+    map['category_title'] = categoryTitle;
+    map['category_filter'] = categoryFilter;
+    map['category_latlong'] = categoryLatlong;
+    map['category_number'] = categoryNumber;
+    map['category_socyt'] = categoryYt;
+    map['category_socig'] = categoryIg;
+    map['category_socfb'] = categoryFb;
+
     map['short_description'] = shortDescription;
     map['special_discount_type'] = specialDiscountType;
     map['special_discount'] = specialDiscount;

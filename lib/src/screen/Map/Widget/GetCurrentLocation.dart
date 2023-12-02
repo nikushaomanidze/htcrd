@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:geolocator/geolocator.dart';
 
 Future<Position> determinePosition() async {

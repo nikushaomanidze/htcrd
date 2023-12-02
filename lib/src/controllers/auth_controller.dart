@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -5,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
+import 'package:email_validator/email_validator.dart';
 
 import '../data/local_data_helper.dart';
 import '../models/user_data_model.dart';
@@ -80,6 +84,26 @@ class AuthController extends GetxController {
     ever(_googleSignInAccount, _setInitialScreenGoogle);
   }
 
+  void showErrorPopup(BuildContext context, String errorMessage1) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(errorMessage1),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the popup
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 //General LogIn
   void loginWithEmailPassword(
       {required String email, required String password}) async {
@@ -93,34 +117,53 @@ class AuthController extends GetxController {
   }
 
   //General SignUp
-  Future signUp({
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String password,
-    required String phone,
-    required String card_number,
-    required String referral_code,
-    required String confirmPassword,
-    required String countryCode,
-    // required bool switchValue,
-  }) async {
+  Future signUp(
+      {required String firstName,
+      required String lastName,
+      required String email,
+      required String password,
+      required String phone,
+      required String card_number,
+      required String referral_code,
+      required String confirmPassword,
+      required String countryCode,
+      context
+      // required bool switchValue,
+      }) async {
     _isLoggingIn(true);
-    await Repository()
-        .signUp(
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phone: countryCode + phone,
-      password: password,
-      confirmPassword: confirmPassword,
-      // switchValue: switchValue,
-      card_number: card_number,
-      referral_code: referral_code,
-    )
-        .then((value) {
-      _isLoggingIn(false);
-    });
+
+    // Provide empty string as default value if card_number is null
+    String finalCardNumber = card_number;
+
+    // Provide empty string as default value if referral_code is null
+    String finalReferralCode = referral_code;
+
+    final emailStatus = EmailValidator.validate(email);
+
+    if (emailStatus == true) {
+      await Repository()
+          .signUp(
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: countryCode + phone,
+        password: password,
+        confirmPassword: confirmPassword,
+        // switchValue: switchValue,
+        card_number: finalCardNumber,
+        referral_code: finalReferralCode,
+      )
+          .then((value) {
+        _isLoggingIn(false);
+      });
+    } else {
+      showErrorPopup(context, "Wrong format Email Address.");
+      // Get.snackbar(
+      //   "Error!!",
+      //   "Wrong format Email Address.",
+      //   snackPosition: SnackPosition.BOTTOM,
+      // );
+    }
   }
 
   //Google SignIn
@@ -162,7 +205,7 @@ class AuthController extends GetxController {
             _isLoggingIn(false);
             Get.snackbar(
               "Error!!",
-              "Failed to login1",
+              "Failed to login",
               snackPosition: SnackPosition.BOTTOM,
             );
           }

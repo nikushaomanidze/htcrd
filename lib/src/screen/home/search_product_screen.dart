@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,7 +20,7 @@ class SearchProduct extends StatefulWidget {
 }
 
 class _SearchProductState extends State<SearchProduct> {
-  TextEditingController searchFieldController = TextEditingController();
+  TextEditingController searchFieldController = TextEditingController(text: '');
   final searcc.SearchController _searchController =
       Get.put(searcc.SearchController());
 
@@ -30,6 +32,12 @@ class _SearchProductState extends State<SearchProduct> {
   void dispose() {
     searchFieldController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _listenTextChange('');
   }
 
   @override
@@ -199,9 +207,10 @@ class _SearchProductState extends State<SearchProduct> {
                     //height: 600,
                     child: Column(
                       children: [
-                        const Text(
-                          'Restaurants',
-                          style: TextStyle(fontSize: 18, fontFamily: 'BPG'),
+                        Text(
+                          AppTags.objects.tr,
+                          style:
+                              const TextStyle(fontSize: 18, fontFamily: 'BPG'),
                         ),
                         GridView.builder(
                           padding: EdgeInsets.symmetric(
@@ -227,9 +236,10 @@ class _SearchProductState extends State<SearchProduct> {
                             );
                           },
                         ),
-                        const Text(
-                          'Products',
-                          style: TextStyle(fontSize: 18, fontFamily: 'BPG'),
+                        Text(
+                          AppTags.products.tr,
+                          style:
+                              const TextStyle(fontSize: 18, fontFamily: 'BPG'),
                         ),
                         GridView.builder(
                           padding: EdgeInsets.symmetric(
@@ -261,9 +271,10 @@ class _SearchProductState extends State<SearchProduct> {
                     ? SizedBox(
                         child: Column(
                           children: [
-                            const Text(
-                              'Products',
-                              style: TextStyle(fontSize: 18, fontFamily: 'BPG'),
+                            Text(
+                              AppTags.products.tr,
+                              style: const TextStyle(
+                                  fontSize: 18, fontFamily: 'BPG'),
                             ),
                             GridView.builder(
                               padding: EdgeInsets.symmetric(
@@ -296,9 +307,9 @@ class _SearchProductState extends State<SearchProduct> {
                         ? SizedBox(
                             child: Column(
                               children: [
-                                const Text(
-                                  'Restaurants',
-                                  style: TextStyle(
+                                Text(
+                                  AppTags.objects.tr,
+                                  style: const TextStyle(
                                       fontSize: 18, fontFamily: 'BPG'),
                                 ),
                                 GridView.builder(

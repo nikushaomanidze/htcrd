@@ -70,7 +70,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     });
   }
 
-  double _currentSliderValue = 5;
+  double _currentSliderValue = 50;
   String selectedOption = AppTags.all.tr;
 
   void updateSliderValue(double value) {
@@ -436,7 +436,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
       Column(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height - 170,
             width: MediaQuery.of(context).size.width - 50,
             child: ListView.builder(
               padding: EdgeInsets.only(right: 1.w),
@@ -527,13 +527,22 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                             .topCategories![index]
                                             .soc_in,
                                         category: homeScreenContentController
-                                                    .homeDataModel
-                                                    .value
-                                                    .data![topCategoriesIndex]
-                                                    .topCategories![index]
-                                                    .category_filter ==
-                                                AppTags.traditional.tr
-                                            ? AppTags.traditional.tr
+                                                        .homeDataModel
+                                                        .value
+                                                        .data![
+                                                            topCategoriesIndex]
+                                                        .topCategories![index]
+                                                        .category_filter ==
+                                                    null ||
+                                                homeScreenContentController
+                                                        .homeDataModel
+                                                        .value
+                                                        .data![
+                                                            topCategoriesIndex]
+                                                        .topCategories![index]
+                                                        .category_filter ==
+                                                    ''
+                                            ? ''
                                             : homeScreenContentController
                                                         .homeDataModel
                                                         .value
@@ -541,47 +550,36 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                                             topCategoriesIndex]
                                                         .topCategories![index]
                                                         .category_filter ==
-                                                    AppTags.sushi.tr
-                                                ? AppTags.sushi.tr
-                                                : homeScreenContentController
-                                                            .homeDataModel
-                                                            .value
-                                                            .data![
-                                                                topCategoriesIndex]
-                                                            .topCategories![
-                                                                index]
-                                                            .category_filter ==
-                                                        AppTags.pizza.tr
-                                                    ? AppTags.pizza.tr
-                                                    : homeScreenContentController
-                                                                .homeDataModel
-                                                                .value
-                                                                .data![
-                                                                    topCategoriesIndex]
-                                                                .topCategories![
-                                                                    index]
-                                                                .category_filter ==
-                                                            AppTags.seafood.tr
-                                                        ? AppTags.seafood.tr
+                                                    AppTags.traditional.tr
+                                                ? AppTags.traditional.tr
+                                                : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter ==
+                                                        AppTags.sushi.tr
+                                                    ? AppTags.sushi.tr
+                                                    : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter ==
+                                                            AppTags.pizza.tr
+                                                        ? AppTags.pizza.tr
                                                         : homeScreenContentController
                                                                     .homeDataModel
                                                                     .value
-                                                                    .data![topCategoriesIndex]
+                                                                    .data![
+                                                                        topCategoriesIndex]
                                                                     .topCategories![index]
                                                                     .category_filter ==
-                                                                AppTags.burgers.tr
-                                                            ? AppTags.burgers.tr
-                                                            : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.asian.tr
-                                                                ? AppTags.asian.tr
-                                                                : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.bakery.tr
-                                                                    ? AppTags.bakery.tr
-                                                                    : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.dessert.tr
-                                                                        ? AppTags.dessert.tr
-                                                                        : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.mexican.tr
-                                                                            ? AppTags.mexican.tr
-                                                                            : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.shawarma.tr
-                                                                                ? AppTags.shawarma.tr
-                                                                                : AppTags.vegetarian.tr,
+                                                                AppTags.seafood.tr
+                                                            ? AppTags.seafood.tr
+                                                            : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.burgers.tr
+                                                                ? AppTags.burgers.tr
+                                                                : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.asian.tr
+                                                                    ? AppTags.asian.tr
+                                                                    : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.bakery.tr
+                                                                        ? AppTags.bakery.tr
+                                                                        : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.dessert.tr
+                                                                            ? AppTags.dessert.tr
+                                                                            : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.mexican.tr
+                                                                                ? AppTags.mexican.tr
+                                                                                : homeScreenContentController.homeDataModel.value.data![topCategoriesIndex].topCategories![index].category_filter == AppTags.shawarma.tr
+                                                                                    ? AppTags.shawarma.tr
+                                                                                    : AppTags.vegetarian.tr,
                                         latlong: homeScreenContentController
                                             .homeDataModel
                                             .value
@@ -2558,48 +2556,48 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
         return campaign(index, context);
       case 'top_categories':
         return topCategories(index, context);
-      case 'today_deals':
-        return todayDeal(index, context);
-      case 'flash_deals':
-        return flashSale(index, context);
-      case 'category_sec_banner':
-        //return categorySecBanner(index, context);
-        return const SizedBox();
-      case 'category_sec_banner_url':
-        return const SizedBox();
-      case 'category_section':
-        return const SizedBox();
-      case 'best_selling_products':
-        return bestSellingProduct(index, context);
-      case 'offer_ending':
-        return offerEnding(index, context);
-      case 'offer_ending_banner':
-        // return offerEndingBanner(index, context);
-        return const SizedBox();
-      case 'offer_ending_banner_url':
-        return const SizedBox();
-      case 'latest_products':
-        return latestProducts(index, context);
-      case 'latest_news':
-        return latestNews(index, context);
-      case 'popular_brands':
-        return popularBrands(index, context);
-      case 'best_shops':
-        return bestShop(index, context);
-      case 'top_shops':
-        return topShop(index, context);
-      case 'featured_shops':
-        return featuredShop(index, context);
-      case 'express_shops':
-        return expressShop(index, context);
-      case 'recent_viewed_product':
-        return recentViewProducts(index, context);
-      case 'custom_products':
-        return customProducts(index, context);
-      case 'subscription_section':
-        return const SizedBox();
-      case 'video_shopping':
-        return videoShopping(index, context);
+      // case 'today_deals':
+      //   return todayDeal(index, context);
+      // case 'flash_deals':
+      //   return flashSale(index, context);
+      // case 'category_sec_banner':
+      //   //return categorySecBanner(index, context);
+      //   return const SizedBox();
+      // case 'category_sec_banner_url':
+      //   return const SizedBox();
+      // case 'category_section':
+      //   return const SizedBox();
+      // case 'best_selling_products':
+      //   return bestSellingProduct(index, context);
+      // case 'offer_ending':
+      //   return offerEnding(index, context);
+      // case 'offer_ending_banner':
+      //   // return offerEndingBanner(index, context);
+      //   return const SizedBox();
+      // case 'offer_ending_banner_url':
+      //   return const SizedBox();
+      // case 'latest_products':
+      //   return latestProducts(index, context);
+      // case 'latest_news':
+      //   return latestNews(index, context);
+      // case 'popular_brands':
+      //   return popularBrands(index, context);
+      // case 'best_shops':
+      //   return bestShop(index, context);
+      // case 'top_shops':
+      //   return topShop(index, context);
+      // case 'featured_shops':
+      //   return featuredShop(index, context);
+      // case 'express_shops':
+      //   return expressShop(index, context);
+      // case 'recent_viewed_product':
+      //   return recentViewProducts(index, context);
+      // case 'custom_products':
+      //   return customProducts(index, context);
+      // case 'subscription_section':
+      //   return const SizedBox();
+      // case 'video_shopping':
+      //   return videoShopping(index, context);
       default:
         return const SizedBox();
     }

@@ -1,6 +1,13 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:hot_card/src/controllers/auth_controller.dart';
+import 'package:hot_card/src/controllers/profile_content_controller.dart';
+import 'package:hot_card/src/servers/repository.dart';
+import 'package:hot_card/src/utils/validators.dart';
 import 'package:store_redirect/store_redirect.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,6 +21,7 @@ import '../../../utils/app_tags.dart';
 import '../../../utils/app_theme_data.dart';
 import '../../../utils/responsive.dart';
 
+// ignore: must_be_immutable
 class Settings extends StatelessWidget {
   Settings({Key? key}) : super(key: key);
   final isUserLoggedIn = false;
@@ -25,9 +33,129 @@ class Settings extends StatelessWidget {
   final settingController = Get.put(SettingController());
   final currencyConverterController = Get.find<CurrencyConverterController>();
 
+  var emailPhoneController = TextEditingController();
+  final ProfileContentController _profileContentController =
+      Get.put(ProfileContentController());
+
+  var arguments = Get.arguments;
+
   @override
   Widget build(BuildContext context) {
     controller.getAppLanguageList();
+
+    //Logout Dialogue
+    logoutDialogue() {
+      return AwesomeDialog(
+        width: isMobile(context)
+            ? MediaQuery.of(context).size.width
+            : MediaQuery.of(context).size.width - 100.w,
+        context: context,
+        animType: AnimType.SCALE,
+        dialogType: DialogType.NO_HEADER,
+        btnOkColor: AppThemeData.okButton,
+        btnCancelColor: AppThemeData.cancelButton,
+        buttonsTextStyle:
+            TextStyle(fontSize: isMobile(context) ? 13.sp : 10.sp),
+        body: Center(
+          child: Text(
+            AppTags.doYouReallyWantToLogout.tr,
+            style: isMobile(context)
+                ? AppThemeData.priceTextStyle_14.copyWith(fontFamily: 'bpg')
+                : AppThemeData.titleTextStyle_11Tab.copyWith(fontFamily: 'bpg'),
+          ),
+        ),
+        btnOkOnPress: () {
+          Navigator.pushNamed(context, 'withOutLoginPage');
+          AuthController.authInstance.signOut();
+        },
+        btnCancelOnPress: () {
+          Get.back();
+        },
+      ).show();
+    }
+
+    //Account Delete Dialog
+    accountDeleteDialogue(userDataModel) {
+      return AwesomeDialog(
+        width: isMobile(context)
+            ? MediaQuery.of(context).size.width
+            : MediaQuery.of(context).size.width - 100.w,
+        context: context,
+        animType: AnimType.SCALE,
+        dialogType: DialogType.NO_HEADER,
+        btnOkColor: AppThemeData.okButton,
+        btnCancelColor: AppThemeData.cancelButton,
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
+                child: Text(
+                  AppTags.enterYourEmailPhoneNumberToContinue.tr,
+                  style: isMobile(context)
+                      ? AppThemeData.priceTextStyle_14
+                          .copyWith(fontFamily: 'bpg')
+                      : AppThemeData.titleTextStyle_11Tab
+                          .copyWith(fontFamily: 'bpg'),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Container(
+                height: isMobile(context) ? 42.h : 48.h,
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: const Color(0xffF4F4F4)),
+                  borderRadius: BorderRadius.all(Radius.circular(5.r)),
+                ),
+                child: TextField(
+                  style: isMobile(context)
+                      ? AppThemeData.titleTextStyle_13
+                      : AppThemeData.titleTextStyleTab,
+                  controller: emailPhoneController,
+                  maxLines: 1,
+                  textAlign: TextAlign.left,
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: AppTags.enterYourEmailPhone.tr,
+                    hintStyle: isMobile(context)
+                        ? AppThemeData.hintTextStyle_13
+                        : AppThemeData.hintTextStyle_10Tab,
+                    contentPadding: EdgeInsets.only(
+                      left: 8.w,
+                      right: 8.w,
+                      bottom: 8.h,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        btnOkOnPress: () {
+          if (emailPhoneController.text == userDataModel.data!.email! ||
+              emailPhoneController.text == userDataModel.data!.phone) {
+            Repository().deleteAccount().then((value) {
+              if (value) {
+                _profileContentController.removeUserData();
+                AuthController.authInstance.signOut();
+                Get.offAllNamed(Routes.logIn);
+              }
+            });
+          } else {
+            showErrorToast(AppTags.pleaseEnterCorrectEmailPhone.tr);
+          }
+        },
+        btnCancelOnPress: () {
+          Get.back();
+        },
+      ).show();
+    }
+
     return Scaffold(
       appBar: isMobile(context)
           ? AppBar(
@@ -209,62 +337,7 @@ class Settings extends StatelessWidget {
             //     ),
             //   ),
             // ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: const Divider(
-                color: AppThemeData.settingScreenDividerColor,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: isMobile(context) ? 0.w : 10.w,
-                  vertical: isMobile(context) ? 0.h : 8.h),
-              child: InkWell(
-                onTap: () {
-                  // if (Platform.isAndroid) {
-                  //   Share.share(
-                  //       "https://play.google.com/store/apps/details?id=${settingController.packageInfo!.packageName}");
-                  // } else if (Platform.isIOS) {
-                  //   Share.share("https://google.com");
-                  // }
-                },
-                child: ListTile(
-                  title: Text(
-                    AppTags.shareThisApp.tr,
-                    style: isMobile(context)
-                        ? AppThemeData.settingsTitleStyle
-                        : AppThemeData.settingsTitleStyleTab,
-                  ),
-                  trailing: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 18.r,
-                  ),
-                ),
-              ),
-            ),
 
-            // Padding(
-            //   padding: EdgeInsets.symmetric(
-            //       horizontal: isMobile(context) ? 0.w : 10.w,
-            //       vertical: isMobile(context) ? 0.h : 8.h),
-            //   child: InkWell(
-            //     onTap: () {
-            //       Get.to(const Addresses());
-            //     },
-            //     child: ListTile(
-            //       title: Text(
-            //         AppTags.address.tr,
-            //         style: isMobile(context)
-            //             ? AppThemeData.settingsTitleStyle
-            //             : AppThemeData.settingsTitleStyleTab,
-            //       ),
-            //       trailing: Icon(
-            //         Icons.arrow_forward_ios,
-            //         size: 18.r,
-            //       ),
-            //     ),
-            //   ),
-            // ),
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: isMobile(context) ? 0.w : 10.w,
@@ -384,6 +457,59 @@ class Settings extends StatelessWidget {
                 child: ListTile(
                   title: Text(
                     AppTags.privacyPolicy.tr,
+                    style: isMobile(context)
+                        ? AppThemeData.settingsTitleStyle
+                        : AppThemeData.settingsTitleStyleTab,
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 18.r,
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: const Divider(
+                color: AppThemeData.settingScreenDividerColor,
+              ),
+            ),
+
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: isMobile(context) ? 0.w : 10.w,
+                  vertical: isMobile(context) ? 0.h : 8.h),
+              child: InkWell(
+                onTap: () {
+                  logoutDialogue();
+                },
+                child: ListTile(
+                  title: Text(
+                    AppTags.logOut.tr,
+                    style: isMobile(context)
+                        ? AppThemeData.settingsTitleStyle
+                        : AppThemeData.settingsTitleStyleTab,
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 18.r,
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: isMobile(context) ? 0.w : 10.w,
+                  vertical: isMobile(context) ? 0.h : 8.h),
+              child: InkWell(
+                onTap: () {
+                  accountDeleteDialogue(arguments['dataModel']);
+                },
+                child: ListTile(
+                  title: Text(
+                    AppTags.deleteYourAccount.tr,
                     style: isMobile(context)
                         ? AppThemeData.settingsTitleStyle
                         : AppThemeData.settingsTitleStyleTab,

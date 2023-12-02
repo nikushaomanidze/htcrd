@@ -2,15 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../utils/app_theme_data.dart';
 
+// ignore: must_be_immutable
 class InputChipWidget extends StatelessWidget {
   late final String label;
-   bool isSelected = true;
+  bool isSelected = true;
   Function onSelected;
-  InputChipWidget(
-      {required this.label,
-       
-      required this.onSelected,
-      Key? key})
+  InputChipWidget({required this.label, required this.onSelected, Key? key})
       : super(key: key);
 
   @override

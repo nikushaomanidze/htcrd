@@ -1,8 +1,11 @@
+// ignore_for_file: unnecessary_null_comparison, non_constant_identifier_names
+
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hot_card/src/screen/auth_screen/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -300,6 +303,26 @@ class Repository {
     }
   }
 
+  void showErrorPopup(BuildContext context, String errorMessage1) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(errorMessage1),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the popup
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   //User SignUp
   Future<bool> signUp({
     required String firstName,
@@ -321,17 +344,48 @@ class Repository {
       'password': password,
       'password_confirmation': confirmPassword,
       'card_number': card_number,
-      'referral_code': referral_code,
+      'referred_user_referral_code': referral_code,
     };
     var url = Uri.parse("${NetworkService.apiUrl}/register?$langCurrCode");
     final response = await http.post(url, body: body, headers: headers);
 
     var data = json.decode(response.body);
     if (response.statusCode == 200) {
-      showShortToast(data['message'], bgColor: Colors.green);
+      Get.defaultDialog(
+        title: "Success",
+        middleText: data['message'],
+        backgroundColor: Colors.teal,
+        titleStyle: const TextStyle(color: Colors.white),
+        middleTextStyle: const TextStyle(color: Colors.white),
+        radius: 30,
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              // Close the dialog
+              Get.back();
+
+              // Navigate to another page
+              Get.to(() => LoginScreen());
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.teal,
+              backgroundColor: Colors.white, // Text color
+            ),
+            child: const Text('Log In'),
+          ),
+        ],
+      );
+
       return true;
     } else {
-      showErrorToast(data['message']);
+      Get.defaultDialog(
+          title: "Error!",
+          middleText: data['message'],
+          backgroundColor: const Color.fromARGB(255, 249, 51, 114),
+          titleStyle: const TextStyle(color: Colors.white),
+          middleTextStyle: const TextStyle(color: Colors.white),
+          radius: 30);
+
       return false;
     }
   }

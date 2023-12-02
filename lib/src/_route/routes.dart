@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:hot_card/src/screen/home/mtla_home.dart';
+import 'package:hot_card/src/screen/profile/profile_screen.dart';
 
 import '../bindings/dashboard_bindings.dart';
 import '../bindings/news_binding.dart';
@@ -39,6 +40,7 @@ class Routes {
   static const String splashScreen = '/splashScreen';
   static const String mainScreen = '/mainScreen';
   static const String dashboardScreen = '/dashboardScreen';
+  static const String profilePage = '/profilePage';
   static const String internetCheckView = '/internetCheckView';
   static const String logIn = '/logIn';
   static const String signUp = '/signUp';
@@ -88,6 +90,10 @@ class Routes {
       name: dashboardScreen,
       page: () => const DashboardScreen(),
       binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: profilePage,
+      page: () => const ProfileContent(),
     ),
     GetPage(
       name: logIn,

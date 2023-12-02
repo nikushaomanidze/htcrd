@@ -1,13 +1,15 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: file_names
+
+import 'package:flutter/foundation.dart';
 import 'package:hot_card/src/models/check_Payment_model.dart';
 import 'package:http/http.dart' as http;
 
 class PaymentProvider with ChangeNotifier {
   String paymentMessage = "";
   CheckPaymentModel? checkPaymentModel;
-  mCheckPaymentFunction({required String payID, required String token}) async {
-    CheckPaymentModel? checkPaymentModel;
-    String paymentMessage = "";
+
+  Future<CheckPaymentModel?> mCheckPaymentFunction(
+      {required String payID, required String token}) async {
     try {
       var headers = {
         'Content-Type': 'application/json',
@@ -18,30 +20,39 @@ class PaymentProvider with ChangeNotifier {
           'GET', Uri.parse('https://api.tbcbank.ge/v1/tpay/payments/$payID'));
       request.headers.addAll(headers);
       http.StreamedResponse response = await request.send();
+
       if (response.statusCode == 200) {
         String value = await response.stream.bytesToString();
         checkPaymentModel = checkPaymentModelFromJson(value);
-        this.checkPaymentModel = checkPaymentModel;
-        if (checkPaymentModel.status != "Failed") {
+        checkPaymentModel = checkPaymentModel;
+
+        if (checkPaymentModel?.status != "Failed") {
           paymentMessage = "Success";
-          this.paymentMessage = paymentMessage;
+          paymentMessage = paymentMessage;
           notifyListeners();
+          return checkPaymentModel; // Return the data here
         } else {
           paymentMessage = "Unsuccess";
-          this.paymentMessage = paymentMessage;
+          paymentMessage = paymentMessage;
           notifyListeners();
         }
-        notifyListeners();
       } else {
-        print(response.reasonPhrase);
+        if (kDebugMode) {
+          print(response.reasonPhrase);
+        }
         paymentMessage = "Unsuccess";
-        this.paymentMessage = paymentMessage;
+        paymentMessage = paymentMessage;
         notifyListeners();
       }
     } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
       paymentMessage = "Unsuccess";
-      this.paymentMessage = paymentMessage;
+      paymentMessage = paymentMessage;
       notifyListeners();
     }
+
+    return null; // Return null in case of failure
   }
 }

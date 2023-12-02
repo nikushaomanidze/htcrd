@@ -3,7 +3,7 @@ class AllProductModel {
   String? message;
   late final List<Data> data;
 
-  AllProductModel({this.success, this.message,required this.data});
+  AllProductModel({this.success, this.message, required this.data});
 
   AllProductModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
@@ -46,27 +46,26 @@ class Data {
   bool? isNew;
   bool? hasVariant;
 
-  Data({
-    this.id,
-    this.slug,
-    this.title,
-    this.shortDescription,
-    this.specialDiscountType,
-    this.specialDiscount,
-    this.discountPrice,
-    this.formattedPrice,
-    this.formattedDiscount,
-    this.image,
-    this.price,
-    this.rating,
-    this.totalReviews,
-    this.currentStock,
-    this.reward,
-    this.minimumOrderQuantity,
-    this.isFavourite,
-    this.isNew,
-    this.hasVariant
-  });
+  Data(
+      {this.id,
+      this.slug,
+      this.title,
+      this.shortDescription,
+      this.specialDiscountType,
+      this.specialDiscount,
+      this.discountPrice,
+      this.formattedPrice,
+      this.formattedDiscount,
+      this.image,
+      this.price,
+      this.rating,
+      this.totalReviews,
+      this.currentStock,
+      this.reward,
+      this.minimumOrderQuantity,
+      this.isFavourite,
+      this.isNew,
+      this.hasVariant});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -95,6 +94,7 @@ class Data {
     data['id'] = id;
     data['slug'] = slug;
     data['title'] = title;
+
     data['short_description'] = shortDescription;
     data['special_discount_type'] = specialDiscountType;
     data['special_discount'] = specialDiscount;

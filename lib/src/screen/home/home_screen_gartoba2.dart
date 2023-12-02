@@ -1,10 +1,14 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:hot_card/src/data/local_data_helper.dart';
 import 'package:hot_card/src/models/home_data_model.dart';
+import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 
 import '../../_route/routes.dart';
@@ -44,8 +48,8 @@ class _HomeScreenGartobaContentState extends State<HomeScreenGartobaContent> {
   }
 
   Future<List<dynamic>> fetchCategories() async {
-    final response = await http
-        .get(Uri.parse('https://julius.ltd/hotcard/api/v100/category/all'));
+    final response = await http.get(Uri.parse(
+        '${NetworkService.apiUrl}/category/all?lang=${LocalDataHelper().getLangCode() ?? "en"}'));
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -242,137 +246,137 @@ class _HomeScreenGartobaContentState extends State<HomeScreenGartobaContent> {
   }
 
   // Popular Categories
-  Widget popularCategories(popularCategoriesIndex, context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(
-            left: 0.0.w,
-          ),
-          child: Text(
-            AppTags.fun.tr,
-            style: isMobile(context)
-                ? AppThemeData.headerTextStyle
-                    .copyWith(color: Colors.white, fontFamily: 'bpg')
-                : AppThemeData.headerTextStyleTab
-                    .copyWith(color: Colors.white, fontFamily: 'bpg'),
-          ),
-        ),
-        Column(
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height - 250,
-              width: MediaQuery.of(context).size.width - 50,
-              child: FutureBuilder<List<dynamic>>(
-                future: fetchCategories(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    List? categories = snapshot.data;
-                    // Render the list of categories as needed
-                    return ListView.builder(
-                      itemCount: categories?.length,
-                      itemBuilder: (context, index) {
-                        return Center(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 0.w, left: 1.w),
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => ProductByCategory(
-                                          id: categories[index]['id'],
-                                          title: categories[index]['title'],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 130,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(25)),
-                                            image: DecorationImage(
-                                                image: categories![index]
-                                                            ['banner'] !=
-                                                        null
-                                                    ? NetworkImage(
-                                                        categories[index]
-                                                            ['banner'])
-                                                    : const NetworkImage(
-                                                        'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'),
-                                                fit: BoxFit.cover)),
-                                        child: Center(
-                                          child: Text(
-                                            categories[index]['title']
-                                                .toString(),
-                                            maxLines: 1,
-                                            textAlign: TextAlign.center,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: AppThemeData
-                                                .todayDealTitleStyle
-                                                .copyWith(
-                                                    color: Colors.white,
-                                                    fontFamily: 'bpg',
-                                                    fontSize: 24,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
-                  // By default, show a loading spinner
-                  return const Center(
-                    child: SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: CircularProgressIndicator()),
-                  );
-                },
-              ),
-            ),
-            // SizedBox(
-            //   height: MediaQuery.of(context).size.height - 250,
-            //   width: MediaQuery.of(context).size.width - 50,
-            //   child: ListView.builder(
-            //     padding: EdgeInsets.only(right: 1.w),
-            //     physics: const AlwaysScrollableScrollPhysics(),
-            //     itemCount: homeScreenContentController.homeDataModel.value
-            //         .data![popularCategoriesIndex].popularCategories!.length,
-            //     scrollDirection: Axis.vertical,
-            //     itemBuilder: (context, index) {
-            //       return
-            //     },
-            //   ),
-            // ),
-          ],
-        ),
-        SizedBox(
-          height: 1.h,
-        ),
-      ],
-    );
-  }
+  // Widget popularCategories(categoriesIndex, context) {
+  //   return Column(
+  //     children: [
+  //       Padding(
+  //         padding: EdgeInsets.only(
+  //           left: 0.0.w,
+  //         ),
+  //         child: Text(
+  //           AppTags.fun.tr,
+  //           style: isMobile(context)
+  //               ? AppThemeData.headerTextStyle
+  //                   .copyWith(color: Colors.white, fontFamily: 'bpg')
+  //               : AppThemeData.headerTextStyleTab
+  //                   .copyWith(color: Colors.white, fontFamily: 'bpg'),
+  //         ),
+  //       ),
+  //       Column(
+  //         children: [
+  //           SizedBox(
+  //             height: MediaQuery.of(context).size.height - 250,
+  //             width: MediaQuery.of(context).size.width - 50,
+  //             child: FutureBuilder<List<dynamic>>(
+  //               future: fetchCategories(),
+  //               builder: (context, snapshot) {
+  //                 if (snapshot.hasData) {
+  //                   List? categories = snapshot.data;
+  //                   // Render the list of categories as needed
+  //                   return ListView.builder(
+  //                     itemCount: categories?.length,
+  //                     itemBuilder: (context, index) {
+  //                       return Center(
+  //                         child: Column(
+  //                           children: [
+  //                             Padding(
+  //                               padding: EdgeInsets.only(right: 0.w, left: 1.w),
+  //                               child: InkWell(
+  //                                 onTap: () {
+  //                                   Navigator.of(context).push(
+  //                                     MaterialPageRoute(
+  //                                       builder: (_) => ProductByCategory(
+  //                                         id: categories[index]['id'],
+  //                                         title: categories[index]['title'],
+  //                                       ),
+  //                                     ),
+  //                                   );
+  //                                 },
+  //                                 child: Column(
+  //                                   children: [
+  //                                     const SizedBox(
+  //                                       height: 20,
+  //                                     ),
+  //                                     Container(
+  //                                       width:
+  //                                           MediaQuery.of(context).size.width,
+  //                                       height: 130,
+  //                                       decoration: BoxDecoration(
+  //                                           borderRadius:
+  //                                               const BorderRadius.all(
+  //                                                   Radius.circular(25)),
+  //                                           image: DecorationImage(
+  //                                               image: categories![index]
+  //                                                           ['banner'] !=
+  //                                                       null
+  //                                                   ? NetworkImage(
+  //                                                       categories[index]
+  //                                                           ['banner'])
+  //                                                   : const NetworkImage(
+  //                                                       'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'),
+  //                                               fit: BoxFit.cover)),
+  //                                       child: Center(
+  //                                         child: Text(
+  //                                           categories[index]['title']
+  //                                               .toString(),
+  //                                           maxLines: 1,
+  //                                           textAlign: TextAlign.center,
+  //                                           overflow: TextOverflow.ellipsis,
+  //                                           style: AppThemeData
+  //                                               .todayDealTitleStyle
+  //                                               .copyWith(
+  //                                                   color: Colors.white,
+  //                                                   fontFamily: 'bpg',
+  //                                                   fontSize: 24,
+  //                                                   fontWeight:
+  //                                                       FontWeight.w600),
+  //                                         ),
+  //                                       ),
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       );
+  //                     },
+  //                   );
+  //                 } else if (snapshot.hasError) {
+  //                   return Text("${snapshot.error}");
+  //                 }
+  //                 // By default, show a loading spinner
+  //                 return const Center(
+  //                   child: SizedBox(
+  //                       width: 50,
+  //                       height: 50,
+  //                       child: CircularProgressIndicator()),
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //           // SizedBox(
+  //           //   height: MediaQuery.of(context).size.height - 250,
+  //           //   width: MediaQuery.of(context).size.width - 50,
+  //           //   child: ListView.builder(
+  //           //     padding: EdgeInsets.only(right: 1.w),
+  //           //     physics: const AlwaysScrollableScrollPhysics(),
+  //           //     itemCount: homeScreenContentController.homeDataModel.value
+  //           //         .data![popularCategoriesIndex].popularCategories!.length,
+  //           //     scrollDirection: Axis.vertical,
+  //           //     itemBuilder: (context, index) {
+  //           //       return
+  //           //     },
+  //           //   ),
+  //           // ),
+  //         ],
+  //       ),
+  //       SizedBox(
+  //         height: 1.h,
+  //       ),
+  //     ],
+  //   );
+  // }
 
   // Categories
   Widget _categories(categoryIndex, context) {

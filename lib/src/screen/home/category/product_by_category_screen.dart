@@ -1,9 +1,13 @@
+// ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables, deprecated_member_use, duplicate_ignore
+
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hot_card/src/data/local_data_helper.dart';
 import 'package:hot_card/src/screen/home/qr_page.dart';
+import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:pagination_view/pagination_view.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -63,7 +67,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
 
   Future<String> fetchCardNumber(String token) async {
     final response = await http.get(
-      Uri.parse('https://julius.ltd/hotcard/api/v100/user/profile'),
+      Uri.parse('${NetworkService.apiUrl}/user/profile'),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -121,7 +125,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     final Uri phoneCallUri = Uri(scheme: 'tel', path: phoneNumber);
 
     if (await canLaunchUrl(Uri.parse(phoneCallUri.toString()))) {
-      await launchUrl(Uri.parse(phoneCallUri.toString()));
+      launchUrl(Uri.parse(phoneCallUri.toString()));
     } else {
       throw 'Could not launch $phoneCallUri';
     }
@@ -311,12 +315,18 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                         itemCount: snapshot.data!.length,
                                         itemBuilder:
                                             (BuildContext context, int index) {
+                                          List<dynamic> dataList2 =
+                                              snapshot.data!;
+
+                                          dataList2.sort((a, b) =>
+                                              a['current_stock'].compareTo(
+                                                  b['current_stock']));
                                           return GestureDetector(
                                             onTap: () {
                                               setState(() {
                                                 additionalfinalIndex = index;
                                                 additionalfinalId =
-                                                    snapshot.data![index]['id'];
+                                                    dataList2[index]['id'];
                                                 additionals
                                                     .add(additionalfinalId);
                                                 differentAdditionalDishes += 1;
@@ -413,7 +423,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
 
   Future<Map<String, dynamic>> getProductsByCategory(int categoryId) async {
     final response = await http.get(Uri.parse(
-        "https://julius.ltd/hotcard/api/v100/products-by-category/${categoryId.toString()}"));
+        "${NetworkService.apiUrl}/products-by-category/${categoryId.toString()}?lang=${LocalDataHelper().getLangCode() ?? "en"}"));
 
     if (response.statusCode == 200) {
       if (dvar < 1) {
@@ -433,7 +443,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
   Future<List<dynamic>> getCheaperProducts(int categoryId, double price) async {
     // Fetch data from API
     var response = await http.get(Uri.parse(
-        'https://julius.ltd/hotcard/api/v100/products-by-category/$categoryId'));
+        '${NetworkService.apiUrl}/products-by-category/$categoryId?lang=${LocalDataHelper().getLangCode() ?? "en"}'));
 
     if (response.statusCode == 200) {
       // Decode the JSON response
@@ -453,40 +463,60 @@ class _ProductByCategoryState extends State<ProductByCategory> {
 
   Future<void> updateUserBalance(
       String authorizationToken, double value) async {
-    final String apiUrl =
-        'https://julius.ltd/hotcard/api/v100/user/update_balance_value/';
+    String apiUrl = '${NetworkService.apiUrl}/user/update_balance_value';
 
     final Map<String, String> headers = {
       'Authorization': 'Bearer $authorizationToken',
       'Content-Type': 'application/json',
     };
 
-    final Map<String, String> body = {
-      'value': value.toString(),
+    final Map<String, dynamic> body = {
+      'value': value,
       'type': 'add',
     };
 
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: headers,
-      body: body,
+      body: jsonEncode(body),
     );
 
     if (response.statusCode == 200) {
       // Request was successful
-      print('Balance updated successfully.');
+      if (kDebugMode) {
+        print('Balance updated successfully.');
+      }
     } else {
-      // Request failed
-      print('Failed to update balance. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      String apiUrl = '${NetworkService.apiUrl}/user/update_balance_value';
+
+      final Map<String, String> headers = {
+        'Authorization': 'Bearer $authorizationToken',
+        'Content-Type': 'application/json',
+      };
+
+      final Map<String, dynamic> body = {
+        'value': value,
+        'type': 'add',
+      };
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+      if (response.statusCode == 200) {
+        // Request was successful
+        if (kDebugMode) {
+          print('Balance updated successfully.');
+        }
+      }
     }
   }
 
   Future<void> sendOrder(List<dynamic> quantity, List<dynamic> ids,
       List<dynamic> additionals) async {
     // var token = LocalDataHelper().getUserToken();
-    var url =
-        Uri.parse('https://julius.ltd/hotcard/api/v100/make/direct/order');
+    var url = Uri.parse('${NetworkService.apiUrl}/make/direct/order');
 
     // Create the orders object dynamically based on the input lists
     Map<String, dynamic> orders = {};
@@ -496,7 +526,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
         Map<String, dynamic> order = {
           "qty": quantity[i],
           "product_id": ids[i],
-          "additional_product_id": additionals[0],
+          "additional_product_id": additionals[i] ?? 0,
           "additional_product_qty": 1,
         };
         orders[index.toString()] = order;
@@ -509,7 +539,10 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     }
 
     // Convert the orders object to JSON
-    var orderData = jsonEncode({"user_id": 1, "orders": orders});
+    var orderData = jsonEncode({
+      "user_id": LocalDataHelper().getUserAllData()!.data!.userId!,
+      "orders": orders
+    });
 
     try {
       var response = await http.post(url,
@@ -521,9 +554,49 @@ class _ProductByCategoryState extends State<ProductByCategory> {
           body: orderData);
 
       if (response.statusCode == 200) {
-        // Success!
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => QrPage(
+                    qty: quantity,
+                    ids: ids,
+                    adds: additionals,
+                    idd: response.body,
+                  )),
+        );
       } else {
-        // Something went wrong
+        try {
+          var response = await http.post(url,
+              headers: {
+                'Content-Type': 'application/json',
+                // 'Authorization':
+                // 'Bearer $token', // Include the token in the request header
+              },
+              body: orderData);
+
+          if (response.statusCode == 200) {
+            // Success!
+          } else {
+            try {
+              var response = await http.post(url,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    // 'Authorization':
+                    // 'Bearer $token', // Include the token in the request header
+                  },
+                  body: orderData);
+
+              if (response.statusCode == 200) {
+                // Success!
+              } else {
+                // Something went wrong
+              }
+              // ignore: empty_catches
+            } catch (e) {}
+          }
+          // ignore: empty_catches
+        } catch (e) {}
       }
       // ignore: empty_catches
     } catch (e) {}
@@ -565,26 +638,11 @@ class _ProductByCategoryState extends State<ProductByCategory> {
             children: [
               FloatingActionButton(
                 onPressed: () {
-                  daysLeft != 'Inactive'
-                      ? updateUserBalance(
-                          LocalDataHelper().getUserToken().toString(),
-                          totalMainPrice)
-                      : null;
                   setState(() {
-                    daysLeft != 'Inactive'
-                        ? Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => QrPage(
-                                    qty: quantity,
-                                    ids: ids,
-                                    adds: additionals)),
-                          )
-                        : Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ProfileContent()),
-                          );
+                    sendOrder(quantity, ids, additionals);
+                    updateUserBalance(
+                        LocalDataHelper().getUserToken().toString(),
+                        totalMainPrice);
 
                     currentTab = 0; // Set the selected tab index
                   });
@@ -702,17 +760,21 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                       const SizedBox(
                                         width: 20,
                                       ),
-                                      Text(
-                                        widget.title.toString(),
-                                        style: const TextStyle(
+                                      SizedBox(
+                                        width: 180, // Set the desired width
+                                        child: Text(
+                                          widget.title.toString(),
+                                          style: const TextStyle(
                                             fontSize: 22,
                                             fontFamily: 'metro-bold',
-                                            color: Color.fromARGB(
-                                                255, 74, 75, 77)),
-                                      ),
-                                      const Spacer(),
-                                      const SizedBox(
-                                        width: 20,
+                                            color:
+                                                Color.fromARGB(255, 74, 75, 77),
+                                          ),
+                                          maxLines:
+                                              2, // Set the maximum number of lines
+                                          overflow: TextOverflow
+                                              .ellipsis, // Handle overflow with ellipsis
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -777,7 +839,17 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                               itemBuilder:
                                                   (BuildContext context,
                                                       int index) {
+                                                List<dynamic> dataList =
+                                                    snapshot.data!['data'];
+
+                                                dataList.sort((a, b) => a[
+                                                        'current_stock']
+                                                    .compareTo(
+                                                        b['current_stock']));
+
                                                 return Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Padding(
                                                       padding: const EdgeInsets
@@ -810,9 +882,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                       top: 8.0),
                                                               child:
                                                                   Image.network(
-                                                                snapshot.data![
-                                                                            'data']
-                                                                        [index]
+                                                                dataList[index]
                                                                     ['image'],
                                                                 width: 90,
                                                                 height: 90,
@@ -826,9 +896,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                             SizedBox(
                                                               width: 100,
                                                               child: Text(
-                                                                snapshot.data![
-                                                                        'data']
-                                                                        [index][
+                                                                dataList[index][
                                                                         'title']
                                                                     .toString(),
                                                                 maxLines: 2,
@@ -902,7 +970,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                           child: Center(
                                                                               child: Icon(
                                                                             size:
-                                                                                20,
+                                                                                22,
                                                                             Icons.remove,
                                                                             color: finalIndex == index
                                                                                 ? Colors.white
@@ -989,13 +1057,10 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                         } else {
                                                                           finalIndex =
                                                                               index;
-
-                                                                          mainDishPrice = double.parse(snapshot
-                                                                              .data!['data'][index]['formatted_price']
-                                                                              .toString());
-                                                                          totalMainPrice += double.parse(snapshot
-                                                                              .data!['data'][index]['formatted_price']
-                                                                              .toString());
+                                                                          mainDishPrice =
+                                                                              double.parse(dataList[index]['formatted_price'].toString());
+                                                                          totalMainPrice +=
+                                                                              double.parse(dataList[index]['formatted_price'].toString());
                                                                           switchnum =
                                                                               2;
                                                                           quantity[index] +=
@@ -1022,7 +1087,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                     child: Center(
                                                                         child: Icon(
                                                                       Icons.add,
-                                                                      size: 20,
+                                                                      size: 22,
                                                                       color: finalIndex ==
                                                                               index
                                                                           ? Colors
@@ -1039,44 +1104,45 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                               ],
                                                             ),
                                                             SizedBox(
-                                                              width: snapshot
-                                                                          .data![
-                                                                              'data']
-                                                                              [
-                                                                              index]
+                                                              width: dataList[index]
                                                                               [
                                                                               'formatted_price']
                                                                           .toString()
                                                                           .length ==
                                                                       1
-                                                                  ? 12
-                                                                  : snapshot.data!['data'][index]['formatted_price']
+                                                                  ? 20
+                                                                  : dataList[index]['formatted_price']
                                                                               .toString()
                                                                               .length ==
                                                                           2
-                                                                      ? 4
-                                                                      : 0,
+                                                                      ? 12
+                                                                      : 1,
                                                             ),
                                                             Row(
                                                               children: [
                                                                 quantity[index] !=
                                                                         0
-                                                                    ? Text(
-                                                                        style: TextStyle(
-                                                                            color: finalIndex == index
-                                                                                ? Colors.white
-                                                                                : Colors.black),
-                                                                        (snapshot.data!['data'][index]['formatted_price'] * quantity[index]).toString() +
-                                                                            '₾'.toString(),
-                                                                        textAlign:
-                                                                            TextAlign.left,
+                                                                    ? FittedBox(
+                                                                        fit: BoxFit
+                                                                            .scaleDown,
+                                                                        child:
+                                                                            Text(
+                                                                          softWrap:
+                                                                              true,
+                                                                          style:
+                                                                              TextStyle(color: finalIndex == index ? Colors.white : Colors.black),
+                                                                          (dataList[index]['formatted_price'] * quantity[index]).toString() +
+                                                                              '₾'.toString(),
+                                                                          textAlign:
+                                                                              TextAlign.left,
+                                                                        ),
                                                                       )
                                                                     : Text(
                                                                         style: TextStyle(
                                                                             color: finalIndex == index
                                                                                 ? Colors.white
                                                                                 : Colors.black),
-                                                                        (snapshot.data!['data'][index]['formatted_price']).toString() +
+                                                                        (dataList[index]['formatted_price']).toString() +
                                                                             '₾'.toString(),
                                                                         textAlign:
                                                                             TextAlign.left,
@@ -1160,11 +1226,14 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                 shrinkWrap: true,
                                                                                 itemCount: snapshot.data!.length,
                                                                                 itemBuilder: (BuildContext context, int index) {
+                                                                                  List<dynamic> dataList3 = snapshot.data!;
+
+                                                                                  dataList3.sort((a, b) => a['current_stock'].compareTo(b['current_stock']));
                                                                                   return GestureDetector(
                                                                                     onTap: () {
                                                                                       setState(() {
                                                                                         additionalfinalIndex = index;
-                                                                                        additionalfinalId = snapshot.data![index]['id'];
+                                                                                        additionalfinalId = dataList3[index]['id'];
                                                                                         additionals.add(additionalfinalId);
                                                                                         differentAdditionalDishes += 1;
                                                                                         switchnum = 1;
@@ -1189,7 +1258,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                                     child: ClipRRect(
                                                                                                       borderRadius: BorderRadius.circular(25), // Same as above for the child
                                                                                                       child: Image.network(
-                                                                                                        snapshot.data![index]['image'].toString(),
+                                                                                                        dataList3[index]['image'].toString(),
                                                                                                         fit: BoxFit.cover,
                                                                                                       ),
                                                                                                     ),
@@ -1200,14 +1269,14 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                                   SizedBox(
                                                                                                     width: 80,
                                                                                                     child: Text(
-                                                                                                      snapshot.data![index]['title'].toString(),
+                                                                                                      dataList3[index]['title'].toString(),
                                                                                                       style: TextStyle(fontFamily: 'metro-bold', fontSize: 13, fontWeight: FontWeight.w400, color: additionalfinalIndex == index ? Colors.white : Colors.black),
                                                                                                     ),
                                                                                                   ),
                                                                                                   SizedBox(
                                                                                                     width: 35,
                                                                                                     child: Text(
-                                                                                                      snapshot.data![index]['formatted_price'].toString() + '₾',
+                                                                                                      '${dataList3[index]['formatted_price']}₾',
                                                                                                       style: TextStyle(fontFamily: 'metro-bold', fontSize: 10, fontWeight: FontWeight.w300, color: additionalfinalIndex == index ? Colors.white : Colors.black),
                                                                                                     ),
                                                                                                   ),
@@ -1218,7 +1287,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                                     width: 50,
                                                                                                     child: Icon(
                                                                                                       Icons.add,
-                                                                                                      size: 20,
+                                                                                                      size: 22,
                                                                                                       color: Color.fromARGB(255, 252, 96, 17),
                                                                                                     ),
                                                                                                   ),

@@ -1,12 +1,18 @@
+// ignore_for_file: prefer_typing_uninitialized_variables, non_constant_identifier_names, use_build_context_synchronously, duplicate_ignore
+
 import 'dart:convert' as convert;
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hot_card/src/Providers/PaymentProvider.dart';
 import 'package:hot_card/src/screen/dashboard/dashboard_screen.dart';
+import 'package:hot_card/src/screen/home/mtla_home.dart';
+import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -39,13 +45,18 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
   final TextEditingController amountController = TextEditingController();
 
   var cardCode1;
+  var momwveviUserId;
+  var ammount;
   var jsonData;
   var daysLeft;
+  var DeviceInfo;
   late String userId;
 
   final String apiKey = '2UwIqaRBAfEQ8y1Po8bn9y8n7ABMFWJR';
   final String clientId = '7001220';
   final String clientSecret = 'OL5p8EsGnIM7hHF7';
+
+  Object? get momwvevi_useris_id => null;
 
   Future<String> getToken(
       String apiKey, String clientId, String clientSecret) async {
@@ -70,24 +81,114 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
     return accessToken;
   }
 
-  //es funkcia iuzeris barats aaktiurebs
-  Future<void> makeCardActive(
-      String userId, int totalDays, String token) async {
+  Future<String?> _getId() async {
+    var deviceInfo = DeviceInfoPlugin();
+    if (Platform.isIOS) {
+      // import 'dart:io'
+      var DeviceInfo = await deviceInfo.iosInfo;
+      if (kDebugMode) {
+        print('iosDeviceInfo ${DeviceInfo.identifierForVendor}');
+      }
+      return DeviceInfo.identifierForVendor; // unique ID on iOS
+    } else if (Platform.isAndroid) {
+      var DeviceInfo = await deviceInfo.androidInfo;
+      if (kDebugMode) {
+        print('androidDeviceInfo ${DeviceInfo.id}');
+      }
+      return DeviceInfo.id;
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> setUserDeviceId(
+      String userIdd, String token, String deviceId) async {
     final url = Uri.parse(
-        'https://julius.ltd/hotcard/api/v100/user/make_card_active/$userId?total_days=$totalDays');
+        '${NetworkService.apiUrl}/user/update_user_device_id/$userIdd');
 
     try {
+      final Map<String, String> headers = {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      };
+
+      final Map<String, dynamic> data = {
+        'user_device_id': deviceId,
+      };
+
       final response = await http.post(
         url,
-        headers: {'Authorization': 'Bearer $token'},
+        headers: headers,
+        body: jsonEncode(data),
       );
 
       if (response.statusCode == 200) {
-      } else {}
-    } catch (e) {}
+        // Successfully made the card active
+        if (kDebugMode) {
+          print('user_device_id set successfully.');
+        }
+      } else {
+        // Handle the case where the request was not successful
+        if (kDebugMode) {
+          print(
+              'Failed to set the user_device_id. Status code: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        }
+      }
+    } catch (e) {
+      // Handle any exceptions that might occur during the request
+      if (kDebugMode) {
+        print('An error occurred: $e');
+      }
+    }
   }
 
-  Future<Map<String, dynamic>> payment(String apiKey, String token) async {
+  //es funkcia iuzeris barats aaktiurebs
+  Future<void> makeCardActive(
+      String userId, String totalDays, String token, String recId) async {
+    final url =
+        Uri.parse('${NetworkService.apiUrl}/user/make_card_active/$userId');
+
+    try {
+      final Map<String, String> headers = {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      };
+
+      final Map<String, dynamic> data = {
+        'total_days': totalDays,
+        'recId': recId,
+      };
+
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200) {
+        // Successfully made the card active
+        if (kDebugMode) {
+          print('Card activated successfully.');
+        }
+      } else {
+        // Handle the case where the request was not successful
+        if (kDebugMode) {
+          print(
+              'Failed to make the card active. Status code: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        }
+      }
+    } catch (e) {
+      // Handle any exceptions that might occur during the request
+      if (kDebugMode) {
+        print('An error occurred: $e');
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>> payment(
+      String apiKey, String token, int amount) async {
     const url = 'https://api.tbcbank.ge/v1/tpay/payments';
     final headers = {
       'Content-Type': 'application/json',
@@ -97,7 +198,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
     final data = {
       "amount": {
         "currency": "GEL",
-        "total": 10.00,
+        "total": amount,
         "subTotal": 0,
         "tax": 0,
         "shipping": 0
@@ -108,13 +209,13 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       "expirationMinutes": "10",
       "methods": [5],
       "installmentProducts": [
-        {"Name": "Subscription", "Price": 10, "Quantity": 1},
+        {"Name": "Subscription", "Price": amount, "Quantity": 1},
       ],
       "callbackUrl": "https://www.google.com/",
       "preAuth": false,
       "language": "EN",
       "merchantPaymentId": "P123123",
-      "saveCard": false,
+      "saveCard": true,
       "saveCardToDate": "0924"
     };
 
@@ -133,9 +234,9 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
     final String accessToken1 = await getToken(apiKey, clientId, clientSecret);
     final String accessToken = widget.userDataModel.data!.token;
     final Map<String, dynamic> paymentResponse =
-        await payment(apiKey, accessToken1);
-    // print(accessToken);
+        await payment(apiKey, accessToken1, ammount);
     final String secondUrl = paymentResponse['links'][1]['uri'];
+    final String rec_Id = paymentResponse['recId'];
     final String tbcBankLink = secondUrl;
     // print(paymentResponse);
     // ignore: use_build_context_synchronously
@@ -153,15 +254,24 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                 if (val == "https://www.google.com/") {
                   PaymentProvider paymentProvider =
                       Provider.of<PaymentProvider>(context, listen: false);
-                  await paymentProvider.mCheckPaymentFunction(
-                      payID: paymentResponse["payId"], token: accessToken);
+                  if (kDebugMode) {
+                    var returnval = await paymentProvider.mCheckPaymentFunction(
+                        payID: paymentResponse["payId"], token: accessToken);
+                    // final recId = returnval['recurringCard']['recId'];
+
+                    print(
+                        'return value return value return value return value $returnval');
+                  }
 
                   const snackBar = SnackBar(
                     content: Text('Payment Successfully!'),
                     backgroundColor: Colors.green,
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  makeCardActive(userId, 30, accessToken);
+
+                  final recId = rec_Id;
+                  makeCardActive(userId, '30', accessToken, recId);
+
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
@@ -211,12 +321,6 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    fetchCardNumber(widget.userDataModel.data!.token);
-  }
-
   Future<http.Response> postData(
       String url, Map<String, dynamic> body, String token) async {
     final response = await http.post(
@@ -233,7 +337,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
 
   Future<String> fetchCardNumber(String token) async {
     final response = await http.get(
-      Uri.parse('https://julius.ltd/hotcard/api/v100/user/profile'),
+      Uri.parse('${NetworkService.apiUrl}/user/profile'),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -243,10 +347,38 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       daysLeft = data['data']['available_subscription_days'] ?? 'Inactive';
       userId = data['data']['id'].toString();
 
+      daysLeft <= 0 ? daysLeft == 'Inactive' : daysLeft == daysLeft;
+
       return cardNumber;
     } else {
       throw Exception('Failed to load data');
     }
+  }
+
+  Future<int?> fetchMomwveviUserID(String? token) async {
+    final response = await http.get(
+      Uri.parse('${NetworkService.apiUrl}/user/profile'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final momwvevi_useris_id = data['data']['momwvevi_useris_id'];
+
+      // print('momwvevi useris id : ' + momwvevi_useris_id.toString());
+      return momwvevi_useris_id;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCardNumber(widget.userDataModel.data!.token);
+    _getId();
+
+    //
   }
 
   void updateCardCode(String newCardCode) {
@@ -257,8 +389,6 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
 
   Future<void> showPopUp() async {
     TextEditingController cardCodeController = TextEditingController();
-    var urlToSend =
-        'https://julius.ltd/hotcard/api/v100/user/update_card_number/';
 
     return showDialog<void>(
       context: context,
@@ -287,6 +417,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                 child: Text(AppTags.save.tr,
                     style: const TextStyle(fontFamily: 'bpg')),
                 onPressed: () async {
+                  var urlToSend =
+                      '${NetworkService.apiUrl}/user/update_card_number/';
                   String cardCode = cardCodeController.text;
                   if (cardCode.length >= 8 && cardCode.length <= 16) {
                     postData(urlToSend + userId, {"card_number": cardCode},
@@ -393,16 +525,18 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
               iconTheme: const IconThemeData(
                 color: Colors.black, //change your color here
               ),
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
-                  size: 22.r,
-                ),
-                onPressed: () {
-                  Get.back();
-                },
-              ),
+              leading: Get.previousRoute == 'dashboardScreen'
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                        size: 22.r,
+                      ),
+                      onPressed: () {
+                        Get.back();
+                      },
+                    )
+                  : null,
             )
           : AppBar(
               backgroundColor: AppThemeData.myRewardAppBarColor,
@@ -646,58 +780,99 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                               if (snapshot.data != 'Not Available')
                                 InkWell(
                                   onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text(
-                                              _profileContentController
-                                                          .profileDataModel
-                                                          .value
-                                                          .data!
-                                                          .cardStatus !=
-                                                      'Inactive'
-                                                  ? AppTags.cardUpgrade.tr
-                                                  : AppTags.activeCard.tr,
-                                              // ak kide erti dasturi unda ro recurrent gadaxdaze tanaxmaa
-                                              style: const TextStyle(
-                                                  fontFamily: 'bpg')),
-                                          content: Text(AppTags.costsAndDate.tr,
-                                              style: const TextStyle(
-                                                  fontFamily: 'bpg')),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: Text(AppTags.yes.tr,
+                                    fetchMomwveviUserID(
+                                            widget.userDataModel.data!.token)
+                                        .then((value) {
+                                      setState(() async {
+                                        var momwveviUserId = value;
+                                        var phoneId;
+                                        var deviceInfo = DeviceInfoPlugin();
+                                        if (Platform.isAndroid) {
+                                          var meore =
+                                              await deviceInfo.androidInfo;
+                                          phoneId = meore.id;
+                                        } else {
+                                          var meore = await deviceInfo.iosInfo;
+                                          phoneId = meore.identifierForVendor;
+                                        }
+                                        setUserDeviceId(
+                                            userId,
+                                            widget.userDataModel.data!.token,
+                                            phoneId);
+                                        momwveviUserId != null &&
+                                                momwveviUserId != 0
+                                            ? ammount = 10
+                                            : ammount = 20;
+
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                  _profileContentController
+                                                              .profileDataModel
+                                                              .value
+                                                              .data!
+                                                              .cardStatus !=
+                                                          'Inactive'
+                                                      ? AppTags.cardUpgrade.tr
+                                                      : AppTags.activeCard.tr,
+                                                  // ak kide erti dasturi unda ro recurrent gadaxdaze tanaxmaa
                                                   style: const TextStyle(
                                                       fontFamily: 'bpg')),
-                                              onPressed: () async {
-                                                // final String accessToken =
-                                                //     await getToken(apiKey,
-                                                //         clientId, clientSecret);
-                                                // print(widget.userDataModel.data!.token);
-                                                // print(userId);
-                                                processPayment();
-                                                // makeCardActive(
-                                                //     userId, 30, accessToken);
-                                                // Perform your "yes" action here
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: Text(AppTags.no.tr,
-                                                  style: const TextStyle(
-                                                      fontFamily: 'bpg')),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                                // Perform your "no" action here
-                                              },
-                                            ),
-                                          ],
+                                              content: momwveviUserId != 0 &&
+                                                      momwveviUserId != null
+                                                  ? Text(
+                                                      AppTags.costsAndDate.tr,
+                                                      style: const TextStyle(
+                                                          fontFamily: 'bpg'))
+                                                  : Text(
+                                                      AppTags.costsAndDate20.tr,
+                                                      style: const TextStyle(
+                                                          fontFamily: 'bpg')),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: Text(AppTags.yes.tr,
+                                                      style: const TextStyle(
+                                                          fontFamily: 'bpg')),
+                                                  onPressed: () async {
+                                                    // final String accessToken =
+                                                    //     await getToken(apiKey,
+                                                    //         clientId, clientSecret);
+                                                    // print(widget.userDataModel.data!.token);
+                                                    // print(userId);
+
+                                                    processPayment();
+                                                    // makeCardActive(
+                                                    //     userId, 30, accessToken);
+                                                    // Perform your "yes" action here
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Text(AppTags.no.tr,
+                                                      style: const TextStyle(
+                                                          fontFamily: 'bpg')),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                    // Perform your "no" action here
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
                                         );
-                                      },
-                                    );
+                                      });
+                                    }).catchError((error) {
+                                      // Handle error
+                                      if (kDebugMode) {
+                                        print(
+                                            'Error fetching momwvevi_useris_id: $error');
+                                      }
+                                    });
                                   },
                                   child: Container(
                                     width: 120,
+                                    height: 140,
                                     decoration: BoxDecoration(
                                       color: const Color.fromARGB(
                                           255, 15, 153, 61),
@@ -727,18 +902,35 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        Text(
-                                            _profileContentController
-                                                        .profileDataModel
-                                                        .value
-                                                        .data!
-                                                        .cardStatus !=
-                                                    AppTags.nonActive.tr
-                                                ? AppTags.upgrade.tr
-                                                : AppTags.activate.tr,
-                                            style: const TextStyle(
-                                                fontFamily: 'bpg',
-                                                color: Colors.white)),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: SizedBox(
+                                              width: double
+                                                  .infinity, // Ensure the container takes the full width
+                                              child: Text(
+                                                _profileContentController
+                                                            .profileDataModel
+                                                            .value
+                                                            .data!
+                                                            .cardStatus !=
+                                                        AppTags.nonActive.tr
+                                                    ? AppTags.upgrade.tr
+                                                    : AppTags.activate.tr,
+                                                style: const TextStyle(
+                                                  fontFamily: 'bpg',
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                ),
+                                                maxLines: 2,
+                                                softWrap: true,
+                                                textAlign: TextAlign
+                                                    .center, // Center the text
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                         const SizedBox(
                                           height: 25,
                                         ),
@@ -750,7 +942,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 InkWell(
                                   onTap: () async {
                                     var urlToSend =
-                                        'https://julius.ltd/hotcard/api/v100/user/update_card_number/';
+                                        '${NetworkService.apiUrl}/user/update_card_number/';
                                     final random = Random();
                                     const digits = '0123456789';
                                     const length = 14;
@@ -844,7 +1036,13 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                       style: const TextStyle(
                                                           fontFamily: 'bpg')),
                                                   onPressed: () {
-                                                    processPayment();
+                                                    makeCardActive(
+                                                        userId,
+                                                        '0',
+                                                        widget.userDataModel
+                                                            .data!.token,
+                                                        '0');
+                                                    Navigator.of(context).pop();
                                                     // Perform your "yes" action here
                                                   },
                                                 ),
@@ -864,6 +1062,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                       },
                                       child: Container(
                                         width: 120,
+                                        height: 140,
                                         decoration: BoxDecoration(
                                           color: const Color.fromARGB(
                                               255, 153, 15, 15),
@@ -887,17 +1086,29 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                               height: 25,
                                             ),
                                             const Icon(
-                                              Icons.delete,
+                                              Icons.remove,
                                               color: Colors.white,
                                               size: 35,
                                             ),
                                             const SizedBox(
                                               height: 10,
                                             ),
-                                            Text(AppTags.cancellation.tr,
-                                                style: const TextStyle(
+                                            Align(
+                                              alignment: Alignment.center,
+                                              child: SizedBox(
+                                                width: double
+                                                    .infinity, // Ensure the container takes the full width
+                                                child: Text(
+                                                  AppTags.cancellation.tr,
+                                                  style: const TextStyle(
                                                     fontFamily: 'bpg',
-                                                    color: Colors.white)),
+                                                    color: Colors.white,
+                                                  ),
+                                                  textAlign: TextAlign
+                                                      .center, // Center the text
+                                                ),
+                                              ),
+                                            ),
                                             const SizedBox(
                                               height: 25,
                                             ),
@@ -919,8 +1130,22 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
             );
           } else if (snapshot.hasError) {
             return Center(
-                child: Text(AppTags.sorryForinconvenience.tr,
-                    style: const TextStyle(fontFamily: 'bpg')));
+                child: Column(
+              children: [
+                Text(AppTags.sorryForinconvenience.tr,
+                    style: const TextStyle(fontFamily: 'bpg')),
+                ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MtlaHome()),
+                      );
+                    },
+                    icon: const Icon(Icons.home),
+                    label: const Text('Main Page'))
+              ],
+            ));
           }
           return const Center(child: CircularProgressIndicator());
         },

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -106,5 +108,4 @@ class VideoShoppingDetailsController extends GetxController {
   //     update();
   //   }
   // }
-
 }

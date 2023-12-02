@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, deprecated_member_use
+
 import 'dart:math';
 import 'dart:ui' as ui;
 
@@ -6,7 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hot_card/src/data/local_data_helper.dart';
 import 'package:hot_card/src/screen/home/category/product_by_category_screen.dart';
+import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/GetCategoryLocationModel.dart';
@@ -61,6 +65,7 @@ class MapProvider with ChangeNotifier {
                               position!.longitude) *
                           p)) /
                   2;
+          // ignore: unused_local_variable
           double location = 12742 * asin(sqrt(a));
           restaurantMarkers.add(
             Marker(
@@ -130,7 +135,9 @@ class MapProvider with ChangeNotifier {
           'hot_card_session=eyJpdiI6ImRSN3pqTDZaZ2h6RjN1SUVOa1NhaXc9PSIsInZhbHVlIjoiYkk4KytoTTh3WXg1Y0haN0NpNEQxc2w4eVA3d2lCdnlEamx6ajNjazVWVUlJWGN4U1JsNmZtTzZXNFZzQTZXd1dsQ0doTjBnbjdESFdzTlIyR2lWdDkwVUN6STdHVWxuWkZLcmEzSVJEZ2ltOUI4UEV0UHJ3UDEzeXNDS2h6Q20iLCJtYWMiOiJkYzc2ZTRmNjBiMzU0MDdkMTVjZmNmODAyYzg5OTMzOTRlNDhjYmJkZDk5NzFmNWJmZmY0OWMwNjRmNzQwMDkwIiwidGFnIjoiIn0%3D',
     };
     var request = http.Request(
-        'GET', Uri.parse('https://julius.ltd/hotcard/api/v100/category/all'));
+        'GET',
+        Uri.parse(
+            '${NetworkService.apiUrl}/category/all?lang=${LocalDataHelper().getLangCode() ?? "en"}'));
     request.headers.addAll(headers);
     http.StreamedResponse response = await request.send();
     if (response.statusCode == 200) {

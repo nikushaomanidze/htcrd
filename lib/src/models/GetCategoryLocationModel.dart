@@ -2,6 +2,8 @@
 //
 //     final getCategoryLocationModel = getCategoryLocationModelFromJson(jsonString);
 
+// ignore_for_file: non_constant_identifier_names, file_names
+
 import 'dart:convert';
 
 GetCategoryLocationModel getCategoryLocationModelFromJson(String str) =>

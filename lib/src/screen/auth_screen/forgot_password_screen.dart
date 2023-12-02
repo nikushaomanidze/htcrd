@@ -55,7 +55,7 @@ class ForgetPasswordScreen extends StatelessWidget {
                   height: 56,
                   child: LoginEditTextField(
                     myController: emailController,
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.emailAddress,
                     hintText: AppTags.emailAddress.tr,
                     // fieldIcon: Icons.email,
                     myObscureText: false,

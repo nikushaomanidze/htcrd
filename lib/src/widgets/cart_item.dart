@@ -1,3 +1,5 @@
+// ignore_for_file: division_optimization
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';

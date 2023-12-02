@@ -40,6 +40,7 @@ class Data {
       this.cardStatus,
       this.cardNumber,
       this.gender,
+      this.momwveviUserisId,
       this.dateOfBirth});
 
   Data.fromJson(dynamic json) {
@@ -57,6 +58,7 @@ class Data {
     currencyCode = json['currency_code'];
     dateOfBirth = json['date_of_birth'] ?? "Select Date";
     gender = json['gender'] ?? "Select Gender";
+    momwveviUserisId = json['momwvevi_useris_id'];
   }
   late String token;
   int? userId;
@@ -72,6 +74,7 @@ class Data {
   String? dateOfBirth;
   String? currencyCode;
   String? gender;
+  String? momwveviUserisId;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -89,6 +92,7 @@ class Data {
     map['date_of_birth'] = dateOfBirth;
     map['currency_code'] = currencyCode;
     map['gender'] = gender;
+    map['momwvevi_useris_id'] = momwveviUserisId;
     return map;
   }
 }

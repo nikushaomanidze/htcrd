@@ -78,16 +78,12 @@ class SplashController extends GetxController {
     Timer(
       const Duration(seconds: 1),
       () {
-        LocalDataHelper().getConfigData().data!.appConfig!.loginMandatory!
-            ? LocalDataHelper().getUserToken() != null
-                ? Get.offAllNamed(
-                    Routes.dashboardScreen,
-                  )
-                : Get.offAllNamed(
-                    Routes.dashboardScreen,
-                  )
-            : Get.offAllNamed(
+        LocalDataHelper().getUserToken() != null
+            ? Get.offAllNamed(
                 Routes.dashboardScreen,
+              )
+            : Get.offAllNamed(
+                Routes.withOutLoginPage,
               );
       },
     );
