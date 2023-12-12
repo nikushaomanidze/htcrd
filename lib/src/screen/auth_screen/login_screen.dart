@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -266,6 +268,49 @@ class LoginScreen extends StatelessWidget {
                                       style: const TextStyle(
                                           fontFamily: 'bpg',
                                           color: Colors.white),
+                                    ),
+                                    const Spacer(),
+                                  ],
+                                ),
+                              ),
+                            ))
+                        : const SizedBox(),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Platform.isIOS
+                        ? Container(
+                            height: 56,
+                            width: 333,
+                            // margin: EdgeInsets.only(right: 15.w),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              borderRadius: BorderRadius.circular(30.r),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                authController.signInWithApple();
+                              },
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              child: Center(
+                                child: Row(
+                                  children: [
+                                    const Spacer(),
+                                    Padding(
+                                      padding: EdgeInsets.all(12.r),
+                                      child: Image.asset(
+                                          "assets/images/apple.png"),
+                                    ),
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      AppTags.appleAuthText.tr,
+                                      style: const TextStyle(
+                                          fontFamily: 'bpg',
+                                          color: Color.fromARGB(255, 0, 0, 0)),
                                     ),
                                     const Spacer(),
                                   ],

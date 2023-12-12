@@ -114,6 +114,7 @@ const Map<String, String> kaGE = {
   "profile": "პროფილი",
   "notLoggedIn": "თქვენ არ გაგივლიათ ავტორიზაცია",
   "googleAuthText": "ავტორიზაცია Google-თი",
+  "appleAuthText": "ავტორიზაცია Apple-თი",
   "fbAuthText": "ავტორიზაცია Facebook-თი",
   "noContent":
       "გაიარეთ ავტორიზაცია/რეგისტრაცია და მიიღეთ უსასრულო ფასდაკლებები",

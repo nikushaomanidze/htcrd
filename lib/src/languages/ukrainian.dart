@@ -114,6 +114,7 @@ const Map<String, String> ukUA = {
   "profile": "Профіль",
   "notLoggedIn": "Ви не ввійшли",
   "googleAuthText": "Авторизувати в Google",
+  "appleAuthText": "Authenticate with Apple",
   "fbAuthText": "Автентифікація за допомогою Facebook",
   "noContent": "Увійти/Зареєструватися та отримати необмежені знижки",
   "firstName": "Ім'я",

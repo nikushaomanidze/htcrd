@@ -114,6 +114,7 @@ const Map<String, String> enUS = {
   "profile": "Profile",
   "notLoggedIn": "You are not authenticated",
   "googleAuthText": "Authenticate with Google",
+  "appleAuthText": "Authenticate with Apple",
   "fbAuthText": "Authenticate with Facebook",
   "noContent": "Login/Register and get unlimited discounts",
   "firstName": "First Name",

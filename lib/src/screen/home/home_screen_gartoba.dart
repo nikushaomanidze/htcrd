@@ -383,7 +383,7 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
     List<dynamic> filteredCategories = [
       for (var category in homeScreenContentController
           .homeDataModel.value.data![categoriesIndex].categories!)
-        if (category.parentId == 32) category,
+        if (category.parentId != 0) category,
     ];
 
     filteredCategories.sort((a, b) => calculateDistance(

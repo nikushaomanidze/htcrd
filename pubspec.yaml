@@ -15,7 +15,7 @@ dependencies:
   cached_network_image: ^3.2.3
   carousel_slider: ^4.2.1
   change_app_package_name: ^1.1.0
-  connectivity_plus: ^4.0.1
+  connectivity_plus: ^5.0.2
   country_pickers: ^2.0.0
   cupertino_icons: ^1.0.2
   firebase_analytics: 

@@ -44,6 +44,7 @@ class AppTags {
   static const String signInTermsAndCondition = "signInTermsAndCondition";
   static const String backToShopping = "backToShopping";
   static const String googleAuthText = "googleAuthText";
+  static const String appleAuthText = "appleAuthText";
   static const String fbAuthText = "fbAuthText";
 
   static const String notLoggedIn = "notLoggedIn";
