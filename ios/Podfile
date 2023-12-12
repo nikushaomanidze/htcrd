@@ -34,17 +34,17 @@ target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
-# post_install do |installer|
-#   installer.pods_project.targets.each do |target|
-#     flutter_additional_ios_build_settings(target)
-#   end
-# end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-         if flutter_additional_ios_build_settings(target).to_f < 12.0
-          flutter_additional_ios_build_settings(target) = '12.0'
-         end
-      end
+    flutter_additional_ios_build_settings(target)
   end
- end
+end
+# post_install do |installer|
+#   installer.pods_project.targets.each do |target|
+#       target.build_configurations.each do |config|
+#          if flutter_additional_ios_build_settings(target).to_f < 12.0
+#           flutter_additional_ios_build_settings(target) = '12.0'
+#          end
+#       end
+#   end
+#  end
