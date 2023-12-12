@@ -85,6 +85,9 @@ dependencies:
   email_validator: ^2.1.17
   device_info_plus: ^8.2.2
 
+dependency_overrides:
+  package_info_plus: ^4.0.1
+
   
 dev_dependencies:
   build_runner: ^2.1.7
