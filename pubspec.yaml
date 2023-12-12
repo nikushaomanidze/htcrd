@@ -72,7 +72,7 @@ dependencies:
   video_player: ^2.4.6
   chewie: ^1.3.5
   youtube_player_flutter: ^8.1.0
-  vimeo_video_player: ^0.0.4
+
   another_flushbar: ^1.12.29
   qr_flutter: ^4.0.0
   google_maps_flutter: ^2.2.6
