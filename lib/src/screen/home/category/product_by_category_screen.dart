@@ -1,12 +1,15 @@
 // ignore_for_file: non_constant_identifier_names, prefer_typing_uninitialized_variables, deprecated_member_use, duplicate_ignore
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hot_card/src/controllers/profile_content_controller.dart';
 import 'package:hot_card/src/data/local_data_helper.dart';
 import 'package:hot_card/src/screen/home/qr_page.dart';
+import 'package:hot_card/src/screen/profile/wallet/my_wallet_screen.dart';
 import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:pagination_view/pagination_view.dart';
@@ -249,6 +252,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     return await Repository()
         .getProductByCategoryItem(id: widget.id, page: page);
   }
+
+  final ProfileContentController _profileContentController =
+      Get.put(ProfileContentController());
 
   Future<void> showRoundedPopup(BuildContext context, int category,
       String price, String imageUrl, String productName) async {
@@ -602,7 +608,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     } catch (e) {}
   }
 
-  int finalIndex = 25;
+  int finalIndex = 125;
   double mainDishPrice = 0;
   double totalMainPrice = 0;
   int additionalfinalIndex = 250;
@@ -638,14 +644,33 @@ class _ProductByCategoryState extends State<ProductByCategory> {
             children: [
               FloatingActionButton(
                 onPressed: () {
-                  setState(() {
-                    sendOrder(quantity, ids, additionals);
-                    updateUserBalance(
-                        LocalDataHelper().getUserToken().toString(),
-                        totalMainPrice);
+                  finalIndex == 125
+                      ? showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(AppTags.error.tr),
+                              content: Text(AppTags.chooseProductsFirst.tr),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(); // Close the popup
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                      : setState(() {
+                          sendOrder(quantity, ids, additionals);
+                          updateUserBalance(
+                              LocalDataHelper().getUserToken().toString(),
+                              totalMainPrice);
 
-                    currentTab = 0; // Set the selected tab index
-                  });
+                          currentTab = 0; // Set the selected tab index
+                        });
                 },
                 backgroundColor: const Color.fromARGB(255, 239, 127, 26),
                 child: const Icon(Icons.done_rounded, size: 45),
@@ -658,17 +683,20 @@ class _ProductByCategoryState extends State<ProductByCategory> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color:
-                      const Color.fromARGB(255, 74, 75, 77).withOpacity(0.11),
-                  spreadRadius: 15,
-                  blurRadius: 15,
-                  offset: const Offset(0, 3), // Set the desired shadow offset
-                ),
-              ],
-            ),
+            decoration: Platform.isIOS
+                ? const BoxDecoration()
+                : BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color.fromARGB(255, 74, 75, 77)
+                            .withOpacity(0.11),
+                        spreadRadius: 15,
+                        blurRadius: 15,
+                        offset:
+                            const Offset(0, 3), // Set the desired shadow offset
+                      ),
+                    ],
+                  ),
             child: const SizedBox()),
         body: Stack(children: [
           Container(
@@ -1052,7 +1080,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                           Navigator
                                                                               .push(
                                                                             context,
-                                                                            MaterialPageRoute(builder: (context) => const ProfileContent()),
+                                                                            MaterialPageRoute(
+                                                                              builder: (context) => _profileContentController.user!.value.data != null ? MyWalletScreen(userDataModel: _profileContentController.user!.value) : const ProfileContent(),
+                                                                            ),
                                                                           );
                                                                         } else {
                                                                           finalIndex =

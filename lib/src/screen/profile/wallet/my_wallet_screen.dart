@@ -11,7 +11,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hot_card/src/Providers/PaymentProvider.dart';
 import 'package:hot_card/src/screen/dashboard/dashboard_screen.dart';
-import 'package:hot_card/src/screen/home/mtla_home.dart';
 import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -347,7 +346,9 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       daysLeft = data['data']['available_subscription_days'] ?? 'Inactive';
       userId = data['data']['id'].toString();
 
-      daysLeft <= 0 ? daysLeft == 'Inactive' : daysLeft == daysLeft;
+      daysLeft <= 0 || daysLeft[0] == '-'
+          ? daysLeft == 'Inactive'
+          : daysLeft == daysLeft;
 
       return cardNumber;
     } else {
@@ -801,8 +802,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                             phoneId);
                                         momwveviUserId != null &&
                                                 momwveviUserId != 0
-                                            ? ammount = 10
-                                            : ammount = 20;
+                                            ? ammount = 15
+                                            : ammount = 28;
 
                                         showDialog(
                                           context: context,
@@ -1136,14 +1137,10 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                     style: const TextStyle(fontFamily: 'bpg')),
                 ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MtlaHome()),
-                      );
+                      Get.back();
                     },
                     icon: const Icon(Icons.home),
-                    label: const Text('Main Page'))
+                    label: Text(AppTags.back.tr))
               ],
             ));
           }

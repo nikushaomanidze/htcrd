@@ -115,35 +115,35 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                             AppTags.category.tr,
                             style: const TextStyle(fontFamily: 'bpg'),
                           ),
-                          Center(
-                            child: DropdownButton<String>(
-                              value: selectedOption,
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  updateFilter(newValue!);
-                                });
-                              },
-                              items: <String>[
-                                AppTags.all.tr,
-                                AppTags.traditional.tr,
-                                AppTags.sushi.tr,
-                                AppTags.pizza.tr,
-                                AppTags.seafood.tr,
-                                AppTags.burgers.tr,
-                                AppTags.asian.tr,
-                                AppTags.bakery.tr,
-                                AppTags.dessert.tr,
-                                AppTags.mexican.tr,
-                                AppTags.shawarma.tr,
-                                AppTags.vegetarian.tr,
-                              ].map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                          ),
+                          // Center(
+                          //   child: DropdownButton<String>(
+                          //     value: selectedOption,
+                          //     onChanged: (String? newValue) {
+                          //       setState(() {
+                          //         updateFilter(newValue!);
+                          //       });
+                          //     },
+                          //     items: <String>[
+                          //       AppTags.all.tr,
+                          //       AppTags.traditional.tr,
+                          //       AppTags.sushi.tr,
+                          //       AppTags.pizza.tr,
+                          //       AppTags.seafood.tr,
+                          //       AppTags.burgers.tr,
+                          //       AppTags.asian.tr,
+                          //       AppTags.bakery.tr,
+                          //       AppTags.dessert.tr,
+                          //       AppTags.mexican.tr,
+                          //       AppTags.shawarma.tr,
+                          //       AppTags.vegetarian.tr,
+                          //     ].map<DropdownMenuItem<String>>((String value) {
+                          //       return DropdownMenuItem<String>(
+                          //         value: value,
+                          //         child: Text(value),
+                          //       );
+                          //     }).toList(),
+                          //   ),
+                          // ),
                           Text(
                             AppTags.distanceMeter.tr,
                             style: const TextStyle(fontFamily: 'bpg'),

@@ -93,6 +93,7 @@ class FeaturedSubCategories {
   String? icon;
   int? parentId;
   String? slug;
+  int? order;
   String? title;
   String? image;
   String? latlong;
@@ -107,6 +108,7 @@ class FeaturedSubCategories {
       this.icon,
       this.parentId,
       this.slug,
+      this.order,
       this.title,
       this.image,
       this.latlong,
@@ -121,6 +123,7 @@ class FeaturedSubCategories {
     icon = json['icon'];
     parentId = json['parent_id'];
     slug = json['slug'];
+    order = json['order'];
     title = json['title'];
     image = json['image'];
     latlong = json['latlong'];
@@ -137,6 +140,7 @@ class FeaturedSubCategories {
     data['icon'] = icon;
     data['parent_id'] = parentId;
     data['slug'] = slug;
+    data['order'] = order;
     data['title'] = title;
     data['image'] = image;
     data['latlong'] = latlong;
@@ -154,6 +158,7 @@ class Categories {
   String? icon;
   int? parentId;
   String? slug;
+  int? order;
   String? banner;
   String? title;
   String? image;
@@ -170,6 +175,7 @@ class Categories {
       this.icon,
       this.parentId,
       this.slug,
+      this.order,
       this.banner,
       this.title,
       this.image,
@@ -186,6 +192,7 @@ class Categories {
     icon = json['icon'];
     parentId = json['parent_id'];
     slug = json['slug'];
+    order = json['order'];
     banner = json['banner'];
     title = json['title'];
     image = json['image'];
@@ -209,6 +216,7 @@ class Categories {
     data['icon'] = icon;
     data['parent_id'] = parentId;
     data['slug'] = slug;
+    data['order'] = order;
     data['banner'] = banner;
     data['title'] = title;
     data['image'] = image;

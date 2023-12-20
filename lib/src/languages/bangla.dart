@@ -305,7 +305,7 @@ const Map<String, String> bnBD = {
   "authorization": "ჯერ არ გაგივლია ავტორიზაცია",
   "restaurants": "რესტორნები",
   "cafeBars": "კაფე-ბარები",
-  "fun": "გართობა",
+  "fun": "სხვა აქტივობები",
   "map": "რუკა",
   "category": "კატეგორია",
   'all': "ყველა",

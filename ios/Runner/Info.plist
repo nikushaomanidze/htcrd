@@ -76,8 +76,6 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Hot Card requires access to the location to support the nearest companies.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Hot Card needs access to location when in the background for access the current location to view nearest companies.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Hot Card needs access to your camera for meetings.</string>
 	<key>NSMicrophoneUsageDescription</key>

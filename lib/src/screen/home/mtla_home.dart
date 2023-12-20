@@ -987,7 +987,8 @@ class _MtlaHomeState extends State<MtlaHome> {
                           List<dynamic> filteredCategories = categories!
                               .where((category) =>
                                   category['slug'] != 'restornebi' &&
-                                  category['slug'] != 'gartoba')
+                                  category['slug'] != 'gartoba' &&
+                                  category['order'] == 15)
                               .toList();
 
                           // Render the list of categories as needed

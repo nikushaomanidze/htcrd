@@ -69,8 +69,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Container(
-        decoration: Platform.isAndroid
-            ? BoxDecoration(
+        decoration: Platform.isIOS
+            ? const BoxDecoration()
+            : BoxDecoration(
                 boxShadow: [
                   BoxShadow(
                     color:
@@ -80,8 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     offset: const Offset(0, 3), // Set the desired shadow offset
                   ),
                 ],
-              )
-            : const BoxDecoration(),
+              ),
         child: BottomAppBar(
           shape: const CircularNotchedRectangle(),
           color: Colors.white,

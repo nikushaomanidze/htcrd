@@ -441,4 +441,6 @@ class AppTags {
   static const String mm = "mm";
   static const String searchFood = "searchFood";
   static const String goToMainPage = "goToMainPage";
+  static const String chooseProductsFirst = "chooseProductsFirst";
+  static const String back = "back";
 }

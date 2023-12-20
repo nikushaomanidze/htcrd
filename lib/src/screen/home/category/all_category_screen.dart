@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hot_card/src/screen/home/category/product_by_category_screen.dart';
@@ -33,9 +35,21 @@ class _AllCategoryState extends State<AllCategory> {
     newcategories = allCategoryModel!.data!.categories;
     filteredCategories = newcategories!
         .where((category) =>
-            category.slug != 'restornebi' && category.slug != 'gartoba')
+            category.slug != 'restornebi' &&
+            category.slug != 'gartoba' &&
+            category.order == 15)
         .toList();
     setState(() {});
+  }
+
+  //Top Category
+  double calculateDistance(lat1, lon1, lat2, lon2) {
+    const p = 0.017453292519943295;
+    const c = cos;
+    final a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    return 12742 * asin(sqrt(a));
   }
 
   @override
@@ -52,17 +66,20 @@ class _AllCategoryState extends State<AllCategory> {
             ? Container()
             : Scaffold(
                 appBar: AppBar(
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.white,
                   elevation: 0,
-                  // leading: IconButton(
-                  //   icon: const Icon(
-                  //     Icons.arrow_back,
-                  //     color: Colors.black,
-                  //   ),
-                  //   onPressed: () {
-                  //     Get.back();
-                  //   },
-                  // ),
+                  leading: Get.previousRoute == '/dashboardScreen'
+                      ? IconButton(
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colors.black,
+                            size: 22.r,
+                          ),
+                          onPressed: () {
+                            Get.back();
+                          },
+                        )
+                      : null,
                   centerTitle: true,
                   title: Text(
                     AppTags.topObjects.tr,

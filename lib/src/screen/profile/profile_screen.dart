@@ -571,18 +571,20 @@ class _ProfileContentState extends State<ProfileContent> {
               //     child:
               //         mobileViewTile("order_history", AppTags.orderHistory.tr)),
               // divider(),
-              _profileContentController.profileDataModel.value.data!.userId! <=
-                      10000
-                  ? InkWell(
-                      onTap: () {
-                        Get.toNamed(Routes.voucherList);
-                      },
-                      child:
-                          mobileViewTile("voucher_color", AppTags.voucher.tr))
+              userDataModel.data!.firstName!.length >= 4
+                  ? userDataModel.data!.firstName!.substring(0, 4) == "sale"
+                      ? InkWell(
+                          onTap: () {
+                            Get.toNamed(Routes.voucherList);
+                          },
+                          child: mobileViewTile(
+                              "voucher_color", AppTags.voucher.tr))
+                      : Container()
                   : Container(),
-              _profileContentController.profileDataModel.value.data!.userId! <=
-                      10000
-                  ? divider()
+              userDataModel.data!.firstName!.length >= 4
+                  ? userDataModel.data!.firstName!.substring(0, 4) == "sale"
+                      ? divider()
+                      : Container()
                   : Container(),
               InkWell(
                   onTap: () {
