@@ -71,6 +71,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               primarySwatch: Colors.blue,
+              useMaterial3: false
             ),
             initialRoute: Routes.splashScreen,
             getPages: Routes.list,
