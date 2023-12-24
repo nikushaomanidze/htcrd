@@ -520,27 +520,48 @@ class _ProductByCategoryState extends State<ProductByCategory> {
   }
 
   Future<void> sendOrder(List<dynamic> quantity, List<dynamic> ids,
-      List<dynamic> additionals) async {
-    // var token = LocalDataHelper().getUserToken();
+      List<dynamic> additionals, BuildContext context) async {
+    FlutterError.onError = (FlutterErrorDetails details) {
+      // Log the error, send to a server, or show a friendly error message
+      // instead of the red or grey screen
+    };
     var url = Uri.parse('${NetworkService.apiUrl}/make/direct/order');
 
     // Create the orders object dynamically based on the input lists
     Map<String, dynamic> orders = {};
     int index = 0;
-    for (int i = 0; i < quantity.length; i++) {
-      if (quantity[i] > 0) {
+
+    int i = 0;
+    while (i < quantity.length) {
+      // Check if the current index is valid for both ids and additionals
+      bool validIdIndex = i < ids.length;
+      bool validAdditionalIndex = i < additionals.length;
+
+      if (quantity[i] > 0 && validIdIndex) {
         Map<String, dynamic> order = {
           "qty": quantity[i],
-          "product_id": ids[i],
-          "additional_product_id": additionals[i] ?? 0,
+          "product_id": validIdIndex
+              ? ids[i]
+              : 0, // Use 0 or some default value if index is invalid
+          "additional_product_id":
+              validAdditionalIndex && additionals.isNotEmpty
+                  ? additionals[i] ?? 0
+                  : 0,
           "additional_product_qty": 1,
         };
-        orders[index.toString()] = order;
+        orders['order$index'] = order;
         index++;
+        i++; // Increment i only if no elements are removed
       } else {
-        ids.removeAt(i);
+        // Only remove elements if their indices are valid
+        if (validIdIndex) {
+          ids.removeAt(i);
+        }
+        if (validAdditionalIndex) {
+          additionals.removeAt(i);
+        }
         quantity.removeAt(i);
-        i--;
+        // Do not increment i since we've removed the current element
       }
     }
 
@@ -554,13 +575,14 @@ class _ProductByCategoryState extends State<ProductByCategory> {
       var response = await http.post(url,
           headers: {
             'Content-Type': 'application/json',
-            // 'Authorization':
-            // 'Bearer $token', // Include the token in the request header
+            // Uncomment and use your token if needed
+            // 'Authorization': 'Bearer ${LocalDataHelper().getUserToken()}',
           },
           body: orderData);
 
       if (response.statusCode == 200) {
-        // ignore: use_build_context_synchronously
+        updateUserBalance(
+            LocalDataHelper().getUserToken().toString(), totalMainPrice);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -635,6 +657,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
 
   @override
   Widget build(BuildContext context) {
+    ErrorWidget.builder = (FlutterErrorDetails details) {
+      return Container();
+    };
     return Scaffold(
         extendBody: true,
         floatingActionButton: SizedBox(
@@ -664,12 +689,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                           },
                         )
                       : setState(() {
-                          sendOrder(quantity, ids, additionals);
-                          updateUserBalance(
-                              LocalDataHelper().getUserToken().toString(),
-                              totalMainPrice);
+                          sendOrder(quantity, ids, additionals, context);
 
-                          currentTab = 0; // Set the selected tab index
+                          // currentTab = 0; // Set the selected tab index
                         });
                 },
                 backgroundColor: const Color.fromARGB(255, 239, 127, 26),
@@ -922,7 +944,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                               width: 15,
                                                             ),
                                                             SizedBox(
-                                                              width: 100,
+                                                              width: 120,
                                                               child: Text(
                                                                 dataList[index][
                                                                         'title']

@@ -16,6 +16,10 @@ import 'src/languages/language_translation.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // Log the error, send to a server, or show a friendly error message
+    // instead of the red or grey screen
+  };
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb) {
     await Firebase.initializeApp();
@@ -71,6 +75,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               primarySwatch: Colors.blue,
+              useMaterial3: false,
             ),
             initialRoute: Routes.splashScreen,
             getPages: Routes.list,

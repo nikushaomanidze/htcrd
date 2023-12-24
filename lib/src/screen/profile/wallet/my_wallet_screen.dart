@@ -48,6 +48,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
   var ammount;
   var jsonData;
   var daysLeft;
+  int intDaysLeft = 0;
   var DeviceInfo;
   late String userId;
 
@@ -346,9 +347,9 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       daysLeft = data['data']['available_subscription_days'] ?? 'Inactive';
       userId = data['data']['id'].toString();
 
-      daysLeft <= 0 || daysLeft[0] == '-'
-          ? daysLeft == 'Inactive'
-          : daysLeft == daysLeft;
+      intDaysLeft = int.parse(daysLeft.toString());
+
+      intDaysLeft <= 0 ? daysLeft == 'Inactive' : daysLeft == daysLeft;
 
       return cardNumber;
     } else {
@@ -677,11 +678,12 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                           const Spacer(),
                                                           Text(
                                                             _profileContentController
-                                                                        .profileDataModel
-                                                                        .value
-                                                                        .data!
-                                                                        .cardStatus !=
-                                                                    'Inactive'
+                                                                            .profileDataModel
+                                                                            .value
+                                                                            .data!
+                                                                            .cardStatus !=
+                                                                        'Inactive' &&
+                                                                    daysLeft > 0
                                                                 ? "${AppTags.active.tr} $daysLeft ${AppTags.day.tr}"
                                                                 : AppTags
                                                                     .nonActive

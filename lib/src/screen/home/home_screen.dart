@@ -625,7 +625,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                                                   index]
                                                               .banner!)
                                                       : const NetworkImage(
-                                                          'https://www.streamingmedia.com/Images/ArticleImages/ArticleImage.14143.jpg'),
+                                                          'https://www.survivorsuk.org/wp-content/uploads/2017/01/no-image.jpg'),
                                                   fit: BoxFit.cover)),
                                           child: Container(
                                             decoration: const BoxDecoration(

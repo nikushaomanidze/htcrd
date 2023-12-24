@@ -66,7 +66,7 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
     }
   }
 
-  double _currentSliderValue = 55550;
+  double _currentSliderValue = 50;
   String selectedOption = AppTags.all.tr;
 
   bool isContainerVisible = false;
@@ -383,7 +383,7 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
     List<dynamic> filteredCategories = [
       for (var category in homeScreenContentController
           .homeDataModel.value.data![categoriesIndex].categories!)
-        if (category.parentId != 0) category,
+        if (category.parentId == 32) category,
     ];
 
     filteredCategories.sort((a, b) => calculateDistance(
