@@ -74,6 +74,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Hot Card requires access to the location to support the nearest companies.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Hot Card requires access to the location to support the nearest companies.</string>
 	<key>NSCameraUsageDescription</key>
