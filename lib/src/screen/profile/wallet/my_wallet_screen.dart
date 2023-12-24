@@ -43,6 +43,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
 
   final TextEditingController amountController = TextEditingController();
 
+  TextEditingController inputController = TextEditingController();
+
   var cardCode1;
   var momwveviUserId;
   var ammount;
@@ -144,8 +146,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
   }
 
   //es funkcia iuzeris barats aaktiurebs
-  Future<void> makeCardActive(
-      String userId, String totalDays, String token, String recId) async {
+  Future<void> makeCardActive(String userId, String totalDays, String token,
+      String recId, String reff_code) async {
     final url =
         Uri.parse('${NetworkService.apiUrl}/user/make_card_active/$userId');
 
@@ -158,6 +160,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       final Map<String, dynamic> data = {
         'total_days': totalDays,
         'recId': recId,
+        'referral_code': reff_code
       };
 
       final response = await http.post(
@@ -270,7 +273,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
                   final recId = rec_Id;
-                  makeCardActive(userId, '30', accessToken, recId);
+                  makeCardActive(
+                      userId, '30', accessToken, recId, inputController.text);
 
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -278,43 +282,9 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                         builder: (context) => const DashboardScreen()),
                     (route) => false,
                   );
-                  // if (paymentProvider.paymentMessage == "Success") {
-                  //   await makeCardActive(userId, 30, accessToken);
-                  //   const snackBar = SnackBar(
-                  //     content: Text('Payment Successfully!'),
-                  //     backgroundColor: Colors.green,
-                  //   );
-                  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  //   Navigator.pushAndRemoveUntil(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => DashboardScreen()),
-                  //     (route) => false,
-                  //   );
-                  // } else {
-                  //   const snackBar = SnackBar(
-                  //     content: Text('Payment UnSuccessfully!'),
-                  //     backgroundColor: Colors.green,
-                  //   );
-                  //   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  //   Navigator.pushAndRemoveUntil(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => DashboardScreen()),
-                  //     (route) => false,
-                  //   );
-                  // }
                 }
               },
             ),
-            // InAppWebView(
-            //   initialUrlRequest: URLRequest(url: Uri.parse(tbcBankLink)),
-            //   onConsoleMessage: (controller, consoleMessage) {
-            //     if (consoleMessage.message=="https://google.com") {
-            //       makeCardActive(userId, 30, accessToken);
-            //     }
-            //   },
-            // ),
           ),
         ),
       ),
@@ -803,7 +773,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                             widget.userDataModel.data!.token,
                                             phoneId);
                                         momwveviUserId != null &&
-                                                momwveviUserId != 0
+                                                    momwveviUserId != 0 ||
+                                                inputController.text.length >= 5
                                             ? ammount = 15
                                             : ammount = 28;
 
@@ -823,22 +794,42 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                   // ak kide erti dasturi unda ro recurrent gadaxdaze tanaxmaa
                                                   style: const TextStyle(
                                                       fontFamily: 'bpg')),
-                                              content: momwveviUserId != 0 &&
-                                                      momwveviUserId != null
-                                                  ? Text(
-                                                      AppTags.costsAndDate.tr,
-                                                      style: const TextStyle(
-                                                          fontFamily: 'bpg'))
-                                                  : Text(
-                                                      AppTags.costsAndDate20.tr,
-                                                      style: const TextStyle(
-                                                          fontFamily: 'bpg')),
+                                              content: SizedBox(
+                                                height: 80,
+                                                child: Column(
+                                                  children: [
+                                                    momwveviUserId != 0 &&
+                                                            momwveviUserId !=
+                                                                null
+                                                        ? Container()
+                                                        : const Text(
+                                                            'Referral Id'),
+                                                    momwveviUserId != 0 &&
+                                                            momwveviUserId !=
+                                                                null
+                                                        ? Text(AppTags
+                                                            .costsAndDate.tr)
+                                                        : TextField(
+                                                            controller:
+                                                                inputController,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                                    hintText:
+                                                                        "Referral Code"),
+                                                          ),
+                                                  ],
+                                                ),
+                                              ),
                                               actions: <Widget>[
                                                 TextButton(
                                                   child: Text(AppTags.yes.tr,
                                                       style: const TextStyle(
                                                           fontFamily: 'bpg')),
                                                   onPressed: () async {
+                                                    String inputText =
+                                                        inputController.text;
+
+                                                    // print(inputText);
                                                     // final String accessToken =
                                                     //     await getToken(apiKey,
                                                     //         clientId, clientSecret);
@@ -846,9 +837,6 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                     // print(userId);
 
                                                     processPayment();
-                                                    // makeCardActive(
-                                                    //     userId, 30, accessToken);
-                                                    // Perform your "yes" action here
                                                   },
                                                 ),
                                                 TextButton(
@@ -1044,7 +1032,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                         '0',
                                                         widget.userDataModel
                                                             .data!.token,
-                                                        '0');
+                                                        '0',
+                                                        inputController.text);
                                                     Navigator.of(context).pop();
                                                     // Perform your "yes" action here
                                                   },
