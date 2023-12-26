@@ -944,12 +944,12 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                               width: 15,
                                                             ),
                                                             SizedBox(
-                                                              width: 120,
+                                                              width: 135,
                                                               child: Text(
                                                                 dataList[index][
                                                                         'title']
                                                                     .toString(),
-                                                                maxLines: 2,
+                                                                maxLines: 3,
                                                                 style: TextStyle(
                                                                     color: finalIndex ==
                                                                             index
