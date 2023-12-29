@@ -39,6 +39,7 @@ class _AllCategoryState extends State<AllCategory> {
             category.slug != 'gartoba' &&
             category.order == 15)
         .toList();
+
     setState(() {});
   }
 
@@ -68,7 +69,7 @@ class _AllCategoryState extends State<AllCategory> {
                 appBar: AppBar(
                   backgroundColor: Colors.white,
                   elevation: 0,
-                  leading: Get.previousRoute == '/dashboardScreen'
+                  leading: Get.context != null && Navigator.canPop(Get.context!)
                       ? IconButton(
                           icon: Icon(
                             Icons.arrow_back,

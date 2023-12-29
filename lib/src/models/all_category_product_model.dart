@@ -36,8 +36,12 @@ class Data {
         : null;
     if (json['categories'] != null) {
       categories = <Categories>[];
-      json['categories'].forEach((v) {
-        categories!.add(Categories.fromJson(v));
+      json['categories'].forEach((cat) {
+        if (cat['sub_categories'] != null) {
+          cat['sub_categories'].forEach((subCat) {
+            categories!.add(Categories.fromJson(subCat));
+          });
+        }
       });
     }
   }

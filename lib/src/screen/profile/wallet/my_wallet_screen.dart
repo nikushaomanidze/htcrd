@@ -774,7 +774,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                             phoneId);
                                         momwveviUserId != null &&
                                                     momwveviUserId != 0 ||
-                                                inputController.text.length >= 5
+                                                inputController.text.length >= 7
                                             ? ammount = 15
                                             : ammount = 28;
 
@@ -1121,19 +1121,1347 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                   : const LoaderWidget(),
             );
           } else if (snapshot.hasError) {
-            return Center(
-                child: Column(
-              children: [
-                Text(AppTags.sorryForinconvenience.tr,
-                    style: const TextStyle(fontFamily: 'bpg')),
-                ElevatedButton.icon(
-                    onPressed: () {
-                      Get.back();
+            return FutureBuilder<String>(
+              future: fetchCardNumber(widget.userDataModel.data!.token),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Obx(
+                    () => myWalletController.myWalletModel.value.data != null
+                        ? Container(
+                            height: size.height,
+                            width: size.width,
+                            color: Colors.white,
+                            child: ListView(
+                              children: [
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Container(
+                                      height: isMobile(context) ? 200.h : 220.h,
+                                      width: MediaQuery.of(context).size.width,
+                                      color: AppThemeData.myRewardAppBarColor,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8.0.h, horizontal: 10.w),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            //SizedBox(height: 5,),
+                                            Container(
+                                              width: isMobile(context)
+                                                  ? 74.w
+                                                  : 50.w,
+                                              height: 74.h,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    width: 0.w,
+                                                    color: Theme.of(context)
+                                                        .scaffoldBackgroundColor),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      spreadRadius: 2.r,
+                                                      blurRadius: 10.r,
+                                                      color: Colors.black
+                                                          .withOpacity(0.1),
+                                                      offset:
+                                                          const Offset(0, 5))
+                                                ],
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: NetworkImage(
+                                                    widget.userDataModel.data!
+                                                        .image!
+                                                        .toString(),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10.h,
+                                            ),
+                                            Text(
+                                                "${widget.userDataModel.data!.firstName!.toString()} ${widget.userDataModel.data!.lastName!.toString()}",
+                                                style: isMobile(context)
+                                                    ? AppThemeData
+                                                        .titleTextStyle_14
+                                                        .copyWith(
+                                                            fontFamily: 'bpg')
+                                                    : AppThemeData
+                                                        .titleTextStyle_11Tab
+                                                        .copyWith(
+                                                            fontFamily: 'bpg')),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                        bottom: snapshot.data != 'Not Available'
+                                            ? -130.h
+                                            : -90.h,
+                                        left: 20.w,
+                                        child: SizedBox(
+                                          width: size.width - 40,
+                                          child: Column(
+                                            children: [
+                                              snapshot.data != 'Not Available'
+                                                  ? Container(
+                                                      transform: Matrix4
+                                                          .translationValues(
+                                                              0.0, -20.0, 0.0),
+                                                      alignment: Alignment
+                                                          .bottomCenter,
+                                                      decoration: BoxDecoration(
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            255, 43, 43, 43),
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                                Radius.circular(
+                                                                    15)),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: AppThemeData
+                                                                .headlineTextColor
+                                                                .withOpacity(
+                                                                    0.1),
+                                                            spreadRadius: 0.r,
+                                                            blurRadius: 30.r,
+                                                            offset: const Offset(
+                                                                0,
+                                                                15), // changes position of shadow
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: Padding(
+                                                        padding: EdgeInsets.all(
+                                                            20.r),
+                                                        child: Column(
+                                                          children: [
+                                                            SizedBox(
+                                                              height: widget
+                                                                          .userDataModel
+                                                                          .data!
+                                                                          .phone ==
+                                                                      ""
+                                                                  ? 0.h
+                                                                  : 00.h,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                const Spacer(),
+                                                                Text(
+                                                                  _profileContentController.profileDataModel.value.data!.cardStatus !=
+                                                                              'Inactive' &&
+                                                                          daysLeft >
+                                                                              0
+                                                                      ? "${AppTags.active.tr} $daysLeft ${AppTags.day.tr}"
+                                                                      : AppTags
+                                                                          .nonActive
+                                                                          .tr,
+                                                                  style: isMobile(
+                                                                          context)
+                                                                      ? TextStyle(
+                                                                          color: const Color
+                                                                              .fromARGB(
+                                                                              255,
+                                                                              255,
+                                                                              255,
+                                                                              255),
+                                                                          fontFamily:
+                                                                              "bpg",
+                                                                          fontSize:
+                                                                              14.sp,
+                                                                          overflow:
+                                                                              TextOverflow.clip,
+                                                                        )
+                                                                      : AppThemeData
+                                                                          .titleTextStyle_11Tab
+                                                                          .copyWith(
+                                                                              fontFamily: 'bpg'),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 15,
+                                                                )
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                              height: 60.h,
+                                                            ),
+                                                            widget.userDataModel.data!
+                                                                        .email ==
+                                                                    ""
+                                                                ? const SizedBox()
+                                                                : Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width:
+                                                                            20.w,
+                                                                      ),
+                                                                      Text(
+                                                                        snapshot
+                                                                            .data
+                                                                            .toString(),
+                                                                        style: isMobile(context)
+                                                                            ? TextStyle(
+                                                                                color: const Color.fromARGB(255, 255, 255, 255),
+                                                                                fontFamily: "bpg",
+                                                                                fontSize: 18.sp,
+                                                                                overflow: TextOverflow.clip,
+                                                                              )
+                                                                            : AppThemeData.titleTextStyle_11Tab.copyWith(fontFamily: 'bpg'),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : SizedBox(
+                                                      child: Center(
+                                                        child: Text(
+                                                            AppTags
+                                                                .noCardIsAdded
+                                                                .tr,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontFamily:
+                                                                        'bpg')),
+                                                      ),
+                                                    ),
+                                              SizedBox(
+                                                height: 20.h,
+                                              ),
+                                            ],
+                                          ),
+                                        ))
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 120,
+                                ),
+                                Row(
+                                  children: [
+                                    const Spacer(),
+                                    if (snapshot.data != 'Not Available')
+                                      InkWell(
+                                        onTap: () {
+                                          fetchMomwveviUserID(widget
+                                                  .userDataModel.data!.token)
+                                              .then((value) {
+                                            setState(() async {
+                                              var momwveviUserId = value;
+                                              var phoneId;
+                                              var deviceInfo =
+                                                  DeviceInfoPlugin();
+                                              if (Platform.isAndroid) {
+                                                var meore = await deviceInfo
+                                                    .androidInfo;
+                                                phoneId = meore.id;
+                                              } else {
+                                                var meore =
+                                                    await deviceInfo.iosInfo;
+                                                phoneId =
+                                                    meore.identifierForVendor;
+                                              }
+                                              setUserDeviceId(
+                                                  userId,
+                                                  widget.userDataModel.data!
+                                                      .token,
+                                                  phoneId);
+                                              momwveviUserId != null &&
+                                                          momwveviUserId != 0 ||
+                                                      inputController
+                                                              .text.length >=
+                                                          7
+                                                  ? ammount = 15
+                                                  : ammount = 28;
+
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text(
+                                                        _profileContentController
+                                                                    .profileDataModel
+                                                                    .value
+                                                                    .data!
+                                                                    .cardStatus !=
+                                                                'Inactive'
+                                                            ? AppTags
+                                                                .cardUpgrade.tr
+                                                            : AppTags
+                                                                .activeCard.tr,
+                                                        // ak kide erti dasturi unda ro recurrent gadaxdaze tanaxmaa
+                                                        style: const TextStyle(
+                                                            fontFamily: 'bpg')),
+                                                    content: SizedBox(
+                                                      height: 80,
+                                                      child: Column(
+                                                        children: [
+                                                          momwveviUserId != 0 &&
+                                                                  momwveviUserId !=
+                                                                      null
+                                                              ? Container()
+                                                              : const Text(
+                                                                  'Referral Id'),
+                                                          momwveviUserId != 0 &&
+                                                                  momwveviUserId !=
+                                                                      null
+                                                              ? Text(AppTags
+                                                                  .costsAndDate
+                                                                  .tr)
+                                                              : TextField(
+                                                                  controller:
+                                                                      inputController,
+                                                                  decoration:
+                                                                      const InputDecoration(
+                                                                          hintText:
+                                                                              "Referral Code"),
+                                                                ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child: Text(
+                                                            AppTags.yes.tr,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontFamily:
+                                                                        'bpg')),
+                                                        onPressed: () async {
+                                                          String inputText =
+                                                              inputController
+                                                                  .text;
+
+                                                          // print(inputText);
+                                                          // final String accessToken =
+                                                          //     await getToken(apiKey,
+                                                          //         clientId, clientSecret);
+                                                          // print(widget.userDataModel.data!.token);
+                                                          // print(userId);
+
+                                                          processPayment();
+                                                        },
+                                                      ),
+                                                      TextButton(
+                                                        child: Text(
+                                                            AppTags.no.tr,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontFamily:
+                                                                        'bpg')),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          // Perform your "no" action here
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            });
+                                          }).catchError((error) {
+                                            // Handle error
+                                            if (kDebugMode) {
+                                              print(
+                                                  'Error fetching momwvevi_useris_id: $error');
+                                            }
+                                          });
+                                        },
+                                        child: Container(
+                                          width: 120,
+                                          height: 140,
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                255, 15, 153, 61),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(15)),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: AppThemeData
+                                                    .headlineTextColor
+                                                    .withOpacity(0.1),
+                                                spreadRadius: 0.r,
+                                                blurRadius: 30.r,
+                                                offset: const Offset(0,
+                                                    15), // changes position of shadow
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              const SizedBox(
+                                                height: 25,
+                                              ),
+                                              const Icon(
+                                                Icons.add,
+                                                color: Colors.white,
+                                                size: 35,
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Align(
+                                                  alignment: Alignment.center,
+                                                  child: SizedBox(
+                                                    width: double
+                                                        .infinity, // Ensure the container takes the full width
+                                                    child: Text(
+                                                      _profileContentController
+                                                                  .profileDataModel
+                                                                  .value
+                                                                  .data!
+                                                                  .cardStatus !=
+                                                              AppTags
+                                                                  .nonActive.tr
+                                                          ? AppTags.upgrade.tr
+                                                          : AppTags.activate.tr,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'bpg',
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                      ),
+                                                      maxLines: 2,
+                                                      softWrap: true,
+                                                      textAlign: TextAlign
+                                                          .center, // Center the text
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 25,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    else
+                                      InkWell(
+                                        onTap: () async {
+                                          var urlToSend =
+                                              '${NetworkService.apiUrl}/user/update_card_number/';
+                                          final random = Random();
+                                          const digits = '0123456789';
+                                          const length = 14;
+                                          String randomNumber = '';
+                                          for (int i = 0; i < length; i++) {
+                                            randomNumber += digits[
+                                                random.nextInt(digits.length)];
+                                          }
+                                          postData(
+                                              urlToSend + userId,
+                                              {"card_number": randomNumber},
+                                              widget.userDataModel.data!.token);
+
+                                          updateCardCode(randomNumber);
+                                          setState(() {
+                                            cardCode1 = snapshot.data;
+                                          });
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Container(
+                                          width: 120,
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                255, 15, 153, 61),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(15)),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: AppThemeData
+                                                    .headlineTextColor
+                                                    .withOpacity(0.1),
+                                                spreadRadius: 0.r,
+                                                blurRadius: 30.r,
+                                                offset: const Offset(0,
+                                                    15), // changes position of shadow
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              const SizedBox(
+                                                height: 25,
+                                              ),
+                                              const Icon(
+                                                Icons.add,
+                                                color: Colors.white,
+                                                size: 35,
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(AppTags.add.tr,
+                                                  style: const TextStyle(
+                                                      fontFamily: 'bpg',
+                                                      color: Colors.white)),
+                                              const SizedBox(
+                                                height: 25,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    snapshot.data != 'Not Available' &&
+                                            _profileContentController
+                                                    .profileDataModel
+                                                    .value
+                                                    .data!
+                                                    .cardStatus !=
+                                                'Inactive'
+                                        ? const Spacer()
+                                        : const SizedBox(),
+                                    snapshot.data != 'Not Available' &&
+                                            _profileContentController
+                                                    .profileDataModel
+                                                    .value
+                                                    .data!
+                                                    .cardStatus !=
+                                                'Inactive'
+                                        ? InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text(
+                                                      AppTags
+                                                          .cardCencellation.tr,
+                                                      style: const TextStyle(
+                                                          fontFamily: 'bpg'),
+                                                    ),
+                                                    content: Text(
+                                                        AppTags
+                                                            .cardCencellationCosts
+                                                            .tr,
+                                                        style: const TextStyle(
+                                                            fontFamily: 'bpg')),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        child: Text(
+                                                            AppTags.yes.tr,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontFamily:
+                                                                        'bpg')),
+                                                        onPressed: () {
+                                                          makeCardActive(
+                                                              userId,
+                                                              '0',
+                                                              widget
+                                                                  .userDataModel
+                                                                  .data!
+                                                                  .token,
+                                                              '0',
+                                                              inputController
+                                                                  .text);
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          // Perform your "yes" action here
+                                                        },
+                                                      ),
+                                                      TextButton(
+                                                        child: Text(
+                                                            AppTags.no.tr,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontFamily:
+                                                                        'bpg')),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          // Perform your "no" action here
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Container(
+                                              width: 120,
+                                              height: 140,
+                                              decoration: BoxDecoration(
+                                                color: const Color.fromARGB(
+                                                    255, 153, 15, 15),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(15)),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: AppThemeData
+                                                        .headlineTextColor
+                                                        .withOpacity(0.1),
+                                                    spreadRadius: 0.r,
+                                                    blurRadius: 30.r,
+                                                    offset: const Offset(0,
+                                                        15), // changes position of shadow
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 25,
+                                                  ),
+                                                  const Icon(
+                                                    Icons.remove,
+                                                    color: Colors.white,
+                                                    size: 35,
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Align(
+                                                    alignment: Alignment.center,
+                                                    child: SizedBox(
+                                                      width: double
+                                                          .infinity, // Ensure the container takes the full width
+                                                      child: Text(
+                                                        AppTags.cancellation.tr,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'bpg',
+                                                          color: Colors.white,
+                                                        ),
+                                                        textAlign: TextAlign
+                                                            .center, // Center the text
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 25,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        : const SizedBox(),
+                                    const Spacer(),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 25.h,
+                                ),
+                              ],
+                            ),
+                          )
+                        : const LoaderWidget(),
+                  );
+                } else if (snapshot.hasError) {
+                  return FutureBuilder<String>(
+                    future: fetchCardNumber(widget.userDataModel.data!.token),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Obx(
+                          () => myWalletController.myWalletModel.value.data !=
+                                  null
+                              ? Container(
+                                  height: size.height,
+                                  width: size.width,
+                                  color: Colors.white,
+                                  child: ListView(
+                                    children: [
+                                      Stack(
+                                        clipBehavior: Clip.none,
+                                        children: [
+                                          Container(
+                                            height: isMobile(context)
+                                                ? 200.h
+                                                : 220.h,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            color: AppThemeData
+                                                .myRewardAppBarColor,
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 8.0.h,
+                                                  horizontal: 10.w),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  //SizedBox(height: 5,),
+                                                  Container(
+                                                    width: isMobile(context)
+                                                        ? 74.w
+                                                        : 50.w,
+                                                    height: 74.h,
+                                                    decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          width: 0.w,
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .scaffoldBackgroundColor),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                            spreadRadius: 2.r,
+                                                            blurRadius: 10.r,
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                    0.1),
+                                                            offset:
+                                                                const Offset(
+                                                                    0, 5))
+                                                      ],
+                                                      shape: BoxShape.circle,
+                                                      image: DecorationImage(
+                                                        fit: BoxFit.cover,
+                                                        image: NetworkImage(
+                                                          widget.userDataModel
+                                                              .data!.image!
+                                                              .toString(),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10.h,
+                                                  ),
+                                                  Text(
+                                                      "${widget.userDataModel.data!.firstName!.toString()} ${widget.userDataModel.data!.lastName!.toString()}",
+                                                      style: isMobile(context)
+                                                          ? AppThemeData
+                                                              .titleTextStyle_14
+                                                              .copyWith(
+                                                                  fontFamily:
+                                                                      'bpg')
+                                                          : AppThemeData
+                                                              .titleTextStyle_11Tab
+                                                              .copyWith(
+                                                                  fontFamily:
+                                                                      'bpg')),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                              bottom: snapshot.data !=
+                                                      'Not Available'
+                                                  ? -130.h
+                                                  : -90.h,
+                                              left: 20.w,
+                                              child: SizedBox(
+                                                width: size.width - 40,
+                                                child: Column(
+                                                  children: [
+                                                    snapshot.data !=
+                                                            'Not Available'
+                                                        ? Container(
+                                                            transform: Matrix4
+                                                                .translationValues(
+                                                                    0.0,
+                                                                    -20.0,
+                                                                    0.0),
+                                                            alignment: Alignment
+                                                                .bottomCenter,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: const Color
+                                                                  .fromARGB(255,
+                                                                  43, 43, 43),
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                      .all(
+                                                                      Radius.circular(
+                                                                          15)),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: AppThemeData
+                                                                      .headlineTextColor
+                                                                      .withOpacity(
+                                                                          0.1),
+                                                                  spreadRadius:
+                                                                      0.r,
+                                                                  blurRadius:
+                                                                      30.r,
+                                                                  offset: const Offset(
+                                                                      0,
+                                                                      15), // changes position of shadow
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(
+                                                                          20.r),
+                                                              child: Column(
+                                                                children: [
+                                                                  SizedBox(
+                                                                    height: widget.userDataModel.data!.phone ==
+                                                                            ""
+                                                                        ? 0.h
+                                                                        : 00.h,
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      const Spacer(),
+                                                                      Text(
+                                                                        _profileContentController.profileDataModel.value.data!.cardStatus != 'Inactive' &&
+                                                                                daysLeft > 0
+                                                                            ? "${AppTags.active.tr} $daysLeft ${AppTags.day.tr}"
+                                                                            : AppTags.nonActive.tr,
+                                                                        style: isMobile(context)
+                                                                            ? TextStyle(
+                                                                                color: const Color.fromARGB(255, 255, 255, 255),
+                                                                                fontFamily: "bpg",
+                                                                                fontSize: 14.sp,
+                                                                                overflow: TextOverflow.clip,
+                                                                              )
+                                                                            : AppThemeData.titleTextStyle_11Tab.copyWith(fontFamily: 'bpg'),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        width:
+                                                                            15,
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height:
+                                                                        60.h,
+                                                                  ),
+                                                                  widget.userDataModel.data!
+                                                                              .email ==
+                                                                          ""
+                                                                      ? const SizedBox()
+                                                                      : Row(
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width: 20.w,
+                                                                            ),
+                                                                            Text(
+                                                                              snapshot.data.toString(),
+                                                                              style: isMobile(context)
+                                                                                  ? TextStyle(
+                                                                                      color: const Color.fromARGB(255, 255, 255, 255),
+                                                                                      fontFamily: "bpg",
+                                                                                      fontSize: 18.sp,
+                                                                                      overflow: TextOverflow.clip,
+                                                                                    )
+                                                                                  : AppThemeData.titleTextStyle_11Tab.copyWith(fontFamily: 'bpg'),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : SizedBox(
+                                                            child: Center(
+                                                              child: Text(
+                                                                  AppTags
+                                                                      .noCardIsAdded
+                                                                      .tr,
+                                                                  style: const TextStyle(
+                                                                      fontFamily:
+                                                                          'bpg')),
+                                                            ),
+                                                          ),
+                                                    SizedBox(
+                                                      height: 20.h,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ))
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 120,
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Spacer(),
+                                          if (snapshot.data != 'Not Available')
+                                            InkWell(
+                                              onTap: () {
+                                                fetchMomwveviUserID(widget
+                                                        .userDataModel
+                                                        .data!
+                                                        .token)
+                                                    .then((value) {
+                                                  setState(() async {
+                                                    var momwveviUserId = value;
+                                                    var phoneId;
+                                                    var deviceInfo =
+                                                        DeviceInfoPlugin();
+                                                    if (Platform.isAndroid) {
+                                                      var meore =
+                                                          await deviceInfo
+                                                              .androidInfo;
+                                                      phoneId = meore.id;
+                                                    } else {
+                                                      var meore =
+                                                          await deviceInfo
+                                                              .iosInfo;
+                                                      phoneId = meore
+                                                          .identifierForVendor;
+                                                    }
+                                                    setUserDeviceId(
+                                                        userId,
+                                                        widget.userDataModel
+                                                            .data!.token,
+                                                        phoneId);
+                                                    momwveviUserId != null &&
+                                                                momwveviUserId !=
+                                                                    0 ||
+                                                            inputController.text
+                                                                    .length >=
+                                                                7
+                                                        ? ammount = 15
+                                                        : ammount = 28;
+
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return AlertDialog(
+                                                          title: Text(
+                                                              _profileContentController
+                                                                          .profileDataModel
+                                                                          .value
+                                                                          .data!
+                                                                          .cardStatus !=
+                                                                      'Inactive'
+                                                                  ? AppTags
+                                                                      .cardUpgrade
+                                                                      .tr
+                                                                  : AppTags
+                                                                      .activeCard
+                                                                      .tr,
+                                                              // ak kide erti dasturi unda ro recurrent gadaxdaze tanaxmaa
+                                                              style: const TextStyle(
+                                                                  fontFamily:
+                                                                      'bpg')),
+                                                          content: SizedBox(
+                                                            height: 80,
+                                                            child: Column(
+                                                              children: [
+                                                                momwveviUserId !=
+                                                                            0 &&
+                                                                        momwveviUserId !=
+                                                                            null
+                                                                    ? Container()
+                                                                    : const Text(
+                                                                        'Referral Id'),
+                                                                momwveviUserId !=
+                                                                            0 &&
+                                                                        momwveviUserId !=
+                                                                            null
+                                                                    ? Text(AppTags
+                                                                        .costsAndDate
+                                                                        .tr)
+                                                                    : TextField(
+                                                                        controller:
+                                                                            inputController,
+                                                                        decoration:
+                                                                            const InputDecoration(hintText: "Referral Code"),
+                                                                      ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              child: Text(
+                                                                  AppTags
+                                                                      .yes.tr,
+                                                                  style: const TextStyle(
+                                                                      fontFamily:
+                                                                          'bpg')),
+                                                              onPressed:
+                                                                  () async {
+                                                                String
+                                                                    inputText =
+                                                                    inputController
+                                                                        .text;
+
+                                                                // print(inputText);
+                                                                // final String accessToken =
+                                                                //     await getToken(apiKey,
+                                                                //         clientId, clientSecret);
+                                                                // print(widget.userDataModel.data!.token);
+                                                                // print(userId);
+
+                                                                processPayment();
+                                                              },
+                                                            ),
+                                                            TextButton(
+                                                              child: Text(
+                                                                  AppTags.no.tr,
+                                                                  style: const TextStyle(
+                                                                      fontFamily:
+                                                                          'bpg')),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                // Perform your "no" action here
+                                                              },
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  });
+                                                }).catchError((error) {
+                                                  // Handle error
+                                                  if (kDebugMode) {
+                                                    print(
+                                                        'Error fetching momwvevi_useris_id: $error');
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                width: 120,
+                                                height: 140,
+                                                decoration: BoxDecoration(
+                                                  color: const Color.fromARGB(
+                                                      255, 15, 153, 61),
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(15)),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: AppThemeData
+                                                          .headlineTextColor
+                                                          .withOpacity(0.1),
+                                                      spreadRadius: 0.r,
+                                                      blurRadius: 30.r,
+                                                      offset: const Offset(0,
+                                                          15), // changes position of shadow
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    const SizedBox(
+                                                      height: 25,
+                                                    ),
+                                                    const Icon(
+                                                      Icons.add,
+                                                      color: Colors.white,
+                                                      size: 35,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: SizedBox(
+                                                          width: double
+                                                              .infinity, // Ensure the container takes the full width
+                                                          child: Text(
+                                                            _profileContentController
+                                                                        .profileDataModel
+                                                                        .value
+                                                                        .data!
+                                                                        .cardStatus !=
+                                                                    AppTags
+                                                                        .nonActive
+                                                                        .tr
+                                                                ? AppTags
+                                                                    .upgrade.tr
+                                                                : AppTags
+                                                                    .activate
+                                                                    .tr,
+                                                            style:
+                                                                const TextStyle(
+                                                              fontFamily: 'bpg',
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 12,
+                                                            ),
+                                                            maxLines: 2,
+                                                            softWrap: true,
+                                                            textAlign: TextAlign
+                                                                .center, // Center the text
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 25,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          else
+                                            InkWell(
+                                              onTap: () async {
+                                                var urlToSend =
+                                                    '${NetworkService.apiUrl}/user/update_card_number/';
+                                                final random = Random();
+                                                const digits = '0123456789';
+                                                const length = 14;
+                                                String randomNumber = '';
+                                                for (int i = 0;
+                                                    i < length;
+                                                    i++) {
+                                                  randomNumber += digits[random
+                                                      .nextInt(digits.length)];
+                                                }
+                                                postData(
+                                                    urlToSend + userId,
+                                                    {
+                                                      "card_number":
+                                                          randomNumber
+                                                    },
+                                                    widget.userDataModel.data!
+                                                        .token);
+
+                                                updateCardCode(randomNumber);
+                                                setState(() {
+                                                  cardCode1 = snapshot.data;
+                                                });
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Container(
+                                                width: 120,
+                                                decoration: BoxDecoration(
+                                                  color: const Color.fromARGB(
+                                                      255, 15, 153, 61),
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(15)),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: AppThemeData
+                                                          .headlineTextColor
+                                                          .withOpacity(0.1),
+                                                      spreadRadius: 0.r,
+                                                      blurRadius: 30.r,
+                                                      offset: const Offset(0,
+                                                          15), // changes position of shadow
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    const SizedBox(
+                                                      height: 25,
+                                                    ),
+                                                    const Icon(
+                                                      Icons.add,
+                                                      color: Colors.white,
+                                                      size: 35,
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(AppTags.add.tr,
+                                                        style: const TextStyle(
+                                                            fontFamily: 'bpg',
+                                                            color:
+                                                                Colors.white)),
+                                                    const SizedBox(
+                                                      height: 25,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          snapshot.data != 'Not Available' &&
+                                                  _profileContentController
+                                                          .profileDataModel
+                                                          .value
+                                                          .data!
+                                                          .cardStatus !=
+                                                      'Inactive'
+                                              ? const Spacer()
+                                              : const SizedBox(),
+                                          snapshot.data != 'Not Available' &&
+                                                  _profileContentController
+                                                          .profileDataModel
+                                                          .value
+                                                          .data!
+                                                          .cardStatus !=
+                                                      'Inactive'
+                                              ? InkWell(
+                                                  onTap: () {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return AlertDialog(
+                                                          title: Text(
+                                                            AppTags
+                                                                .cardCencellation
+                                                                .tr,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontFamily:
+                                                                        'bpg'),
+                                                          ),
+                                                          content: Text(
+                                                              AppTags
+                                                                  .cardCencellationCosts
+                                                                  .tr,
+                                                              style: const TextStyle(
+                                                                  fontFamily:
+                                                                      'bpg')),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              child: Text(
+                                                                  AppTags
+                                                                      .yes.tr,
+                                                                  style: const TextStyle(
+                                                                      fontFamily:
+                                                                          'bpg')),
+                                                              onPressed: () {
+                                                                makeCardActive(
+                                                                    userId,
+                                                                    '0',
+                                                                    widget
+                                                                        .userDataModel
+                                                                        .data!
+                                                                        .token,
+                                                                    '0',
+                                                                    inputController
+                                                                        .text);
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                // Perform your "yes" action here
+                                                              },
+                                                            ),
+                                                            TextButton(
+                                                              child: Text(
+                                                                  AppTags.no.tr,
+                                                                  style: const TextStyle(
+                                                                      fontFamily:
+                                                                          'bpg')),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                // Perform your "no" action here
+                                                              },
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    width: 120,
+                                                    height: 140,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255, 153, 15, 15),
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .all(
+                                                              Radius.circular(
+                                                                  15)),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: AppThemeData
+                                                              .headlineTextColor
+                                                              .withOpacity(0.1),
+                                                          spreadRadius: 0.r,
+                                                          blurRadius: 30.r,
+                                                          offset: const Offset(
+                                                              0,
+                                                              15), // changes position of shadow
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Column(
+                                                      children: [
+                                                        const SizedBox(
+                                                          height: 25,
+                                                        ),
+                                                        const Icon(
+                                                          Icons.remove,
+                                                          color: Colors.white,
+                                                          size: 35,
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: SizedBox(
+                                                            width: double
+                                                                .infinity, // Ensure the container takes the full width
+                                                            child: Text(
+                                                              AppTags
+                                                                  .cancellation
+                                                                  .tr,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontFamily:
+                                                                    'bpg',
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                              textAlign: TextAlign
+                                                                  .center, // Center the text
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 25,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                              : const SizedBox(),
+                                          const Spacer(),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 25.h,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const LoaderWidget(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Center(
+                            child: Column(
+                          children: [
+                            Text(AppTags.sorryForinconvenience.tr,
+                                style: const TextStyle(fontFamily: 'bpg')),
+                            ElevatedButton.icon(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                icon: const Icon(Icons.home),
+                                label: Text(AppTags.back.tr))
+                          ],
+                        ));
+                      }
+                      return const Center(child: CircularProgressIndicator());
                     },
-                    icon: const Icon(Icons.home),
-                    label: Text(AppTags.back.tr))
-              ],
-            ));
+                  );
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            );
           }
           return const Center(child: CircularProgressIndicator());
         },

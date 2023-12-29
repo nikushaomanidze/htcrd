@@ -10,7 +10,8 @@ import 'api_exception.dart';
 
 class NetworkService {
   static String apiUrl = "${Config.apiServerUrl}/v100";
-  static String walletRechargeUrl =  Config.apiServerUrl.substring(0,Config.apiServerUrl.length-4);
+  static String walletRechargeUrl =
+      Config.apiServerUrl.substring(0, Config.apiServerUrl.length - 4);
   Future fetchJsonData(String url) {
     return _getData(url);
   }

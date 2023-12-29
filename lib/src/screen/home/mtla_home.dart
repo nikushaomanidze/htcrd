@@ -65,6 +65,11 @@ class _MtlaHomeState extends State<MtlaHome> {
     return permission == LocationPermission.whileInUse;
   }
 
+  Future<void> clearCache() async {
+    DefaultCacheManager manager = DefaultCacheManager();
+    await manager.emptyCache();
+  }
+
   Future<List<dynamic>> cacheApiResponse() async {
     String url =
         '${NetworkService.apiUrl}/category/all?lang=${LocalDataHelper().getLangCode() ?? "en"}'; // Replace with your API endpoint URL
@@ -77,8 +82,12 @@ class _MtlaHomeState extends State<MtlaHome> {
       // API response is cached, you can read and parse the JSON data
       String cachedData = await fileInfo.file.readAsString();
       Map<String, dynamic> jsonData = jsonDecode(cachedData);
-      final categories = jsonData['data']['categories'];
-      return categories;
+      final categories = jsonData['data']['categories'][0]['sub_categories'];
+      final secondCategories =
+          jsonData['data']['categories'][1]['sub_categories'];
+      ;
+
+      return categories + secondCategories;
     } else {
       // API response is not cached, make the API request and cache it
       final apiResponse = await makeApiRequest(url);
@@ -990,6 +999,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                   category['slug'] != 'gartoba' &&
                                   category['order'] == 15)
                               .toList();
+                          print(filteredCategories);
 
                           // Render the list of categories as needed
                           return NotificationListener<

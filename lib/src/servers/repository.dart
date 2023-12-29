@@ -1016,9 +1016,8 @@ class Repository {
   //All Category
   Future<AllCategoryModel?> getAllCategory({int page = 1}) async {
     AllCategoryModel? allCategoryModel;
-    var headers = {"apiKey": Config.apiKey};
-    var url = Uri.parse(
-        "${NetworkService.apiUrl}/category/all?page=$page&$langCurrCode");
+    var headers = {"apiKey": Config.apiKey, 'Cache-Control': 'no-cache'};
+    var url = Uri.parse("${NetworkService.apiUrl}/category/all?$langCurrCode");
     final response = await http.get(url, headers: headers);
 
     var data = json.decode(response.body);
@@ -1037,8 +1036,10 @@ class Repository {
 
   //All Category Content
   Future<AllCategoryProductModel?> getAllCategoryContent({int page = 1}) async {
-    var url = "${NetworkService.apiUrl}/category/all?page=$page&$langCurrCode";
+    var url = "${NetworkService.apiUrl}/category/all?$langCurrCode";
+    var header = {'Cache-Control': 'no-cache'};
     final response = await _service.fetchJsonData(url);
+    print(response.toString());
     return AllCategoryProductModel.fromJson(response);
   }
 
