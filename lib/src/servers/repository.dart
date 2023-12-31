@@ -1037,9 +1037,9 @@ class Repository {
   //All Category Content
   Future<AllCategoryProductModel?> getAllCategoryContent({int page = 1}) async {
     var url = "${NetworkService.apiUrl}/category/all?$langCurrCode";
-    var header = {'Cache-Control': 'no-cache'};
+    // var header = {'Cache-Control': 'no-cache'};
     final response = await _service.fetchJsonData(url);
-    print(response.toString());
+    // print(response.toString());
     return AllCategoryProductModel.fromJson(response);
   }
 

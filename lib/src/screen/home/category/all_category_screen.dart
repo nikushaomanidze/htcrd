@@ -11,7 +11,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../models/all_category_product_model.dart';
 import '../../../servers/repository.dart';
 import '../../../utils/app_theme_data.dart';
-import '../../../widgets/loader/shimmer_all_category.dart';
 
 class AllCategory extends StatefulWidget {
   const AllCategory({Key? key}) : super(key: key);
@@ -62,7 +61,18 @@ class _AllCategoryState extends State<AllCategory> {
   @override
   Widget build(BuildContext context) {
     return newcategories == null
-        ? const ShimmerAllCategory()
+        ? Scaffold(
+            backgroundColor: const Color.fromARGB(255, 230, 230, 230),
+            body: SafeArea(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: Center(
+                  child: Image.asset("assets/images/splashgif.gif"),
+                ),
+              ),
+            ),
+          )
         : newcategories!.isEmpty
             ? Container()
             : Scaffold(

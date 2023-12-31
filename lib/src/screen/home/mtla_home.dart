@@ -85,7 +85,6 @@ class _MtlaHomeState extends State<MtlaHome> {
       final categories = jsonData['data']['categories'][0]['sub_categories'];
       final secondCategories =
           jsonData['data']['categories'][1]['sub_categories'];
-      ;
 
       return categories + secondCategories;
     } else {
@@ -999,7 +998,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                   category['slug'] != 'gartoba' &&
                                   category['order'] == 15)
                               .toList();
-                          print(filteredCategories);
+                          // print(filteredCategories);
 
                           // Render the list of categories as needed
                           return NotificationListener<

@@ -84,8 +84,24 @@ class _ProductByCategoryState extends State<ProductByCategory> {
         return daysLeft;
       }
     } else {
-      daysLeft = 'Inactive';
-      throw Exception('Failed to load data');
+      final response = await http.get(
+        Uri.parse('${NetworkService.apiUrl}/user/profile'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        daysLeft = data['data']['available_subscription_days'] ?? 'Inactive';
+        if (daysLeft > 0) {
+          return daysLeft;
+        } else {
+          daysLeft = 'Inactive';
+          return daysLeft;
+        }
+      } else {
+        daysLeft = 'Inactive2';
+        throw Exception('Failed to load data');
+      }
     }
   }
 
@@ -116,11 +132,23 @@ class _ProductByCategoryState extends State<ProductByCategory> {
   }
 
   static void navigateTo(String? latlong) async {
-    var uri = Uri.parse("google.navigation:q=$latlong&mode=d");
-    if (await canLaunchUrl(Uri.parse(uri.toString()))) {
-      await launchUrl(Uri.parse(uri.toString()));
+    String url;
+
+    // Check the platform
+    if (Platform.isIOS) {
+      // Apple Maps URL for iOS
+      url = 'http://maps.apple.com/?q=$latlong';
     } else {
-      throw 'Could not launch ${uri.toString()}';
+      // Google Maps URL for other platforms
+      url = 'google.navigation:q=$latlong&mode=d';
+    }
+
+    final uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
@@ -520,7 +548,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
   }
 
   Future<void> sendOrder(List<dynamic> quantity, List<dynamic> ids,
-      List<dynamic> additionals, BuildContext context) async {
+      List<dynamic> additionals, BuildContext context, additionalWNames) async {
     FlutterError.onError = (FlutterErrorDetails details) {
       // Log the error, send to a server, or show a friendly error message
       // instead of the red or grey screen
@@ -583,29 +611,35 @@ class _ProductByCategoryState extends State<ProductByCategory> {
       if (response.statusCode == 200) {
         updateUserBalance(
             LocalDataHelper().getUserToken().toString(), totalMainPrice);
+        // ignore: use_build_context_synchronously
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => QrPage(
-                    qty: quantity,
-                    ids: ids,
-                    adds: additionals,
-                    idd: response.body,
-                  )),
+                  qty: quantity,
+                  ids: ids,
+                  adds: additionals,
+                  idd: response.body,
+                  addwn: additionalWNames,
+                  iddwn: mainWNames)),
         );
       } else {
+        if (kDebugMode) {
+          print('error${response.statusCode}');
+        }
         try {
           var response = await http.post(url,
               headers: {
                 'Content-Type': 'application/json',
-                // 'Authorization':
-                // 'Bearer $token', // Include the token in the request header
               },
               body: orderData);
 
           if (response.statusCode == 200) {
-            // Success!
           } else {
+            if (kDebugMode) {
+              print(orderData.toString());
+              print('error${response.statusCode}');
+            }
             try {
               var response = await http.post(url,
                   headers: {
@@ -640,6 +674,8 @@ class _ProductByCategoryState extends State<ProductByCategory> {
   bool active_ac = false;
   List ids = [];
   List additionals = [];
+  var additionalWNames = {};
+  var mainWNames = {};
   List addedIndexes = [];
 
   int switchnum = 1;
@@ -689,7 +725,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                           },
                         )
                       : setState(() {
-                          sendOrder(quantity, ids, additionals, context);
+                          sendOrder(quantity, ids, additionals, context,
+                              additionalWNames);
+                          // print('Order Sent!');
 
                           // currentTab = 0; // Set the selected tab index
                         });
@@ -977,6 +1015,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                           true;
                                                                       differentAdditionalDishes -=
                                                                           1;
+                                                                      additionalWNames
+                                                                          .remove(
+                                                                              additionalfinalId);
                                                                       additionals
                                                                           .remove(
                                                                               additionalfinalId);
@@ -1004,6 +1045,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                         addedIndexes.removeWhere((element) =>
                                                                             element ==
                                                                             index);
+                                                                        mainWNames.remove(dataList[index]
+                                                                            [
+                                                                            'id']);
                                                                         differentDishes -=
                                                                             1;
                                                                       }
@@ -1113,6 +1157,12 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                               double.parse(dataList[index]['formatted_price'].toString());
                                                                           totalMainPrice +=
                                                                               double.parse(dataList[index]['formatted_price'].toString());
+                                                                          mainWNames[dataList[index]
+                                                                              [
+                                                                              'id']] = dataList[
+                                                                                  index]
+                                                                              [
+                                                                              'title'];
                                                                           switchnum =
                                                                               2;
                                                                           quantity[index] +=
@@ -1287,6 +1337,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                         additionalfinalIndex = index;
                                                                                         additionalfinalId = dataList3[index]['id'];
                                                                                         additionals.add(additionalfinalId);
+                                                                                        additionalWNames[dataList3[index]['id']] = dataList3[index]['title'];
                                                                                         differentAdditionalDishes += 1;
                                                                                         switchnum = 1;
                                                                                       });

@@ -826,9 +826,6 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                       style: const TextStyle(
                                                           fontFamily: 'bpg')),
                                                   onPressed: () async {
-                                                    String inputText =
-                                                        inputController.text;
-
                                                     // print(inputText);
                                                     // final String accessToken =
                                                     //     await getToken(apiKey,
@@ -1434,10 +1431,6 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                                     fontFamily:
                                                                         'bpg')),
                                                         onPressed: () async {
-                                                          String inputText =
-                                                              inputController
-                                                                  .text;
-
                                                           // print(inputText);
                                                           // final String accessToken =
                                                           //     await getToken(apiKey,
@@ -2083,11 +2076,6 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                                           'bpg')),
                                                               onPressed:
                                                                   () async {
-                                                                String
-                                                                    inputText =
-                                                                    inputController
-                                                                        .text;
-
                                                                 // print(inputText);
                                                                 // final String accessToken =
                                                                 //     await getToken(apiKey,

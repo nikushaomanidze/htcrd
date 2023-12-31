@@ -17,13 +17,17 @@ class QrPage extends StatefulWidget {
   final List ids;
   final List adds;
   final String idd;
+  final Map addwn;
+  final Map iddwn;
 
   const QrPage(
       {super.key,
       required this.qty,
       required this.ids,
       required this.adds,
-      required this.idd});
+      required this.idd,
+      required this.addwn,
+      required this.iddwn});
 
   @override
   State<QrPage> createState() => _QrPageState();
@@ -88,6 +92,8 @@ class _QrPageState extends State<QrPage> {
     List qty = widget.qty;
     List ids = widget.ids;
     List adds = widget.adds;
+    Map addwn = widget.addwn;
+    Map iddwn = widget.iddwn;
     String idd = widget.idd;
 
     Map combined = Map.fromIterables(ids, qty);
@@ -145,36 +151,26 @@ class _QrPageState extends State<QrPage> {
                 const SizedBox(
                   height: 25,
                 ),
-                FutureBuilder(
-                  future: forEach(combinedWithoutZero),
-                  builder: (context, snapshot) {
-                    try {
-                      if (snapshot.hasData) {
-                        return Column(
-                          children:
-                              List.generate(snapshot.data!.length, (index) {
-                            var element = snapshot.data![index];
-                            return SizedBox(
-                                height: 50,
-                                child: Text(
-                                  '${element['data']['title']} x ${combinedWithoutZero[element['data']['id']].toString()}',
-                                  style: const TextStyle(
-                                      fontFamily: 'bpg', color: Colors.white),
-                                ));
-                          }),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
+                Builder(
+                  builder: (BuildContext context) {
+                    // Generate list of widgets from the map
+                    List<Widget> widgets = iddwn.entries.map((entry) {
+                      var value = entry.value;
+                      return SizedBox(
+                        height: 50,
+                        child: SingleChildScrollView(
+                          child: Text(
+                            '$value',
+                            style: const TextStyle(
+                                fontFamily: 'bpg', color: Colors.white),
+                          ),
+                        ),
+                      );
+                    }).toList();
 
-                      return const CircularProgressIndicator();
-                    } catch (e) {
-                      return const Center(
-                          child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: CircularProgressIndicator()));
-                    }
+                    return Column(
+                      children: widgets,
+                    );
                   },
                 ),
                 const SizedBox(
@@ -193,50 +189,26 @@ class _QrPageState extends State<QrPage> {
                 const SizedBox(
                   height: 25,
                 ),
-                FutureBuilder(
-                  future: forEach(sachurkebi),
-                  builder: (context, snapshot) {
-                    try {
-                      if (snapshot.hasData) {
-                        return Column(
-                          children:
-                              List.generate(snapshot.data!.length, (index) {
-                            var element = snapshot.data![index];
-                            return SizedBox(
-                                height: 50,
-                                child: SingleChildScrollView(
-                                    child: Text(
-                                  '${element['data']['title']} x ${sachurkebi[element['data']['id']].toString()}',
-                                  style: const TextStyle(
-                                      fontFamily: 'bpg', color: Colors.white),
-                                )));
-                          }),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Column(
-                          children:
-                              List.generate(snapshot.data!.length, (index) {
-                            var element = snapshot.data![index];
-                            return SizedBox(
-                                height: 50,
-                                child: SingleChildScrollView(
-                                    child: Text(
-                                  '${element['data']['title']} x ${sachurkebi[element['data']['id']].toString()}',
-                                  style: const TextStyle(
-                                      fontFamily: 'bpg', color: Colors.white),
-                                )));
-                          }),
-                        );
-                      }
+                Builder(
+                  builder: (BuildContext context) {
+                    // Generate list of widgets from the map
+                    List<Widget> widgets = addwn.entries.map((entry) {
+                      var value = entry.value;
+                      return SizedBox(
+                        height: 50,
+                        child: SingleChildScrollView(
+                          child: Text(
+                            '$value',
+                            style: const TextStyle(
+                                fontFamily: 'bpg', color: Colors.white),
+                          ),
+                        ),
+                      );
+                    }).toList();
 
-                      return const CircularProgressIndicator();
-                    } catch (e) {
-                      return const Center(
-                          child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: CircularProgressIndicator()));
-                    }
+                    return Column(
+                      children: widgets,
+                    );
                   },
                 ),
                 const SizedBox(
