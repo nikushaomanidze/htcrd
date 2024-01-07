@@ -205,7 +205,7 @@ class _VoucherListState extends State<VoucherList> {
                         const Spacer(),
                         Text(
                           snapshot.data!['data']['result_active'] != null
-                              ? '${snapshot.data!['data']['result_active']}₾'
+                              ? '${snapshot.data!['data']['result_active'] * 2}₾'
                               : '0' '₾',
                           style: const TextStyle(
                               fontSize: 22, color: Colors.white),

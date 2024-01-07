@@ -30,7 +30,7 @@ final ProfileContentController _profileContentController =
 
 Future<Map> sendPostRequest() async {
   String dd =
-      _profileContentController.profileDataModel.value.data!.referralId!;
+      _profileContentController.profileDataModel.value.data!.userId!.toString();
   var url =
       "${NetworkService.apiUrl}$referralUrl$dd?token=${LocalDataHelper().getUserToken()}";
   var headers = {'Content-Type': 'application/json'};

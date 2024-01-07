@@ -772,9 +772,10 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                             userId,
                                             widget.userDataModel.data!.token,
                                             phoneId);
-                                        momwveviUserId != null &&
-                                                    momwveviUserId != 0 ||
-                                                inputController.text.length >= 7
+
+                                        inputController.text.length >= 7 &&
+                                                inputController.text.length <=
+                                                    12
                                             ? ammount = 15
                                             : ammount = 28;
 
@@ -1368,11 +1369,12 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                   widget.userDataModel.data!
                                                       .token,
                                                   phoneId);
-                                              momwveviUserId != null &&
-                                                          momwveviUserId != 0 ||
+
+                                              inputController.text.length >=
+                                                          7 &&
                                                       inputController
-                                                              .text.length >=
-                                                          7
+                                                              .text.length <=
+                                                          12
                                                   ? ammount = 15
                                                   : ammount = 28;
 
@@ -2008,12 +2010,13 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                         widget.userDataModel
                                                             .data!.token,
                                                         phoneId);
-                                                    momwveviUserId != null &&
-                                                                momwveviUserId !=
-                                                                    0 ||
-                                                            inputController.text
+
+                                                    inputController.text
                                                                     .length >=
-                                                                7
+                                                                7 &&
+                                                            inputController.text
+                                                                    .length <=
+                                                                12
                                                         ? ammount = 15
                                                         : ammount = 28;
 

@@ -724,13 +724,11 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                             );
                           },
                         )
-                      : setState(() {
-                          sendOrder(quantity, ids, additionals, context,
-                              additionalWNames);
-                          // print('Order Sent!');
+                      : sendOrder(quantity, ids, additionals, context,
+                          additionalWNames);
+                  // print('Order Sent!');
 
-                          // currentTab = 0; // Set the selected tab index
-                        });
+                  // currentTab = 0; // Set the selected tab index
                 },
                 backgroundColor: const Color.fromARGB(255, 239, 127, 26),
                 child: const Icon(Icons.done_rounded, size: 45),

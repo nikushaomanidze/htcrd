@@ -401,8 +401,7 @@ class _SignupScreenState extends State<SignupScreen> {
               width: 333,
               child: InkWell(
                 onTap: () {
-                  if (authController.codeControllers.text == code ||
-                      authController.codeControllers.text == "2222") {
+                  if (authController.codeControllers.text == code) {
                     authController.signUp(
                         countryCode: authController.countryCodeControllers.text,
                         firstName: authController.firstNameController.text,

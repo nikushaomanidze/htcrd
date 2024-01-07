@@ -303,116 +303,6 @@ class _ProfileContentState extends State<ProfileContent> {
                       const SizedBox(
                         height: 5,
                       ),
-                      // FutureBuilder<String>(
-                      //   future: fetchCardNumber(
-                      //       LocalDataHelper().getUserToken().toString()),
-                      //   builder: (context, snapshot) {
-                      //     if (snapshot.hasData &&
-                      //         snapshot.data != 'Not Available') {
-                      //       return InkWell(
-                      //         onTap: () {
-                      //           Navigator.of(context).push(
-                      //             MaterialPageRoute(
-                      //               builder: (context) => MyWalletScreen(
-                      //                 userDataModel: userDataModel,
-                      //               ),
-                      //             ),
-                      //           );
-                      //         },
-                      //         child: Container(
-                      //           transform:
-                      //               Matrix4.translationValues(0.0, -20.0, 0.0),
-                      //           alignment: Alignment.bottomCenter,
-                      //           decoration: BoxDecoration(
-                      //             color: const Color.fromARGB(255, 43, 43, 43),
-                      //             borderRadius: const BorderRadius.all(
-                      //                 Radius.circular(10)),
-                      //             boxShadow: [
-                      //               BoxShadow(
-                      //                 color: AppThemeData.headlineTextColor
-                      //                     .withOpacity(0.1),
-                      //                 spreadRadius: 0.r,
-                      //                 blurRadius: 30.r,
-                      //                 offset: const Offset(
-                      //                     0, 15), // changes position of shadow
-                      //               ),
-                      //             ],
-                      //           ),
-                      //           child: Padding(
-                      //             padding: EdgeInsets.all(20.r),
-                      //             child: Column(
-                      //               children: [
-                      //                 SizedBox(
-                      //                   height: userDataModel.data!.phone == ""
-                      //                       ? 0.h
-                      //                       : 00.h,
-                      //                 ),
-                      //                 Row(
-                      //                   children: [
-                      //                     const Spacer(),
-                      //                     Text(
-                      //                       _profileContentController
-                      //                                   .profileDataModel
-                      //                                   .value
-                      //                                   .data!
-                      //                                   .cardStatus !=
-                      //                               'Inactive'
-                      //                           ? "${AppTags.active.tr} $daysLeft ${AppTags.day.tr}"
-                      //                           : AppTags.nonActive.tr,
-                      //                       style: isMobile(context)
-                      //                           ? TextStyle(
-                      //                               color: const Color.fromARGB(
-                      //                                   255, 255, 255, 255),
-                      //                               fontFamily: 'bpg',
-                      //                               fontSize: 14.sp,
-                      //                               overflow: TextOverflow.clip,
-                      //                             )
-                      //                           : AppThemeData
-                      //                               .titleTextStyle_11Tab,
-                      //                     ),
-                      //                     const SizedBox(
-                      //                       width: 15,
-                      //                     )
-                      //                   ],
-                      //                 ),
-                      //                 SizedBox(
-                      //                   height: 60.h,
-                      //                 ),
-                      //                 userDataModel.data!.email == ""
-                      //                     ? const SizedBox()
-                      //                     : Row(
-                      //                         children: [
-                      //                           SizedBox(
-                      //                             width: 20.w,
-                      //                           ),
-                      //                           Text(
-                      //                             snapshot.data.toString(),
-                      //                             style: isMobile(context)
-                      //                                 ? TextStyle(
-                      //                                     color: const Color
-                      //                                         .fromARGB(255,
-                      //                                         255, 255, 255),
-                      //                                     fontFamily: 'bpg',
-                      //                                     fontSize: 18.sp,
-                      //                                     overflow:
-                      //                                         TextOverflow.clip,
-                      //                                   )
-                      //                                 : AppThemeData
-                      //                                     .titleTextStyle_11Tab,
-                      //                           ),
-                      //                         ],
-                      //                       ),
-                      //               ],
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       );
-                      //     } else if (snapshot.hasError) {
-                      //       return const SizedBox();
-                      //     }
-                      //     return const SizedBox();
-                      //   },
-                      // ),
                     ],
                   ),
                 ),
@@ -420,22 +310,6 @@ class _ProfileContentState extends State<ProfileContent> {
           isMobile(context)
               ? mobileView(userDataModel)
               : tabView(userDataModel),
-          // Padding(
-          //   padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
-          //   child: InkWell(
-          //     onTap: () {
-          //       accountDeleteDialogue(userDataModel);
-          //     },
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text(AppTags.deleteYourAccount.tr,
-          //             style: AppThemeData.todayDealNewStyleTab
-          //                 .copyWith(fontSize: 12.sp, fontFamily: 'bpg'))
-          //       ],
-          //     ),
-          //   ),
-          // ),
         ],
       );
   //Mobile view
