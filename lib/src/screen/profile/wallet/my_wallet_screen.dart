@@ -236,8 +236,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
   void processPayment() async {
     final String accessToken1 = await getToken(apiKey, clientId, clientSecret);
     final String accessToken = widget.userDataModel.data!.token;
-    final Map<String, dynamic> paymentResponse =
-        await payment(apiKey, accessToken1, ammount);
+    final Map<String, dynamic> paymentResponse = await payment(
+        apiKey, accessToken1, inputController.toString().length >= 7 ? 15 : 28);
     final String secondUrl = paymentResponse['links'][1]['uri'];
     final String rec_Id = paymentResponse['recId'];
     final String tbcBankLink = secondUrl;
