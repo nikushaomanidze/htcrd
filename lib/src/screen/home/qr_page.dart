@@ -217,7 +217,7 @@ class _QrPageState extends State<QrPage> {
                 Center(
                   child: QrImageView(
                     data:
-                        'https://julius.ltd/hotcard/api/v100/invoice-view/${jsonMap['data']['id']}',
+                        'https://hotcard.online/api/v100/invoice-view/${jsonMap['data']['id']}',
                     version: QrVersions.auto,
                     size: 200.0,
                     backgroundColor: Colors.white,

@@ -51,7 +51,7 @@ class SearchProductCard extends StatelessWidget {
               title: data.categoryTitle,
               category: data.categoryFilter,
               imgurl:
-                  'https://julius.ltd/hotcard/public/${data.categoryBanner!['image_835x200']}',
+                  'https://hotcard.online/api/public/${data.categoryBanner!['image_835x200']}',
               latlong: data.categoryLatlong,
               number: data.categoryNumber,
               soc_fb: data.categoryFb,

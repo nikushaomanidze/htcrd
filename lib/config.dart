@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Config {
   // copy your server url from admin panel
-  static String apiServerUrl = "https://julius.ltd/hotcard/api";
+  static String apiServerUrl = "https://hotcard.online/api";
   // copy your api key from admin panel
   static String apiKey = "X7BICVCWBZUB6S8Y";
 

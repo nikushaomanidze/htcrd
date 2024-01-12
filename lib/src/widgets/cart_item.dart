@@ -34,7 +34,7 @@ class _CartItemState extends State<CartItem> {
   Future<dynamic> fetchProductData(int productId, double price, int qty) async {
     final response = await http.get(
       Uri.parse(
-          'http://julius.ltd/hotcard/api/v100/product-details/$productId'),
+          'https://hotcard.online//api/v100/product-details/$productId'),
     );
 
     if (response.statusCode == 200) {
@@ -42,7 +42,7 @@ class _CartItemState extends State<CartItem> {
       final categoryId = data['data']['category'];
       final response2 = await http.get(
         Uri.parse(
-            'http://julius.ltd/hotcard/api/v100/products-by-category/$categoryId'),
+            'https://hotcard.online/api/v100/products-by-category/$categoryId'),
       );
 
       if (response2.statusCode == 200) {
