@@ -8,7 +8,10 @@ class MyWalletController extends GetxController {
 
   Future getMyWallet() async {
     await Repository().getMyWallet().then((value) {
-      myWalletModel.value = value!;
+      print('getMyWallet then: ${value.toString()}');
+      if (value != null) {
+        myWalletModel.value = value;
+      }
     });
     update();
   }

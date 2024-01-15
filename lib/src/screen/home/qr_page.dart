@@ -5,11 +5,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
+import 'package:get/get.dart';
 import 'package:hot_card/src/servers/network_service.dart';
+import 'package:hot_card/src/utils/app_tags.dart';
 import 'package:http/http.dart' as http;
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:hot_card/src/utils/app_tags.dart';
-import 'package:get/get.dart';
+
 import '../../data/local_data_helper.dart';
 
 class QrPage extends StatefulWidget {
@@ -20,14 +21,7 @@ class QrPage extends StatefulWidget {
   final Map addwn;
   final Map iddwn;
 
-  const QrPage(
-      {super.key,
-      required this.qty,
-      required this.ids,
-      required this.adds,
-      required this.idd,
-      required this.addwn,
-      required this.iddwn});
+  const QrPage({super.key, required this.qty, required this.ids, required this.adds, required this.idd, required this.addwn, required this.iddwn});
 
   @override
   State<QrPage> createState() => _QrPageState();
@@ -96,6 +90,8 @@ class _QrPageState extends State<QrPage> {
     Map iddwn = widget.iddwn;
     String idd = widget.idd;
 
+    RxBool showBackButton = false.obs;
+
     Map combined = Map.fromIterables(ids, qty);
 
     Map<int, int> combinedWithoutZero = {};
@@ -123,15 +119,33 @@ class _QrPageState extends State<QrPage> {
             const SizedBox(
               height: 70,
             ),
-            Center(
-              child: Text(
-                AppTags.details.tr,
-                style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'bpg',
-                    color: Colors.white),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Obx(() {
+                  return AnimatedCrossFade(
+                      firstChild: IconButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        icon: Icon(
+                          Icons.arrow_back_outlined,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                      secondChild: SizedBox(),
+                      crossFadeState: showBackButton.isTrue ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                      duration: Duration(milliseconds: 500));
+                }),
+                Center(
+                  child: Text(
+                    AppTags.details.tr,
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, fontFamily: 'bpg', color: Colors.white),
+                  ),
+                ),
+              ],
             ),
             Column(
               children: [
@@ -141,11 +155,7 @@ class _QrPageState extends State<QrPage> {
                 Center(
                   child: Text(
                     AppTags.order.tr,
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'bpg',
-                        color: Colors.white),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, fontFamily: 'bpg', color: Colors.white),
                   ),
                 ),
                 const SizedBox(
@@ -216,8 +226,7 @@ class _QrPageState extends State<QrPage> {
                 ),
                 Center(
                   child: QrImageView(
-                    data:
-                        'https://hotcard.online/api/v100/invoice-view/${jsonMap['data']['id']}',
+                    data: 'https://hotcard.online/api/v100/invoice-view/${jsonMap['data']['id']}',
                     version: QrVersions.auto,
                     size: 200.0,
                     backgroundColor: Colors.white,
@@ -228,12 +237,14 @@ class _QrPageState extends State<QrPage> {
                   height: 15,
                 ),
                 Center(
-                    child: CountdownTimer(
-                  endTime: DateTime.now().millisecondsSinceEpoch +
-                      60000, // 60 seconds
-                  textStyle: const TextStyle(fontSize: 48, color: Colors.white),
-                  onEnd: () {},
-                )),
+                  child: CountdownTimer(
+                    endTime: DateTime.now().millisecondsSinceEpoch + 60000, // 60 seconds
+                    textStyle: const TextStyle(fontSize: 48, color: Colors.white),
+                    onEnd: () {
+                      showBackButton.value = true;
+                    },
+                  ),
+                ),
               ],
             )
           ],

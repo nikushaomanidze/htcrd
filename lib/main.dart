@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hot_card/firebase_options.dart';
 import 'package:hot_card/src/Providers/MapProvider.dart';
 import 'package:hot_card/src/Providers/PaymentProvider.dart';
 import 'package:provider/provider.dart';
@@ -21,15 +22,7 @@ void main() async {
     await Firebase.initializeApp();
   } else {
     await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyDSdAY0btx2wzn07dSKa_kjVy-dvKDMeDI",
-        authDomain: "hotcard-ff104.firebaseapp.com",
-        projectId: "hotcard-ff104",
-        storageBucket: "hotcard-ff104.appspot.com",
-        messagingSenderId: "848498097413",
-        appId: "1:848498097413:web:94b755c4cc6cffe389cb6c",
-        measurementId: "G-QQG1BBHK0E",
-      ),
+      options: DefaultFirebaseOptions.currentPlatform,
     );
   }
   await GetStorage.init();
