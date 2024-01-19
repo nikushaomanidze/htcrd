@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
             initialBinding: InitBindings(),
             locale: storage.languageCode != null
                 ? Locale(storage.languageCode!, storage.countryCode)
-                : const Locale('ka', 'GE'),
+                : const Locale('en', 'US'),
             translations: AppTranslations(),
             fallbackLocale: const Locale('ka', 'GE'),
             debugShowCheckedModeBanner: false,

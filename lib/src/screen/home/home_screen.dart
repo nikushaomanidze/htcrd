@@ -146,7 +146,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           ),
                           Slider(
                             value: _currentSliderValue,
-                            max: 50,
+                            max: 500,
                             divisions: _currentSliderValue <= 10 ? 500 : 100,
                             activeColor: const Color.fromARGB(255, 221, 153, 6),
                             label: _currentSliderValue < 1

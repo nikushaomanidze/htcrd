@@ -111,6 +111,7 @@ class _QrPageState extends State<QrPage> {
       }
     }
     Map<String, dynamic> jsonMap = json.decode(idd);
+
     return Scaffold(
       backgroundColor: const Color(0xffe07527),
       body: SingleChildScrollView(

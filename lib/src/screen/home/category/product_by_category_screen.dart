@@ -78,7 +78,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
       final data = jsonDecode(response.body);
       daysLeft = data['data']['available_subscription_days'] ?? 'Inactive';
       if (daysLeft > 0) {
-        return daysLeft;
+        return daysLeft.toString();
       } else {
         daysLeft = 'Inactive';
         return daysLeft;
@@ -600,24 +600,24 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     });
 
     try {
-      var response = await http.post(url,
-          headers: {
-            'Content-Type': 'application/json',
-            // Uncomment and use your token if needed
-            // 'Authorization': 'Bearer ${LocalDataHelper().getUserToken()}',
-          },
-          body: orderData);
+      var response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          // Uncomment and use your token if needed
+          // 'Authorization': 'Bearer ${LocalDataHelper().getUserToken()}',
+        },
+        body: orderData,
+      );
 
       if (response.statusCode == 200) {
-        updateUserBalance(
-            LocalDataHelper().getUserToken().toString(), totalMainPrice);
+        updateUserBalance(LocalDataHelper().getUserToken().toString(), totalMainPrice);
         // ignore: use_build_context_synchronously
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => QrPage(
-                  qty: quantity,
-                  ids: ids,
+              builder: (context) =>
+                  QrPage(qty: quantity, ids: ids,
                   adds: additionals,
                   idd: response.body,
                   addwn: additionalWNames,
