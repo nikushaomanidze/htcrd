@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 
 import 'src/_route/routes.dart';
 import 'src/bindings/init_bindings.dart';
-import 'src/controllers/init_controller.dart';
 import 'src/data/data_storage_service.dart';
 import 'src/languages/language_translation.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -39,7 +38,6 @@ Future<void> initialConfig() async {
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
   final storage = Get.put(StorageService());
-  final initController = Get.put(InitController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +52,6 @@ class MyApp extends StatelessWidget {
                 create: (context) => PaymentProvider()),
           ],
           child: GetMaterialApp(
-            navigatorObservers: <NavigatorObserver>[initController.observer],
             initialBinding: InitBindings(),
             locale: storage.languageCode != null
                 ? Locale(storage.languageCode!, storage.countryCode)

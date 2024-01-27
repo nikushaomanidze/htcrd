@@ -7,7 +7,6 @@ import 'package:hot_card/src/controllers/color_selection_controller.dart';
 import 'package:hot_card/src/data/local_data_helper.dart';
 import 'package:hot_card/src/models/product_details_model.dart';
 import 'package:hot_card/src/servers/repository.dart';
-import 'package:hot_card/src/utils/analytics_helper.dart';
 import 'package:hot_card/src/utils/constants.dart';
 import 'package:hot_card/src/utils/validators.dart';
 import 'package:image_picker/image_picker.dart';
@@ -168,13 +167,6 @@ class DetailsPageController extends GetxController {
       calculateTotalPrice();
       setProductVariantData(value);
       isFavorite(value.data!.isFavourite);
-      AnalyticsHelper().setAnalyticsData(
-          screenName: "ProductDetailsScreen",
-          eventTitle: "ProductDetails",
-          additionalData: {
-            "productId": proId,
-            "price": value.data != null ? value.data!.price : null,
-          });
       isLoading(false);
       update();
       return value;

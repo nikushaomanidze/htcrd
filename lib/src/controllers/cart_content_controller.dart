@@ -5,7 +5,6 @@ import '../data/local_data_helper.dart';
 import '../models/add_to_cart_list_model.dart';
 import '../models/coupon_applied_list.dart';
 import '../servers/repository.dart';
-import '../utils/analytics_helper.dart';
 
 class CartContentController extends GetxController {
   final Rx<AddToCartListModel> _addToCartListModel = AddToCartListModel().obs;
@@ -53,14 +52,6 @@ class CartContentController extends GetxController {
       required String quantity,
         String? variantsIds,
        String? variantsNames}) async {
-    AnalyticsHelper().setAnalyticsData(
-        screenName: "ProductDetailsScreen",
-        eventTitle: "AddToCart",
-        additionalData: {
-          "productId": productId,
-          "quantity": quantity,
-          "variantsNames": variantsNames,
-        });
     String? trxId = LocalDataHelper().getCartTrxId();
     if (trxId == null) {
       Repository()
@@ -86,12 +77,6 @@ class CartContentController extends GetxController {
   Future deleteAProductFromCart({required String productId}) async {
     await Repository().deleteCartProduct(productId: productId).then((value) {
       getCartList(isShowLoading: false);
-       AnalyticsHelper().setAnalyticsData(
-          screenName: "ProductDetailsScreen",
-          eventTitle: "DeleteFromCart",
-          additionalData: {
-            "productId": productId,
-          });
     });
   }
 

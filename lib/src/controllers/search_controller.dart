@@ -2,7 +2,6 @@ import 'package:get/state_manager.dart';
 
 import '../models/search_product_model.dart';
 import '../servers/repository.dart';
-import '../utils/analytics_helper.dart';
 
 class SearchController extends GetxController {
   final Rx<SearchProductModel> _searchResult = SearchProductModel().obs;
@@ -17,12 +16,6 @@ class SearchController extends GetxController {
     await Repository().getSearchProducts(searchKey: searchValue).then((value) {
       if (value.products!.isNotEmpty || value.restaurants!.isNotEmpty) {
         _searchResult.value = value;
-        AnalyticsHelper().setAnalyticsData(
-            screenName: "SearchScreen",
-            eventTitle: "Search",
-            additionalData: {
-              "searchTag": searchValue,
-            });
       } else {
         searchResult.products = [];
         searchResult.restaurants = [];

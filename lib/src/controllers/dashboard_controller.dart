@@ -4,7 +4,6 @@ import '../_route/routes.dart';
 import '../data/local_data_helper.dart';
 import '../models/add_to_cart_list_model.dart';
 import '../servers/repository.dart';
-import '../utils/analytics_helper.dart';
 import '../utils/constants.dart';
 
 class DashboardController extends GetxController {
@@ -36,7 +35,6 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    AnalyticsHelper().setAnalyticsData(screenName: "HomeScreen");
     getAddToCartList();
   }
 }
