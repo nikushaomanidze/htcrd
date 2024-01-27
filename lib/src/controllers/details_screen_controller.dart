@@ -232,22 +232,27 @@ class DetailsPageController extends GetxController {
   }
 
   void calculateTotalPrice() {
-    double price =
-        productQuantity.value * double.parse(productDetail.value.data!.price);
     if (productDetail.value.data != null) {
+      double basePrice = double.parse(productDetail.value.data!.price);
+
       if (productDetail.value.data!.isWholesale &&
           productDetail.value.data!.wholesalePrices != null) {
         for (var wholesale in productDetail.value.data!.wholesalePrices!) {
           if (productQuantity.value >= wholesale.minQty &&
               productQuantity.value <= wholesale.maxQty) {
-            price = productQuantity.value * double.parse(wholesale.price);
+            totalPrice.value = productQuantity.value * double.parse(wholesale.price);
+            update();
+            return;
           }
         }
       }
+
+      totalPrice.value = productQuantity.value * basePrice;
+      update();
     }
-    totalPrice.value = price;
-    update();
   }
+
+
 
   @override
   void onClose() {

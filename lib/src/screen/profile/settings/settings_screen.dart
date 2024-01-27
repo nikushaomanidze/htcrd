@@ -50,8 +50,8 @@ class Settings extends StatelessWidget {
             ? MediaQuery.of(context).size.width
             : MediaQuery.of(context).size.width - 100.w,
         context: context,
-        animType: AnimType.SCALE,
-        dialogType: DialogType.NO_HEADER,
+        animType: AnimType.scale,
+        dialogType: DialogType.noHeader,
         btnOkColor: AppThemeData.okButton,
         btnCancelColor: AppThemeData.cancelButton,
         buttonsTextStyle:
@@ -81,8 +81,8 @@ class Settings extends StatelessWidget {
             ? MediaQuery.of(context).size.width
             : MediaQuery.of(context).size.width - 100.w,
         context: context,
-        animType: AnimType.SCALE,
-        dialogType: DialogType.NO_HEADER,
+        animType: AnimType.scale,
+        dialogType: DialogType.noHeader,
         btnOkColor: AppThemeData.okButton,
         btnCancelColor: AppThemeData.cancelButton,
         body: Padding(

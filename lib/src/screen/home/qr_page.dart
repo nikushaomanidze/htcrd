@@ -72,14 +72,22 @@ class _QrPageState extends State<QrPage> {
   }
 
   Future<dynamic> fetchData(String id) async {
-    final response = await http
-        .get(Uri.parse('${NetworkService.apiUrl}/product-details/$id'));
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      fetchData(id);
+    try {
+      final response = await http.get(Uri.parse('${NetworkService.apiUrl}/product-details/$id'));
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception("Failed to fetch data for ID: $id");
+      }
+    } catch (e) {
+      print("Error fetching data for ID $id: $e");
+
+      // You might want to return a default value or handle the error differently
+      return null;
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +118,9 @@ class _QrPageState extends State<QrPage> {
         sachurkebi[item] = 1;
       }
     }
+
+
+
     Map<String, dynamic> jsonMap = json.decode(idd);
 
     return Scaffold(
@@ -162,28 +173,27 @@ class _QrPageState extends State<QrPage> {
                 const SizedBox(
                   height: 25,
                 ),
-                Builder(
-                  builder: (BuildContext context) {
-                    // Generate list of widgets from the map
-                    List<Widget> widgets = iddwn.entries.map((entry) {
-                      var value = entry.value;
-                      return SizedBox(
-                        height: 50,
-                        child: SingleChildScrollView(
-                          child: Text(
-                            '$value',
-                            style: const TextStyle(
-                                fontFamily: 'bpg', color: Colors.white),
-                          ),
-                        ),
-                      );
-                    }).toList();
-
-                    return Column(
-                      children: widgets,
-                    );
-                  },
+        Builder(
+          builder: (BuildContext context) {
+            List<Widget> widgets = iddwn.entries.map((entry) {
+              var id = entry.key;
+              var value = entry.value;
+              var quantity = combinedWithoutZero[id] ?? 0; // Get quantity from combinedWithoutZero
+              return SizedBox(
+                height: 50,
+                child: SingleChildScrollView(
+                  child: Text(
+                    '$value x$quantity', // Display quantity next to the item
+                    style: const TextStyle(fontFamily: 'bpg', color: Colors.white),
+                  ),
                 ),
+              );
+            }).toList();
+            return Column(
+              children: widgets,
+            );
+          },
+        ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -200,29 +210,31 @@ class _QrPageState extends State<QrPage> {
                 const SizedBox(
                   height: 25,
                 ),
+        // For addwn (Gift)
                 Builder(
                   builder: (BuildContext context) {
-                    // Generate list of widgets from the map
                     List<Widget> widgets = addwn.entries.map((entry) {
+                      var id = entry.key;
                       var value = entry.value;
+                      var quantity = sachurkebi[id] ?? 0; // Get quantity from sachurkebi
+                      print("Gift ID: $id, Quantity: $quantity");
                       return SizedBox(
                         height: 50,
                         child: SingleChildScrollView(
                           child: Text(
-                            '$value',
-                            style: const TextStyle(
-                                fontFamily: 'bpg', color: Colors.white),
+                            '$value x$quantity', // Display quantity next to the item
+                            style: const TextStyle(fontFamily: 'bpg', color: Colors.white),
                           ),
                         ),
                       );
                     }).toList();
-
                     return Column(
                       children: widgets,
                     );
                   },
                 ),
-                const SizedBox(
+
+        const SizedBox(
                   height: 15,
                 ),
                 Center(

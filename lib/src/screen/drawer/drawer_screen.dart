@@ -172,9 +172,9 @@ class _DrawerScreenState extends State<DrawerScreen> {
     return AwesomeDialog(
       context: context,
       // ignore: deprecated_member_use
-      animType: AnimType.SCALE,
+      animType: AnimType.scale,
       // ignore: deprecated_member_use
-      dialogType: DialogType.WARNING,
+      dialogType: DialogType.warning,
       body: Center(
         child: Text(
           'Do you Really want to logout?',

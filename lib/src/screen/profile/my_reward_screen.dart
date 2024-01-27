@@ -314,8 +314,8 @@ class MyRewardScreen extends StatelessWidget {
   convertRewardWallet(context) {
     return AwesomeDialog(
       context: context,
-      animType: AnimType.SCALE,
-      dialogType: DialogType.NO_HEADER,
+      animType: AnimType.scale,
+      dialogType: DialogType.noHeader,
       btnOkColor: const Color(0xFF333333),
       body: Obx(
         () => Padding(

@@ -547,122 +547,69 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     }
   }
 
-  Future<void> sendOrder(List<dynamic> quantity, List<dynamic> ids,
-      List<dynamic> additionals, BuildContext context, additionalWNames) async {
+  Future<void> sendOrder(
+      List<dynamic> quantity,
+      List<dynamic> ids,
+      List<dynamic> additionals,
+      BuildContext context,
+      additionalWNames,
+      ) async {
     FlutterError.onError = (FlutterErrorDetails details) {
       // Log the error, send to a server, or show a friendly error message
       // instead of the red or grey screen
     };
-    var url = Uri.parse('${NetworkService.apiUrl}/make/direct/order');
+
+    var url = '${NetworkService.apiUrl}/make/direct/order';
 
     // Create the orders object dynamically based on the input lists
-    Map<String, dynamic> orders = {};
-    int index = 0;
+    List<Map<String, dynamic>> orders = [];
 
-    int i = 0;
-    while (i < quantity.length) {
-      // Check if the current index is valid for both ids and additionals
-      bool validIdIndex = i < ids.length;
-      bool validAdditionalIndex = i < additionals.length;
-
-      if (quantity[i] > 0 && validIdIndex) {
+    for (int i = 0; i < quantity.length; i++) {
+      if (quantity[i] > 0) {
         Map<String, dynamic> order = {
           "qty": quantity[i],
-          "product_id": validIdIndex
-              ? ids[i]
-              : 0, // Use 0 or some default value if index is invalid
-          "additional_product_id":
-              validAdditionalIndex && additionals.isNotEmpty
-                  ? additionals[i] ?? 0
-                  : 0,
+          "product_id": ids.elementAt(i) ?? 0,
+          "additional_product_id": additionals.elementAt(i) ?? 0,
           "additional_product_qty": 1,
         };
-        orders['order$index'] = order;
-        index++;
-        i++; // Increment i only if no elements are removed
-      } else {
-        // Only remove elements if their indices are valid
-        if (validIdIndex) {
-          ids.removeAt(i);
-        }
-        if (validAdditionalIndex) {
-          additionals.removeAt(i);
-        }
-        quantity.removeAt(i);
-        // Do not increment i since we've removed the current element
+        orders.add(order);
       }
     }
 
-    // Convert the orders object to JSON
-    var orderData = jsonEncode({
+    // Construct the order data
+    var orderData = {
       "user_id": LocalDataHelper().getUserAllData()!.data!.userId!,
-      "orders": orders
-    });
+      "orders": orders,
+    };
 
     try {
-      var response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          // Uncomment and use your token if needed
-          // 'Authorization': 'Bearer ${LocalDataHelper().getUserToken()}',
-        },
-        body: orderData,
-      );
+      // Send the order data using the postData method
+      var response = await NetworkService().postData(url, orderData);
 
-      if (response.statusCode == 200) {
-        updateUserBalance(LocalDataHelper().getUserToken().toString(), totalMainPrice);
-        // ignore: use_build_context_synchronously
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  QrPage(qty: quantity, ids: ids,
-                  adds: additionals,
-                  idd: response.body,
-                  addwn: additionalWNames,
-                  iddwn: mainWNames)),
+      // Check the response status
+      if (response['status'] == 'success') {
+        updateUserBalance(
+          LocalDataHelper().getUserToken().toString(),
+          totalMainPrice,
         );
+
+        // Process the successful response here
+        // It might involve parsing the response body to extract invoice details
+        // and displaying them to the user.
+        print('Order successfully sent!');
+        print(response);
       } else {
-        if (kDebugMode) {
-          print('error${response.statusCode}');
-        }
-        try {
-          var response = await http.post(url,
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: orderData);
-
-          if (response.statusCode == 200) {
-          } else {
-            if (kDebugMode) {
-              print(orderData.toString());
-              print('error${response.statusCode}');
-            }
-            try {
-              var response = await http.post(url,
-                  headers: {
-                    'Content-Type': 'application/json',
-                    // 'Authorization':
-                    // 'Bearer $token', // Include the token in the request header
-                  },
-                  body: orderData);
-
-              if (response.statusCode == 200) {
-                // Success!
-              } else {
-                // Something went wrong
-              }
-              // ignore: empty_catches
-            } catch (e) {}
-          }
-          // ignore: empty_catches
-        } catch (e) {}
+        // Handle server response indicating an error
+        print('Error: ${response['error_message']}');
+        // Handle error or retry logic here
       }
-      // ignore: empty_catches
-    } catch (e) {}
+    } catch (e) {
+      print('Exception: $e');
+      // Handle exception or retry logic here
+    }
   }
+
+
 
   int finalIndex = 125;
   double mainDishPrice = 0;
