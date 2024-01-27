@@ -8,7 +8,6 @@ import 'package:hot_card/firebase_options.dart';
 import 'package:hot_card/src/Providers/MapProvider.dart';
 import 'package:hot_card/src/Providers/PaymentProvider.dart';
 import 'package:provider/provider.dart';
-
 import 'src/_route/routes.dart';
 import 'src/bindings/init_bindings.dart';
 import 'src/data/data_storage_service.dart';
