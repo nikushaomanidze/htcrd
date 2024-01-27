@@ -559,48 +559,56 @@ class _ProductByCategoryState extends State<ProductByCategory> {
       // instead of the red or grey screen
     };
 
-    var url = '${NetworkService.apiUrl}/make/direct/order';
+    var url = Uri.parse('${NetworkService.apiUrl}/make/direct/order');
 
     // Create the orders object dynamically based on the input lists
-    List<Map<String, dynamic>> orders = [];
+    Map<String, dynamic> orders = {};
+    int index = 0;
 
     for (int i = 0; i < quantity.length; i++) {
       if (quantity[i] > 0) {
-        Map<String, dynamic> order = {
+        orders['order$index'] = {
           "qty": quantity[i],
           "product_id": ids.elementAt(i) ?? 0,
           "additional_product_id": additionals.elementAt(i) ?? 0,
           "additional_product_qty": 1,
         };
-        orders.add(order);
+        index++;
       }
     }
 
-    // Construct the order data
-    var orderData = {
+    // Convert the orders object to JSON
+    var orderData = jsonEncode({
       "user_id": LocalDataHelper().getUserAllData()!.data!.userId!,
       "orders": orders,
-    };
+    });
 
     try {
-      // Send the order data using the postData method
-      var response = await NetworkService().postData(url, orderData);
+      var response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: orderData,
+      );
 
-      // Check the response status
-      if (response['status'] == 'success') {
+      if (response.statusCode == 200) {
         updateUserBalance(
-          LocalDataHelper().getUserToken().toString(),
-          totalMainPrice,
-        );
+            LocalDataHelper().getUserToken().toString(), totalMainPrice);
 
-        // Process the successful response here
-        // It might involve parsing the response body to extract invoice details
-        // and displaying them to the user.
-        print('Order successfully sent!');
-        print(response);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => QrPage(
+              qty: quantity,
+              ids: ids,
+              adds: additionals,
+              idd: response.body,
+              addwn: additionalWNames,
+              iddwn: mainWNames,
+            ),
+          ),
+        );
       } else {
-        // Handle server response indicating an error
-        print('Error: ${response['error_message']}');
+        print('Error: ${response.statusCode}');
         // Handle error or retry logic here
       }
     } catch (e) {
@@ -608,6 +616,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
       // Handle exception or retry logic here
     }
   }
+
+
+
 
 
 
