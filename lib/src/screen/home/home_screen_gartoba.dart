@@ -209,34 +209,42 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                         onTap: () {
                           Get.toNamed(Routes.searchProduct);
                         },
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 20.w),
-                              child: SvgPicture.asset(
-                                "assets/icons/search_bar.svg",
-                                // ignore: deprecated_member_use
-                                color: const Color.fromARGB(255, 88, 88, 88),
-                                width: 18.w,
-                                height: 18.h,
+                        child: Container(
+                          height: 40.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.r),
+                            color: Colors.grey.shade200,
+                          ),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(11),
+                                child: SvgPicture.asset(
+                                  "assets/icons/search_bar.svg",
+                                  color: Colors.black54,
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.w, vertical: 8.h),
-                              child: const VerticalDivider(
-                                thickness: 2,
+                              SizedBox(width: 5,),
+                              Text('პროდუქტის ძებნა', style: TextStyle(color: Colors.black54, fontSize: 13),),
+                              SizedBox(width: 15,),
+                              Padding(
+                                padding: const EdgeInsets.all(9.0),
+                                child: Image.asset('assets/logos/logo.png', width: 60,),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.w),
-                              child: Text(AppTags.searchProduct.tr,
-                                  style: AppThemeData.hintTextStyle_13
-                                      .copyWith(fontFamily: 'bpg')),
-                            )
-                          ],
+                            ],
+                          )
                         ),
                       ),
+                actions: [
+                  IconButton(
+                    padding: EdgeInsets.all(4.r),
+                    icon: SvgPicture.asset(
+                      "assets/icons/search_bar.svg",
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Get.toNamed(Routes.searchProduct),
+                  )
+                ],
                     )
                   : AppBar(
                       backgroundColor: const Color(0xffFAB75A),

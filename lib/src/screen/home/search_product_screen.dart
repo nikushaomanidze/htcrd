@@ -56,19 +56,19 @@ class _SearchProductState extends State<SearchProduct> {
                       color: Colors.black,
                     )),
                 title: Container(
-                  height: 35.h,
+                  height: 40.h,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.r),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppThemeData.boxShadowColor.withOpacity(0.2),
-                        spreadRadius: 0,
-                        blurRadius: 20,
-                        offset:
-                            const Offset(0, 15), // changes position of shadow
-                      ),
-                    ],
+                    borderRadius: BorderRadius.circular(20.r),
+                    color: Colors.grey.shade200,
+            //        boxShadow: [
+              //        BoxShadow(
+               //         color: AppThemeData.boxShadowColor.withOpacity(0.2),
+               //         spreadRadius: 0,
+                //        blurRadius: 20,
+                //        offset:
+                //            const Offset(0, 15), // changes position of shadow
+                 //     ),
+                 //   ],
                   ),
                   child: TextField(
                     controller: searchFieldController,
@@ -81,6 +81,17 @@ class _SearchProductState extends State<SearchProduct> {
                     },
                     onSubmitted: (value) => _listenTextChange(value),
                     decoration: InputDecoration(
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(11),
+                        child: SvgPicture.asset(
+                          "assets/icons/search_bar.svg",
+                          color: Colors.black54,
+                        ),
+                      ),
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.all(9.0),
+                        child: Image.asset('assets/logos/logo.png', width: 60,),
+                      ),
                       fillColor: Colors.green,
                       hoverColor: Colors.blue,
                       enabledBorder: const OutlineInputBorder(
@@ -94,7 +105,7 @@ class _SearchProductState extends State<SearchProduct> {
                             BorderSide(width: 1, color: Colors.transparent),
                       ),
                       helperMaxLines: 1,
-                      hintText: AppTags.searchProducts.tr,
+                      hintText: 'პროდუქტის ძებნა',
                       border: InputBorder.none,
                       contentPadding:
                           EdgeInsets.only(top: 15.h, bottom: 8.h, left: 15.h),
@@ -108,7 +119,7 @@ class _SearchProductState extends State<SearchProduct> {
                     padding: EdgeInsets.all(4.r),
                     icon: SvgPicture.asset(
                       "assets/icons/search_bar.svg",
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                     onPressed: () =>
                         _listenTextChange(searchFieldController.text),
