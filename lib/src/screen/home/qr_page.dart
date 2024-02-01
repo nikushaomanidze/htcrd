@@ -21,7 +21,15 @@ class QrPage extends StatefulWidget {
   final Map addwn;
   final Map iddwn;
 
-  const QrPage({super.key, required this.qty, required this.ids, required this.adds, required this.idd, required this.addwn, required this.iddwn});
+  const QrPage({
+    super.key,
+    required this.qty,
+    required this.ids,
+    required this.adds,
+    required this.idd,
+    required this.addwn,
+    required this.iddwn,
+  });
 
   @override
   State<QrPage> createState() => _QrPageState();
@@ -51,8 +59,11 @@ class _QrPageState extends State<QrPage> {
     List<dynamic> results = [];
 
     for (var id in productIds.keys) {
-      var data = await fetchData(id.toString());
-      results.add(data);
+      var quantity = productIds[id] as int;
+      for (int i = 0; i < quantity; i++) {
+        var data = await fetchData(id.toString());
+        results.add(data);
+      }
     }
 
     return results;
@@ -88,7 +99,6 @@ class _QrPageState extends State<QrPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     List qty = widget.qty;
@@ -103,23 +113,21 @@ class _QrPageState extends State<QrPage> {
     Map combined = Map.fromIterables(ids, qty);
 
     Map<int, int> combinedWithoutZero = {};
-    combined.forEach((key, value) {
-      if (value > 0) {
-        combinedWithoutZero[key] = value;
-      }
-    });
-
     Map<dynamic, int> sachurkebi = {};
 
-    for (var item in adds) {
-      if (sachurkebi.containsKey(item)) {
-        sachurkebi[item] = (sachurkebi[item] ?? 0) + 1;
-      } else {
-        sachurkebi[item] = 1;
+    for (int i = 0; i < ids.length; i++) {
+      var id = ids[i];
+      var quantity = qty[i];
+      if (quantity is! int) {
+        quantity = (quantity as num).toInt();
       }
+
+      combinedWithoutZero[id] = (combinedWithoutZero[id] ?? 0) + quantity;
     }
 
-
+    for (var item in adds) {
+      sachurkebi[item] = (sachurkebi[item] ?? 0) + 1;
+    }
 
     Map<String, dynamic> jsonMap = json.decode(idd);
 
@@ -137,24 +145,31 @@ class _QrPageState extends State<QrPage> {
               children: [
                 Obx(() {
                   return AnimatedCrossFade(
-                      firstChild: IconButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        icon: Icon(
-                          Icons.arrow_back_outlined,
-                          color: Colors.white,
-                          size: 30,
-                        ),
+                    firstChild: IconButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_outlined,
+                        color: Colors.white,
+                        size: 30,
                       ),
-                      secondChild: SizedBox(),
-                      crossFadeState: showBackButton.isTrue ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: 500));
+                    ),
+                    secondChild: SizedBox(),
+                    crossFadeState: showBackButton.isTrue
+                        ? CrossFadeState.showFirst
+                        : CrossFadeState.showSecond,
+                    duration: Duration(milliseconds: 500),
+                  );
                 }),
                 Center(
                   child: Text(
                     AppTags.details.tr,
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, fontFamily: 'bpg', color: Colors.white),
+                    style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'bpg',
+                        color: Colors.white),
                   ),
                 ),
               ],
@@ -167,33 +182,52 @@ class _QrPageState extends State<QrPage> {
                 Center(
                   child: Text(
                     AppTags.order.tr,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, fontFamily: 'bpg', color: Colors.white),
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'bpg',
+                        color: Colors.white),
                   ),
                 ),
                 const SizedBox(
                   height: 25,
                 ),
-        Builder(
-          builder: (BuildContext context) {
-            List<Widget> widgets = iddwn.entries.map((entry) {
-              var id = entry.key;
-              var value = entry.value;
-              var quantity = combinedWithoutZero[id] ?? 0; // Get quantity from combinedWithoutZero
-              return SizedBox(
-                height: 50,
-                child: SingleChildScrollView(
-                  child: Text(
-                    '$value x$quantity', // Display quantity next to the item
-                    style: const TextStyle(fontFamily: 'bpg', color: Colors.white),
-                  ),
+                Builder(
+                  builder: (BuildContext context) {
+                    List<Widget> widgets = [];
+
+                    for (var entry in iddwn.entries) {
+                      var id = entry.key;
+                      var value = entry.value;
+                      var quantity = combinedWithoutZero[id] ?? 0;
+
+                      for (int i = 0; i < quantity; i++) {
+                        widgets.add(
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 50,
+                                child: SingleChildScrollView(
+                                  child: Text(
+                                    '$value', // Display the item without quantity
+                                    style: const TextStyle(
+                                        fontFamily: 'bpg',
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10), // Add some spacing between entries
+                            ],
+                          ),
+                        );
+                      }
+                    }
+
+                    return Column(
+                      children: widgets,
+                    );
+                  },
                 ),
-              );
-            }).toList();
-            return Column(
-              children: widgets,
-            );
-          },
-        ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -210,36 +244,50 @@ class _QrPageState extends State<QrPage> {
                 const SizedBox(
                   height: 25,
                 ),
-        // For addwn (Gift)
+                // For addwn (Gift)
                 Builder(
                   builder: (BuildContext context) {
-                    List<Widget> widgets = addwn.entries.map((entry) {
+                    List<Widget> widgets = [];
+
+                    for (var entry in addwn.entries) {
                       var id = entry.key;
                       var value = entry.value;
-                      var quantity = sachurkebi[id] ?? 0; // Get quantity from sachurkebi
-                      print("Gift ID: $id, Quantity: $quantity");
-                      return SizedBox(
-                        height: 50,
-                        child: SingleChildScrollView(
-                          child: Text(
-                            '$value x$quantity', // Display quantity next to the item
-                            style: const TextStyle(fontFamily: 'bpg', color: Colors.white),
+                      var quantity = sachurkebi[id] ?? 0;
+
+                      for (int i = 0; i < quantity; i++) {
+                        widgets.add(
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 50,
+                                child: SingleChildScrollView(
+                                  child: Text(
+                                    '$value', // Display the item without quantity
+                                    style: const TextStyle(
+                                        fontFamily: 'bpg',
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10), // Add some spacing between entries
+                            ],
                           ),
-                        ),
-                      );
-                    }).toList();
+                        );
+                      }
+                    }
+
                     return Column(
                       children: widgets,
                     );
                   },
                 ),
-
-        const SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 Center(
                   child: QrImageView(
-                    data: 'https://hotcard.online/api/v100/invoice-view/${jsonMap['data']['id']}',
+                    data:
+                    'https://hotcard.online/api/v100/invoice-view/${jsonMap['data']['id']}',
                     version: QrVersions.auto,
                     size: 200.0,
                     backgroundColor: Colors.white,
@@ -251,8 +299,10 @@ class _QrPageState extends State<QrPage> {
                 ),
                 Center(
                   child: CountdownTimer(
-                    endTime: DateTime.now().millisecondsSinceEpoch + 60000, // 60 seconds
-                    textStyle: const TextStyle(fontSize: 48, color: Colors.white),
+                    endTime: DateTime.now().millisecondsSinceEpoch +
+                        60000, // 60 seconds
+                    textStyle: const TextStyle(
+                        fontSize: 48, color: Colors.white),
                     onEnd: () {
                       showBackButton.value = true;
                     },

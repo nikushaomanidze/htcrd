@@ -11,7 +11,7 @@ import 'package:hot_card/src/data/local_data_helper.dart';
 import 'package:hot_card/src/screen/dashboard/dashboard_screen.dart';
 import 'package:hot_card/src/servers/network_service.dart';
 import 'package:hot_card/src/servers/repository.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import '../../utils/app_tags.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -32,6 +32,7 @@ import '../../controllers/my_wallet_controller.dart';
 import '../../controllers/profile_content_controller.dart';
 import '../../utils/app_theme_data.dart';
 import '../../utils/responsive.dart';
+import '../splash/splash_screen.dart';
 import 'category/all_category_screen.dart';
 import 'category/product_by_category_screen.dart';
 import 'home_screen.dart';
@@ -275,6 +276,8 @@ class _MtlaHomeState extends State<MtlaHome> {
     if (kDebugMode) {
       print(LocalDataHelper().getUserToken().toString());
     }
+  //  checkAndRequestLocationPermission();
+
   }
 
   mUpdate() async {
@@ -427,72 +430,74 @@ class _MtlaHomeState extends State<MtlaHome> {
   //   );
   // }
 
+  bool locationPermissionChecked = false;
+
+  Future<void> checkAndRequestLocationPermission() async {
+    var status = await Permission.location.status;
+
+    if ((status == PermissionStatus.denied || status == PermissionStatus.permanentlyDenied) && !locationPermissionChecked) {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            title: Text('ლოკაციის გაზიარება აუცილებელია', style: TextStyle(color: Colors.orange)),
+            content: Text('თუ გსურთ ისარგებლოთ ჩვენი აპლიკაციით, გთხოვთ გაგვიზიარეთ ლოკაცია', style: TextStyle(color: Colors.orange)),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  if (status == PermissionStatus.denied) {
+                    await Permission.location.request();
+                    status = await Permission.location.status;
+                    if (status != PermissionStatus.denied) {
+                      locationPermissionChecked = true;
+                      Navigator.of(context).pop();
+                    }
+                  } else if (status == PermissionStatus.permanentlyDenied) {
+                    await openAppSettings();
+                    status = await Permission.location.status;
+                    if (status != PermissionStatus.denied) {
+                      locationPermissionChecked = true;
+                      Navigator.of(context).pop();
+                    }
+                  }
+                },
+                child: Text('გაზიარება', style: TextStyle(color: Colors.orange)),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     // ignore: unused_local_variable
     final ProfileContentController profileContentController =
         Get.put(ProfileContentController());
 
+
     return Scaffold(
       // backgroundColor: Colors.white,
       extendBodyBehindAppBar: false,
       extendBody: true,
       backgroundColor: Colors.transparent,
-
-      // appBar: AppBar(
-      //   leading: null,
-      //   automaticallyImplyLeading: false,
-      //   backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      //   elevation: 0,
-      //   title: InkWell(
-      //     onTap: () {
-      // Get.toNamed(Routes.searchProduct);
-      //     },
-      //     child: Row(
-      //       children: [
-      //         const Spacer(),
-      //         Container(
-      //           decoration: const BoxDecoration(
-      //               color: Colors.transparent,
-      //               borderRadius: BorderRadius.only(
-      //                   bottomLeft: Radius.circular(70),
-      //                   bottomRight: Radius.circular(70),
-      //                   topLeft: Radius.circular(70),
-      //                   topRight: Radius.circular(70))),
-      //           width: 300,
-      //           height: 45,
-      //           child: Row(
-      //             children: [
-      //               const Spacer(),
-      //               SvgPicture.asset(
-      //                 "assets/icons/search_bar.svg",
-      //                 color: const Color.fromARGB(255, 68, 68, 68),
-      //                 width: 18.w,
-      //                 height: 18.h,
-      //               ),
-      //               Padding(
-      //                 padding:
-      //                     EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-      //                 child: const VerticalDivider(
-      //                   thickness: 2,
-      //                 ),
-      //               ),
-      //               Padding(
-      //                 padding: EdgeInsets.symmetric(horizontal: 10.w),
-      //                 child: Text(AppTags.searchProduct.tr,
-      //                     style: AppThemeData.hintTextStyle_13.copyWith(
-      //                         color: const Color.fromARGB(255, 68, 68, 68),
-      //                         fontFamily: 'bpg')),
-      //               ),
-      //               const Spacer(),
-      //             ],
-      //           ),
-      //         ),
-      //         const Spacer(),
-      //       ],
-      //     ),
-      //   ),
-      // ),
 
       body: SafeArea(
         child: Column(
@@ -696,29 +701,46 @@ class _MtlaHomeState extends State<MtlaHome> {
                   child: Row(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const HomeScreenContent()),
-                          );
-                        },
+                      onTap: () async {
+                // Check and request location permission
+                await checkAndRequestLocationPermission();
+
+                // Navigate to the splash screen
+                Navigator.push(
+                context,
+                MaterialPageRoute(
+                builder: (context) => SplashScreen(), // Redirect to SplashScreen
+                ),
+                );
+
+                // Wait for 2 seconds
+                await Future.delayed(Duration(seconds: 2));
+
+                // Navigate to the final destination (HomeScreenContent)
+                Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                builder: (context) => HomeScreenContent(),
+                ),
+                );
+                },
+
+
                         child: Center(
                           child: Column(
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(20.0),
                                   border: Border.all(
                                     color: Colors
                                         .orange, // Choose your border color
-                                    width: 2.0, // Choose your border width
+                                    width: 3.0, // Choose your border width
                                   ),
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      6.0), // Adjust the radius to be slightly less than the container
+                                      15.0), // Adjust the radius to be slightly less than the container
                                   child: Image.asset(
                                     "assets/images/restornebi.png",
                                     width: 88,
@@ -759,16 +781,16 @@ class _MtlaHomeState extends State<MtlaHome> {
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(20.0),
                                   border: Border.all(
                                     color: Colors
                                         .orange, // Choose your border color
-                                    width: 2.0, // Choose your border width
+                                    width: 3.0, // Choose your border width
                                   ),
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      6.0), // Adjust the radius to be slightly less than the container
+                                      17.0), // Adjust the radius to be slightly less than the container
                                   child: Image.asset(
                                     "assets/images/barebi.png",
                                     width: 88,
@@ -809,7 +831,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(20.0),
                                   border: Border.all(
                                     color: Colors
                                         .orange, // Choose your border color
@@ -818,7 +840,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      6.0), // Adjust the radius to be slightly less than the container
+                                      18.0), // Adjust the radius to be slightly less than the container
                                   child: Image.asset(
                                     "assets/images/gartoba.png",
                                     width: 88,
@@ -847,14 +869,18 @@ class _MtlaHomeState extends State<MtlaHome> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          _showPopup(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MapScreen()),
+                          );
                         },
                         child: Center(
                           child: Column(
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(20.0),
                                   border: Border.all(
                                     color: Colors
                                         .orange, // Choose your border color
@@ -863,9 +889,9 @@ class _MtlaHomeState extends State<MtlaHome> {
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      6.0), // Adjust the radius to be slightly less than the container
+                                      18.0), // Adjust the radius to be slightly less than the container
                                   child: Image.asset(
-                                    "assets/images/socialebi.png",
+                                    "assets/images/mapi.png",
                                     width: 88,
                                     height: 88,
                                     fit: BoxFit.cover,
@@ -876,7 +902,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                 height: 15,
                               ),
                               Text(
-                                AppTags.socialNetworks.tr,
+                                AppTags.map.tr,
                                 style: const TextStyle(
                                     color: Color.fromARGB(255, 14, 13, 13),
                                     fontWeight: FontWeight.w500,
@@ -892,18 +918,14 @@ class _MtlaHomeState extends State<MtlaHome> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const MapScreen()),
-                          );
+                          _showPopup(context);
                         },
                         child: Center(
                           child: Column(
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(20.0),
                                   border: Border.all(
                                     color: Colors
                                         .orange, // Choose your border color
@@ -912,9 +934,9 @@ class _MtlaHomeState extends State<MtlaHome> {
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(
-                                      6.0), // Adjust the radius to be slightly less than the container
+                                      15.0), // Adjust the radius to be slightly less than the container
                                   child: Image.asset(
-                                    "assets/images/mapi.png",
+                                    "assets/images/socialebi.png",
                                     width: 88,
                                     height: 88,
                                     fit: BoxFit.cover,
@@ -925,7 +947,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                 height: 15,
                               ),
                               Text(
-                                AppTags.map.tr,
+                                AppTags.socialNetworks.tr,
                                 style: const TextStyle(
                                     color: Color.fromARGB(255, 14, 13, 13),
                                     fontWeight: FontWeight.w500,

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <httpProtocol>
+        <customHeaders>
+            <add name="Access-Control-Allow-Origin" value="*"/>
+        </customHeaders>
+    </httpProtocol>
+    <!--
+      If you are serving your web app in a path other than the root, change the
+      href value below to reflect the base path you are serving from.
+
+      The path provided below has to start and end with a slash "/" in order for
+      it to work correctly.
+
+      For more details:
+      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+      This is a placeholder for base href that will be replaced by the value of
+      the `--base-href` argument provided to `flutter build`.
+    -->
+    <base href="/">
+
+    <meta charset="UTF-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta name="description" content="Hotcard">
+    <meta name="google-signin-client_id" content="848498097413-v0bc0l2opubifla4bep3setb9abc9ne5.apps.googleusercontent.com" />
+
+    <!-- iOS meta tags & icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Hotcard">
+    <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <title>Hotcard</title>
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+<!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+<!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
+
+<!-- Add Firebase products that you want to use -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+
+<script>
+        // TODO: Replace the following with your app's Firebase project configuration
+        // For Firebase JavaScript SDK v7.20.0 and later, `measurementId` is an optional field
+const firebaseConfig = {
+  apiKey: "AIzaSyDSdAY0btx2wzn07dSKa_kjVy-dvKDMeDI",
+  authDomain: "hotcard-ff104.firebaseapp.com",
+  projectId: "hotcard-ff104",
+  storageBucket: "hotcard-ff104.appspot.com",
+  messagingSenderId: "848498097413",
+  appId: "1:848498097413:web:94b755c4cc6cffe389cb6c",
+  measurementId: "G-QQG1BBHK0E"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+</script>
+
+<!-- This script installs service_worker.js to provide PWA functionality to
+     application. For more information, see:
+     https://developers.google.com/web/fundamentals/primers/service-workers -->
+<script>
+  window.flutterWebRenderer = 'html';
+</script>
+<script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('flutter-first-frame', function () {
+        navigator.serviceWorker.register('flutter_service_worker.js');
+      });
+    }
+</script>
+
+<script src="main.dart.js" type="application/javascript"></script>
+</body>
+</html>
