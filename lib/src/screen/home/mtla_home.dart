@@ -12,6 +12,7 @@ import 'package:hot_card/src/screen/dashboard/dashboard_screen.dart';
 import 'package:hot_card/src/servers/network_service.dart';
 import 'package:hot_card/src/servers/repository.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/app_tags.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -276,7 +277,7 @@ class _MtlaHomeState extends State<MtlaHome> {
     if (kDebugMode) {
       print(LocalDataHelper().getUserToken().toString());
     }
-  //  checkAndRequestLocationPermission();
+   // checkAndRequestLocationPermission(context);
 
   }
 
@@ -430,57 +431,116 @@ class _MtlaHomeState extends State<MtlaHome> {
   //   );
   // }
 
-  bool locationPermissionChecked = false;
+  Future<void> _checkAndRequestLocationPermission(
+      BuildContext context, MaterialPageRoute route) async {
+    LocationPermission locationPermission = await Geolocator.checkPermission();
 
-  Future<void> checkAndRequestLocationPermission() async {
-    var status = await Permission.location.status;
-
-    if ((status == PermissionStatus.denied || status == PermissionStatus.permanentlyDenied) && !locationPermissionChecked) {
+    if (locationPermission == LocationPermission.denied ||
+        locationPermission == LocationPermission.deniedForever) {
       await showDialog(
         context: context,
-        barrierDismissible: false,
+        barrierDismissible: false, // Prevent user from closing the dialog
         builder: (BuildContext context) {
           return AlertDialog(
+            title: Text(
+              'ლოკაციის გაზიარება აუცილებელია',
+             // style: TextStyle(color: Colors.orange),
+            ),
+            content: Text(
+              'თუ გსურთ ისარგებლოთ ჩვენი აპლიკაციით, გთხოვთ გაგვიზიაროთ ლოკაცია',
+            //  style: TextStyle(color: Colors.orange),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  // Handle cancel action
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'არ ვეთანხმები',
+                  style: TextStyle(color: Colors.orange.shade700),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.orange.shade700,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+                onPressed: () async {
+                  // Request location permission and close the dialog
+                  locationPermission = await Geolocator.requestPermission();
+                  if (locationPermission == LocationPermission.deniedForever) {
+                    // The user has permanently denied the location permission
+                    // You may want to navigate to the app settings to enable the permission manually
+                    openAppSettings();
+                  }
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'თანხმობა',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    } else if (locationPermission == LocationPermission.always ||
+        locationPermission == LocationPermission.whileInUse) {
+      Navigator.pushReplacement(context, route);
+    }
+  }
+
+
+
+  bool locationPermissionChecked = false;
+
+  Future<void> checkAndRequestLocationPermission(BuildContext context) async {
+    PermissionStatus status = await Permission.location.status;
+
+    if (status.isDenied || status == PermissionStatus.permanentlyDenied) {
+      await showDialog(
+        context: context,
+        barrierDismissible: false, // Prevent user from closing the dialog
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'ლოკაციის გაზიარება აუცილებელია',
+              style: TextStyle(color: Colors.orange),
+            ),
+            content: Text(
+              'თუ გსურთ ისარგებლოთ ჩვენი აპლიკაციით, გთხოვთ გაგვიზიაროთ ლოკაცია',
+              style: TextStyle(color: Colors.orange),
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
-            title: Text('ლოკაციის გაზიარება აუცილებელია', style: TextStyle(color: Colors.orange)),
-            content: Text('თუ გსურთ ისარგებლოთ ჩვენი აპლიკაციით, გთხოვთ გაგვიზიარეთ ლოკაცია', style: TextStyle(color: Colors.orange)),
             actions: [
               TextButton(
                 onPressed: () async {
-                  if (status == PermissionStatus.denied) {
-                    await Permission.location.request();
-                    status = await Permission.location.status;
-                    if (status != PermissionStatus.denied) {
-                      locationPermissionChecked = true;
-                      Navigator.of(context).pop();
-                    }
-                  } else if (status == PermissionStatus.permanentlyDenied) {
-                    await openAppSettings();
-                    status = await Permission.location.status;
-                    if (status != PermissionStatus.denied) {
-                      locationPermissionChecked = true;
-                      Navigator.of(context).pop();
-                    }
+                  // Request location permission and close the dialog
+                  status = await Permission.location.request();
+                  if (status.isPermanentlyDenied) {
+                    // The user has permanently denied the location permission
+                    // You may want to navigate to the app settings to enable the permission manually
+                    openAppSettings();
                   }
+                  Navigator.of(context).pop();
                 },
-                child: Text('გაზიარება', style: TextStyle(color: Colors.orange)),
+                child: Text(
+                  'თანხმობა',
+                  style: TextStyle(color: Colors.orange),
+                ),
               ),
             ],
           );
         },
       );
     }
-  }
-
-
-
-
-
-
-
-
+    }
 
 
 
@@ -500,726 +560,512 @@ class _MtlaHomeState extends State<MtlaHome> {
       backgroundColor: Colors.transparent,
 
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 40,
-            ),
-            InkWell(
-              onTap: () {
-                Get.toNamed(Routes.searchProduct);
-              },
-              child: Container(
-                width: 333,
-                height: 45,
-                decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 242, 242, 242),
-                    borderRadius: BorderRadius.circular(35)),
-                child: const Row(
-                  children: [
-                    SizedBox(
-                      width: 25,
-                    ),
-                    ImageIcon(
-                      size: 20,
-                      AssetImage('assets/images/searchicon.png'),
-                      color: Color.fromARGB(255, 124, 125, 126),
-                    ),
-                    SizedBox(
-                      width: 25,
-                    ),
-                    Text(
-                      'Search Food',
-                      style: TextStyle(
-                          color: Color.fromARGB(255, 182, 183, 183),
-                          fontSize: 14),
-                    ),
-                    Spacer(),
-                    Image(
-                      width: 68.35,
-                      image: AssetImage('assets/images/hotcard-lo.png'),
-                    ),
-                    SizedBox(
-                      width: 15,
-                    )
-                  ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 40,
+              ),
+              InkWell(
+                onTap: () {
+                  Get.toNamed(Routes.searchProduct);
+                },
+                child: Container(
+                  width: 333,
+                  height: 45,
+                  decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 242, 242, 242),
+                      borderRadius: BorderRadius.circular(35)),
+                  child: const Row(
+                    children: [
+                      SizedBox(
+                        width: 25,
+                      ),
+                      ImageIcon(
+                        size: 20,
+                        AssetImage('assets/images/searchicon.png'),
+                        color: Color.fromARGB(255, 124, 125, 126),
+                      ),
+                      SizedBox(
+                        width: 25,
+                      ),
+                      Text(
+                        'Search Food',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 182, 183, 183),
+                            fontSize: 14),
+                      ),
+                      Spacer(),
+                      Image(
+                        width: 68.35,
+                        image: AssetImage('assets/images/hotcard-lo.png'),
+                      ),
+                      SizedBox(
+                        width: 15,
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Center(
-              child: Padding(
-                padding: EdgeInsets.only(top: isMobile(context) ? 2.h : 30.h),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: isMobile(context) ? 100.h : 120.h,
-                      width: 333,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                            // color: Color.fromARGB(255, 245, 245, 245),
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10),
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10))),
-                        child: Center(
-                            child: LocalDataHelper().getUserToken() != null
-                                ? FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Row(
-                                      children: [
-                                        const SizedBox(width: 10),
-                                        SizedBox(
-                                            width: 65,
-                                            child: Image.asset(
-                                                "assets/images/xeli.png")),
-                                        const SizedBox(width: 8),
-                                        const SizedBox(width: 50),
-                                        Column(
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Obx(() {
-                                                final balance =
-                                                    myWalletController
-                                                        .myWalletModel
-                                                        .value
-                                                        .data
-                                                        ?.balance
-                                                        ?.balance;
+              const SizedBox(
+                height: 30,
+              ),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: isMobile(context) ? 2.h : 30.h),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: isMobile(context) ? 100.h : 120.h,
+                        width: 333,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              // color: Color.fromARGB(255, 245, 245, 245),
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10),
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10))),
+                          child: Center(
+                              child: LocalDataHelper().getUserToken() != null
+                                  ? FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Row(
+                                        children: [
+                                          const SizedBox(width: 10),
+                                          SizedBox(
+                                              width: 65,
+                                              child: Image.asset(
+                                                  "assets/images/xeli.png")),
+                                          const SizedBox(width: 8),
+                                          const SizedBox(width: 50),
+                                          Column(
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Obx(() {
+                                                  final balance =
+                                                      myWalletController
+                                                          .myWalletModel
+                                                          .value
+                                                          .data
+                                                          ?.balance
+                                                          ?.balance;
 
-                                                return Text(
-                                                  balance != null
-                                                      ? "${balance.toStringAsFixed(1)} ₾"
-                                                      : "0 ₾", // Explicitly handle the case when balance is not loaded
-                                                  style: const TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 65, 65, 65),
-                                                    fontSize: 25.5,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontFamily: 'bpg',
-                                                  ),
-                                                );
-                                              }),
-                                            ),
-                                            Text(AppTags.allSaved.tr),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 10),
-                                      ],
-                                    ))
-                                : Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 140.w,
-                                        height: 60.h,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Get.toNamed(Routes.logIn);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: AppThemeData
-                                                .lightBackgroundColor,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(25),
-                                            ),
-                                            elevation: 5,
-                                            shadowColor: AppThemeData
-                                                .lightBackgroundColor,
+                                                  return Text(
+                                                    balance != null
+                                                        ? "${balance.toStringAsFixed(1)} ₾"
+                                                        : "0 ₾", // Explicitly handle the case when balance is not loaded
+                                                    style: const TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 65, 65, 65),
+                                                      fontSize: 25.5,
+                                                      fontWeight: FontWeight.w600,
+                                                      fontFamily: 'bpg',
+                                                    ),
+                                                  );
+                                                }),
+                                              ),
+                                              Text(AppTags.allSaved.tr),
+                                            ],
                                           ),
-                                          child: Text(
-                                            AppTags.signIn.tr,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                              fontSize: isMobile(context)
-                                                  ? 12.sp
-                                                  : 11.sp,
-                                              fontFamily: "bpg",
-                                              color: const Color.fromARGB(
-                                                  255, 255, 255, 255),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      SizedBox(
-                                        width: 140.w,
-                                        height: 60.h,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Get.toNamed(Routes.signUp);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 255, 255, 255),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(25),
-                                            ),
-                                            elevation: 5,
-                                            shadowColor: const Color.fromARGB(
-                                                255, 194, 83, 4),
-                                          ),
-                                          child: Text(
-                                            AppTags.signUp.tr,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                              fontSize: isMobile(context)
-                                                  ? 12.sp
-                                                  : 11.sp,
-                                              fontFamily: "bpg",
-                                              color: AppThemeData
+                                          const SizedBox(width: 10),
+                                        ],
+                                      ))
+                                  : Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 140.w,
+                                          height: 60.h,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Get.toNamed(Routes.logIn);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: AppThemeData
+                                                  .lightBackgroundColor,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
+                                              ),
+                                              elevation: 5,
+                                              shadowColor: AppThemeData
                                                   .lightBackgroundColor,
                                             ),
+                                            child: Text(
+                                              AppTags.signIn.tr,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                fontSize: isMobile(context)
+                                                    ? 12.sp
+                                                    : 11.sp,
+                                                fontFamily: "bpg",
+                                                color: const Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  )),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 10, left: 10),
-              child: SizedBox(
-                height: 130,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                      onTap: () async {
-                // Check and request location permission
-                await checkAndRequestLocationPermission();
-
-                // Navigate to the splash screen
-                Navigator.push(
-                context,
-                MaterialPageRoute(
-                builder: (context) => SplashScreen(), // Redirect to SplashScreen
-                ),
-                );
-
-                // Wait for 2 seconds
-                await Future.delayed(Duration(seconds: 2));
-
-                // Navigate to the final destination (HomeScreenContent)
-                Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                builder: (context) => HomeScreenContent(),
-                ),
-                );
-                },
-
-
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  border: Border.all(
-                                    color: Colors
-                                        .orange, // Choose your border color
-                                    width: 3.0, // Choose your border width
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      15.0), // Adjust the radius to be slightly less than the container
-                                  child: Image.asset(
-                                    "assets/images/restornebi.png",
-                                    width: 88,
-                                    height: 88,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                AppTags.restaurants.tr,
-                                style: const TextStyle(
-                                    color: Color.fromARGB(255, 14, 13, 13),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
-                                    fontFamily: 'bpg'),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const HomeScreenCafeContent()),
-                          );
-                        },
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  border: Border.all(
-                                    color: Colors
-                                        .orange, // Choose your border color
-                                    width: 3.0, // Choose your border width
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      17.0), // Adjust the radius to be slightly less than the container
-                                  child: Image.asset(
-                                    "assets/images/barebi.png",
-                                    width: 88,
-                                    height: 88,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                AppTags.cafeBars.tr,
-                                style: const TextStyle(
-                                    color: Color.fromARGB(255, 14, 13, 13),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
-                                    fontFamily: 'bpg'),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const HomeScreenGartoba()),
-                          );
-                        },
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  border: Border.all(
-                                    color: Colors
-                                        .orange, // Choose your border color
-                                    width: 2.0, // Choose your border width
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      18.0), // Adjust the radius to be slightly less than the container
-                                  child: Image.asset(
-                                    "assets/images/gartoba.png",
-                                    width: 88,
-                                    height: 88,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                AppTags.fun.tr,
-                                style: const TextStyle(
-                                    color: Color.fromARGB(255, 14, 13, 13),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
-                                    fontFamily: 'bpg'),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const MapScreen()),
-                          );
-                        },
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  border: Border.all(
-                                    color: Colors
-                                        .orange, // Choose your border color
-                                    width: 2.0, // Choose your border width
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      18.0), // Adjust the radius to be slightly less than the container
-                                  child: Image.asset(
-                                    "assets/images/mapi.png",
-                                    width: 88,
-                                    height: 88,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                AppTags.map.tr,
-                                style: const TextStyle(
-                                    color: Color.fromARGB(255, 14, 13, 13),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
-                                    fontFamily: 'bpg'),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          _showPopup(context);
-                        },
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  border: Border.all(
-                                    color: Colors
-                                        .orange, // Choose your border color
-                                    width: 2.0, // Choose your border width
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                      15.0), // Adjust the radius to be slightly less than the container
-                                  child: Image.asset(
-                                    "assets/images/socialebi.png",
-                                    width: 88,
-                                    height: 88,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text(
-                                AppTags.socialNetworks.tr,
-                                style: const TextStyle(
-                                    color: Color.fromARGB(255, 14, 13, 13),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12,
-                                    fontFamily: 'bpg'),
-                              )
-                            ],
-                          ),
+                                        const Spacer(),
+                                        SizedBox(
+                                          width: 140.w,
+                                          height: 60.h,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Get.toNamed(Routes.signUp);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 255, 255, 255),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
+                                              ),
+                                              elevation: 5,
+                                              shadowColor: const Color.fromARGB(
+                                                  255, 194, 83, 4),
+                                            ),
+                                            child: Text(
+                                              AppTags.signUp.tr,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                fontSize: isMobile(context)
+                                                    ? 12.sp
+                                                    : 11.sp,
+                                                fontFamily: "bpg",
+                                                color: AppThemeData
+                                                    .lightBackgroundColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              child: Row(
-                children: [
-                  Text(
-                    AppTags.topObjects.tr,
-                    style: const TextStyle(
-                        fontFamily: 'bpg',
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AllCategory()),
-                      );
-                    },
-                    child: Text(
-                      AppTags.seeAll.tr,
-                      style: const TextStyle(
-                          color: Color.fromARGB(255, 252, 96, 17),
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'bpg'),
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 10, left: 10),
+                child: SizedBox(
+                  height: 130,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                        onTap: () async {
+                       await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => HomeScreenContent()));
+               /*   PermissionStatus status = await Permission.location.status;
+                  if (status.isDenied || status.isPermanentlyDenied) {
+                  // Permission is denied or permanently denied, do nothing or show a message
+                    _checkAndRequestLocationPermission(context);
+                  } else {
+                  // Permission is granted, navigate to HomeScreenContent
+                  Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreenContent()),
+                  );
+                  } */
+
+
+                  },
+
+
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    border: Border.all(
+                                      color: Colors
+                                          .orange, // Choose your border color
+                                      width: 3.0, // Choose your border width
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0), // Adjust the radius to be slightly less than the container
+                                    child: Image.asset(
+                                      "assets/images/restornebi.png",
+                                      width: 88,
+                                      height: 88,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Text(
+                                  AppTags.restaurants.tr,
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 14, 13, 13),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
+                                      fontFamily: 'bpg'),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => HomeScreenCafeContent()));
+
+                          },
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    border: Border.all(
+                                      color: Colors
+                                          .orange, // Choose your border color
+                                      width: 3.0, // Choose your border width
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        17.0), // Adjust the radius to be slightly less than the container
+                                    child: Image.asset(
+                                      "assets/images/barebi.png",
+                                      width: 88,
+                                      height: 88,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Text(
+                                  AppTags.cafeBars.tr,
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 14, 13, 13),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
+                                      fontFamily: 'bpg'),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => HomeScreenGartoba()));
+                          },
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    border: Border.all(
+                                      color: Colors
+                                          .orange, // Choose your border color
+                                      width: 2.0, // Choose your border width
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        18.0), // Adjust the radius to be slightly less than the container
+                                    child: Image.asset(
+                                      "assets/images/gartoba.png",
+                                      width: 88,
+                                      height: 88,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Text(
+                                  AppTags.fun.tr,
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 14, 13, 13),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
+                                      fontFamily: 'bpg'),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const MapScreen()),
+                            );
+                          },
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    border: Border.all(
+                                      color: Colors
+                                          .orange, // Choose your border color
+                                      width: 2.0, // Choose your border width
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        18.0), // Adjust the radius to be slightly less than the container
+                                    child: Image.asset(
+                                      "assets/images/mapi.png",
+                                      width: 88,
+                                      height: 88,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Text(
+                                  AppTags.map.tr,
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 14, 13, 13),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
+                                      fontFamily: 'bpg'),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            _showPopup(context);
+                          },
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    border: Border.all(
+                                      color: Colors
+                                          .orange, // Choose your border color
+                                      width: 2.0, // Choose your border width
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0), // Adjust the radius to be slightly less than the container
+                                    child: Image.asset(
+                                      "assets/images/socialebi.png",
+                                      width: 88,
+                                      height: 88,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Text(
+                                  AppTags.socialNetworks.tr,
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 14, 13, 13),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12,
+                                      fontFamily: 'bpg'),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 200,
-                    width: MediaQuery.of(context).size.width - 20,
-                    child: FutureBuilder<List<dynamic>>(
-                      future: cacheApiResponse(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          List<dynamic>? categories = snapshot.data;
-                          List<dynamic> filteredCategories = categories!
-                              .where((category) =>
-                                  category['slug'] != 'restornebi' &&
-                                  category['slug'] != 'gartoba' &&
-                                  category['order'] == 15)
-                              .toList();
-                          // print(filteredCategories);
-
-                          // Render the list of categories as needed
-                          return NotificationListener<
-                              OverscrollIndicatorNotification>(
-                            onNotification: (overscroll) {
-                              overscroll
-                                  .disallowIndicator(); // This will prevent the overscroll glow effect
-                              return false;
-                            },
-                            child: ListView.builder(
-                              itemCount: filteredCategories.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                return Row(
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 10),
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        ProductByCategory(
-                                                      id: filteredCategories[
-                                                          index]['id'],
-                                                      title: filteredCategories[
-                                                          index]['title'],
-                                                      number:
-                                                          filteredCategories[
-                                                              index]['number'],
-                                                      soc_fb:
-                                                          filteredCategories[
-                                                              index]['soc_fb'],
-                                                      soc_yt:
-                                                          filteredCategories[
-                                                              index]['soc_yt'],
-                                                      soc_in:
-                                                          filteredCategories[
-                                                              index]['soc_in'],
-                                                      category:
-                                                          filteredCategories[
-                                                                  index][
-                                                              'category_filter'],
-                                                      imgurl:
-                                                          filteredCategories[
-                                                              index]['banner'],
-                                                      latlong:
-                                                          filteredCategories[
-                                                              index]['latlong'],
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              child: Column(
-                                                children: [
-                                                  const SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                  Container(
-                                                    width: 250,
-                                                    height: 130,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                              Radius.circular(
-                                                                  10)),
-                                                      border: Border.all(
-                                                        color: Colors
-                                                            .orange, // Choose your border color
-                                                        width:
-                                                            2.0, // Choose your border width
-                                                      ),
-                                                      image: DecorationImage(
-                                                        image: filteredCategories[
-                                                                        index][
-                                                                    'banner'] !=
-                                                                null
-                                                            ? NetworkImage(
-                                                                filteredCategories[
-                                                                        index]
-                                                                    ['banner'])
-                                                            : const NetworkImage(
-                                                                'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        SizedBox(
-                                          width: 250,
-                                          child: Text(
-                                            filteredCategories[index]['title']
-                                                .toString(),
-                                            maxLines: 1,
-                                            textAlign: TextAlign.left,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: AppThemeData
-                                                .todayDealTitleStyle
-                                                .copyWith(
-                                                    color: const Color.fromARGB(
-                                                        255, 43, 42, 42),
-                                                    fontFamily: 'metro-bold',
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        SizedBox(
-                                          width: 250,
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              filteredCategories[index]['category_filter'] ==
-                                                          '' ||
-                                                      filteredCategories[index][
-                                                              'category_filter'] ==
-                                                          null
-                                                  ? ''
-                                                  : filteredCategories[index][
-                                                              'category_filter'] ==
-                                                          'ტრადიციული'
-                                                      ? AppTags.traditional.tr
-                                                      : filteredCategories[index][
-                                                                  'category_filter'] ==
-                                                              'სუში'
-                                                          ? AppTags.sushi.tr
-                                                          : filteredCategories[index]['category_filter'] ==
-                                                                  'პიცა'
-                                                              ? AppTags.pizza.tr
-                                                              : filteredCategories[index]['category_filter'] ==
-                                                                      'ზღვის პროდუქტები'
-                                                                  ? AppTags
-                                                                      .seafood
-                                                                      .tr
-                                                                  : filteredCategories[index]['category_filter'] ==
-                                                                          'ბურგერები'
-                                                                      ? AppTags
-                                                                          .burgers
-                                                                          .tr
-                                                                      : filteredCategories[index]['category_filter'] == 'აზიური'
-                                                                          ? AppTags.asian.tr
-                                                                          : filteredCategories[index]['category_filter'] == 'საცხობი'
-                                                                              ? AppTags.bakery.tr
-                                                                              : filteredCategories[index]['category_filter'] == 'დესერტი'
-                                                                                  ? AppTags.dessert.tr
-                                                                                  : filteredCategories[index]['category_filter'] == 'მექსიკური'
-                                                                                      ? AppTags.mexican.tr
-                                                                                      : filteredCategories[index]['category_filter'] == 'შაურმა'
-                                                                                          ? AppTags.shawarma.tr
-                                                                                          : AppTags.vegetarian.tr,
-                                              maxLines: 1,
-                                              textAlign: TextAlign.center,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: AppThemeData
-                                                  .todayDealTitleStyle
-                                                  .copyWith(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              128,
-                                                              128,
-                                                              128),
-                                                      fontFamily: 'bpg',
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w300),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          );
-                        } else if (snapshot.hasError) {
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15),
+                child: Row(
+                  children: [
+                    Text(
+                      AppTags.topObjects.tr,
+                      style: const TextStyle(
+                          fontFamily: 'bpg',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AllCategory()),
+                        );
+                      },
+                      child: Text(
+                        AppTags.seeAll.tr,
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 252, 96, 17),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'bpg'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 200,
+                      width: MediaQuery.of(context).size.width - 20,
+                      child: FutureBuilder<List<dynamic>>(
+                        future: cacheApiResponse(),
+                        builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             List<dynamic>? categories = snapshot.data;
                             List<dynamic> filteredCategories = categories!
                                 .where((category) =>
                                     category['slug'] != 'restornebi' &&
-                                    category['slug'] != 'gartoba')
+                                    category['slug'] != 'gartoba' &&
+                                    category['order'] == 15)
                                 .toList();
+                            // print(filteredCategories);
 
                             // Render the list of categories as needed
                             return NotificationListener<
@@ -1249,37 +1095,30 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                           ProductByCategory(
                                                         id: filteredCategories[
                                                             index]['id'],
-                                                        title:
-                                                            filteredCategories[
-                                                                index]['title'],
+                                                        title: filteredCategories[
+                                                            index]['title'],
                                                         number:
                                                             filteredCategories[
-                                                                    index]
-                                                                ['number'],
+                                                                index]['number'],
                                                         soc_fb:
                                                             filteredCategories[
-                                                                    index]
-                                                                ['soc_fb'],
+                                                                index]['soc_fb'],
                                                         soc_yt:
                                                             filteredCategories[
-                                                                    index]
-                                                                ['soc_yt'],
+                                                                index]['soc_yt'],
                                                         soc_in:
                                                             filteredCategories[
-                                                                    index]
-                                                                ['soc_in'],
+                                                                index]['soc_in'],
                                                         category:
                                                             filteredCategories[
                                                                     index][
                                                                 'category_filter'],
                                                         imgurl:
                                                             filteredCategories[
-                                                                    index]
-                                                                ['banner'],
+                                                                index]['banner'],
                                                         latlong:
                                                             filteredCategories[
-                                                                    index]
-                                                                ['latlong'],
+                                                                index]['latlong'],
                                                       ),
                                                     ),
                                                   );
@@ -1293,23 +1132,32 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                       width: 250,
                                                       height: 130,
                                                       decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              const BorderRadius.all(
-                                                                  Radius.circular(
-                                                                      10)),
-                                                          image: DecorationImage(
-                                                              image: filteredCategories[index]
-                                                                          [
-                                                                          'banner'] !=
-                                                                      null
-                                                                  ? NetworkImage(
-                                                                      filteredCategories[index]
-                                                                          [
-                                                                          'banner'])
-                                                                  : const NetworkImage(
-                                                                      'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'),
-                                                              fit: BoxFit.cover)),
-                                                    ),
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                                Radius.circular(
+                                                                    10)),
+                                                        border: Border.all(
+                                                          color: Colors
+                                                              .orange, // Choose your border color
+                                                          width:
+                                                              2.0, // Choose your border width
+                                                        ),
+                                                        image: DecorationImage(
+                                                          image: filteredCategories[
+                                                                          index][
+                                                                      'banner'] !=
+                                                                  null
+                                                              ? NetworkImage(
+                                                                  filteredCategories[
+                                                                          index]
+                                                                      ['banner'])
+                                                              : const NetworkImage(
+                                                                  'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    )
                                                   ],
                                                 ),
                                               ),
@@ -1329,9 +1177,8 @@ class _MtlaHomeState extends State<MtlaHome> {
                                               style: AppThemeData
                                                   .todayDealTitleStyle
                                                   .copyWith(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255, 43, 42, 42),
+                                                      color: const Color.fromARGB(
+                                                          255, 43, 42, 42),
                                                       fontFamily: 'metro-bold',
                                                       fontSize: 14,
                                                       fontWeight:
@@ -1346,8 +1193,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                filteredCategories[index][
-                                                                'category_filter'] ==
+                                                filteredCategories[index]['category_filter'] ==
                                                             '' ||
                                                         filteredCategories[index][
                                                                 'category_filter'] ==
@@ -1357,22 +1203,23 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                                 'category_filter'] ==
                                                             'ტრადიციული'
                                                         ? AppTags.traditional.tr
-                                                        : filteredCategories[index]
-                                                                    [
+                                                        : filteredCategories[index][
                                                                     'category_filter'] ==
                                                                 'სუში'
                                                             ? AppTags.sushi.tr
                                                             : filteredCategories[index]['category_filter'] ==
                                                                     'პიცა'
-                                                                ? AppTags
-                                                                    .pizza.tr
+                                                                ? AppTags.pizza.tr
                                                                 : filteredCategories[index]['category_filter'] ==
                                                                         'ზღვის პროდუქტები'
                                                                     ? AppTags
                                                                         .seafood
                                                                         .tr
-                                                                    : filteredCategories[index]['category_filter'] == 'ბურგერები'
-                                                                        ? AppTags.burgers.tr
+                                                                    : filteredCategories[index]['category_filter'] ==
+                                                                            'ბურგერები'
+                                                                        ? AppTags
+                                                                            .burgers
+                                                                            .tr
                                                                         : filteredCategories[index]['category_filter'] == 'აზიური'
                                                                             ? AppTags.asian.tr
                                                                             : filteredCategories[index]['category_filter'] == 'საცხობი'
@@ -1390,9 +1237,12 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                 style: AppThemeData
                                                     .todayDealTitleStyle
                                                     .copyWith(
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 128, 128, 128),
+                                                        color:
+                                                            const Color.fromARGB(
+                                                                255,
+                                                                128,
+                                                                128,
+                                                                128),
                                                         fontFamily: 'bpg',
                                                         fontSize: 12,
                                                         fontWeight:
@@ -1407,27 +1257,223 @@ class _MtlaHomeState extends State<MtlaHome> {
                                 },
                               ),
                             );
-                          }
-                        }
-                        // By default, show a loading spinner
-                        return const Center(
-                          child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: SizedBox(
-                                child: SpinKitDancingSquare(
-                                  color: Colors.blue,
-                                  size: 50.0,
+                          } else if (snapshot.hasError) {
+                            if (snapshot.hasData) {
+                              List<dynamic>? categories = snapshot.data;
+                              List<dynamic> filteredCategories = categories!
+                                  .where((category) =>
+                                      category['slug'] != 'restornebi' &&
+                                      category['slug'] != 'gartoba')
+                                  .toList();
+
+                              // Render the list of categories as needed
+                              return NotificationListener<
+                                  OverscrollIndicatorNotification>(
+                                onNotification: (overscroll) {
+                                  overscroll
+                                      .disallowIndicator(); // This will prevent the overscroll glow effect
+                                  return false;
+                                },
+                                child: ListView.builder(
+                                  itemCount: filteredCategories.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    return Row(
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Center(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 10),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                        builder: (_) =>
+                                                            ProductByCategory(
+                                                          id: filteredCategories[
+                                                              index]['id'],
+                                                          title:
+                                                              filteredCategories[
+                                                                  index]['title'],
+                                                          number:
+                                                              filteredCategories[
+                                                                      index]
+                                                                  ['number'],
+                                                          soc_fb:
+                                                              filteredCategories[
+                                                                      index]
+                                                                  ['soc_fb'],
+                                                          soc_yt:
+                                                              filteredCategories[
+                                                                      index]
+                                                                  ['soc_yt'],
+                                                          soc_in:
+                                                              filteredCategories[
+                                                                      index]
+                                                                  ['soc_in'],
+                                                          category:
+                                                              filteredCategories[
+                                                                      index][
+                                                                  'category_filter'],
+                                                          imgurl:
+                                                              filteredCategories[
+                                                                      index]
+                                                                  ['banner'],
+                                                          latlong:
+                                                              filteredCategories[
+                                                                      index]
+                                                                  ['latlong'],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Column(
+                                                    children: [
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      Container(
+                                                        width: 250,
+                                                        height: 130,
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                const BorderRadius.all(
+                                                                    Radius.circular(
+                                                                        10)),
+                                                            image: DecorationImage(
+                                                                image: filteredCategories[index]
+                                                                            [
+                                                                            'banner'] !=
+                                                                        null
+                                                                    ? NetworkImage(
+                                                                        filteredCategories[index]
+                                                                            [
+                                                                            'banner'])
+                                                                    : const NetworkImage(
+                                                                        'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'),
+                                                                fit: BoxFit.cover)),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            SizedBox(
+                                              width: 250,
+                                              child: Text(
+                                                filteredCategories[index]['title']
+                                                    .toString(),
+                                                maxLines: 1,
+                                                textAlign: TextAlign.left,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: AppThemeData
+                                                    .todayDealTitleStyle
+                                                    .copyWith(
+                                                        color:
+                                                            const Color.fromARGB(
+                                                                255, 43, 42, 42),
+                                                        fontFamily: 'metro-bold',
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            SizedBox(
+                                              width: 250,
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  filteredCategories[index][
+                                                                  'category_filter'] ==
+                                                              '' ||
+                                                          filteredCategories[index][
+                                                                  'category_filter'] ==
+                                                              null
+                                                      ? ''
+                                                      : filteredCategories[index][
+                                                                  'category_filter'] ==
+                                                              'ტრადიციული'
+                                                          ? AppTags.traditional.tr
+                                                          : filteredCategories[index]
+                                                                      [
+                                                                      'category_filter'] ==
+                                                                  'სუში'
+                                                              ? AppTags.sushi.tr
+                                                              : filteredCategories[index]['category_filter'] ==
+                                                                      'პიცა'
+                                                                  ? AppTags
+                                                                      .pizza.tr
+                                                                  : filteredCategories[index]['category_filter'] ==
+                                                                          'ზღვის პროდუქტები'
+                                                                      ? AppTags
+                                                                          .seafood
+                                                                          .tr
+                                                                      : filteredCategories[index]['category_filter'] == 'ბურგერები'
+                                                                          ? AppTags.burgers.tr
+                                                                          : filteredCategories[index]['category_filter'] == 'აზიური'
+                                                                              ? AppTags.asian.tr
+                                                                              : filteredCategories[index]['category_filter'] == 'საცხობი'
+                                                                                  ? AppTags.bakery.tr
+                                                                                  : filteredCategories[index]['category_filter'] == 'დესერტი'
+                                                                                      ? AppTags.dessert.tr
+                                                                                      : filteredCategories[index]['category_filter'] == 'მექსიკური'
+                                                                                          ? AppTags.mexican.tr
+                                                                                          : filteredCategories[index]['category_filter'] == 'შაურმა'
+                                                                                              ? AppTags.shawarma.tr
+                                                                                              : AppTags.vegetarian.tr,
+                                                  maxLines: 1,
+                                                  textAlign: TextAlign.center,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: AppThemeData
+                                                      .todayDealTitleStyle
+                                                      .copyWith(
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              255, 128, 128, 128),
+                                                          fontFamily: 'bpg',
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w300),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
-                              )),
-                        );
-                      },
+                              );
+                            }
+                          }
+                          // By default, show a loading spinner
+                          return const Center(
+                            child: SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: SizedBox(
+                                  child: SpinKitDancingSquare(
+                                    color: Colors.blue,
+                                    size: 50.0,
+                                  ),
+                                )),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          ],
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

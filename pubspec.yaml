@@ -83,6 +83,8 @@ dependencies:
   intl_phone_number_input: ^0.7.3+1
   email_validator: ^2.1.17
   device_info_plus: ^8.2.2
+  permission_handler: ^11.0.1
+  shared_preferences: ^2.2.2
 
 dependency_overrides:
   package_info_plus: ^4.0.1

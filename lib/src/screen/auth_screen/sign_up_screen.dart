@@ -488,7 +488,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         )
                       : const SizedBox(),
                   //facebook login button
-                  Config.enableFacebookLogin
+                /*  Config.enableFacebookLogin
                       ? Container(
                           height: 48.h,
                           width: 48.w,
@@ -512,6 +512,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         )
                       : const SizedBox(),
+
+                 */
                   Platform.isIOS
                       ? Container(
                           height: 48.h,
