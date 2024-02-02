@@ -353,6 +353,7 @@ class AuthController extends GetxController {
     try {
       printLog("From Auth: ${LocalDataHelper().box.read("userToken")}");
       await _googleSign.signOut();
+      await _googleSign.disconnect();
       await _auth.signOut();
       await Repository().logOut().then((value) {
         LocalDataHelper().box.remove("userToken");

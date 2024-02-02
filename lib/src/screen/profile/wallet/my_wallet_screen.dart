@@ -752,8 +752,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                               const Spacer(),
                               if (snapshot.data != 'Not Available')
                                 InkWell(
-                                  onTap: () {
-                                    fetchMomwveviUserID(
+                                  onTap: () async {
+                                   await fetchMomwveviUserID(
                                             widget.userDataModel.data!.token)
                                         .then((value) {
                                       setState(() async {
@@ -930,27 +930,39 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                               else
                                 InkWell(
                                   onTap: () async {
-                                    var urlToSend =
-                                        '${NetworkService.apiUrl}/user/update_card_number/';
-                                    final random = Random();
-                                    const digits = '0123456789';
-                                    const length = 14;
-                                    String randomNumber = '';
-                                    for (int i = 0; i < length; i++) {
-                                      randomNumber +=
-                                          digits[random.nextInt(digits.length)];
-                                    }
-                                    postData(
+                                    try {
+                                      var urlToSend = '${NetworkService.apiUrl}/user/update_card_number/';
+                                      final random = Random();
+                                      const digits = '0123456789';
+                                      const length = 14;
+                                      String randomNumber = '';
+                                      for (int i = 0; i < length; i++) {
+                                        randomNumber += digits[random.nextInt(digits.length)];
+                                      }
+
+                                      // Await postData operation
+                                      await postData(
                                         urlToSend + userId,
                                         {"card_number": randomNumber},
-                                        widget.userDataModel.data!.token);
+                                        widget.userDataModel.data!.token,
+                                      );
 
-                                    updateCardCode(randomNumber);
-                                    setState(() {
-                                      cardCode1 = snapshot.data;
-                                    });
-                                    Navigator.of(context).pop();
+                                      // Update card code and close the dialog
+                                      updateCardCode(randomNumber);
+
+                                      setState(() {
+                                        cardCode1 = snapshot.data;
+                                      });
+
+                                      Navigator.of(context).pop();
+                                    } catch (error) {
+                                      if (kDebugMode) {
+                                        print('Error during onTap (Card Update): $error');
+                                      }
+                                      // Handle errors appropriately
+                                    }
                                   },
+
                                   child: Container(
                                     width: 120,
                                     decoration: BoxDecoration(
