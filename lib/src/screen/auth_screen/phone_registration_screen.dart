@@ -39,23 +39,6 @@ class PhoneRegistrationScreen extends StatelessWidget {
             SizedBox(
               height: 50.h,
             ),
-            LoginEditTextField(
-              myController: firstNameController,
-              keyboardType: TextInputType.text,
-              hintText: AppTags.firstName.tr,
-              fieldIcon: Icons.person,
-              myObscureText: false,
-            ),
-            SizedBox(
-              height: 5.h,
-            ),
-            LoginEditTextField(
-              myController: lastNameController,
-              keyboardType: TextInputType.text,
-              hintText: AppTags.lastName.tr,
-              fieldIcon: Icons.person,
-              myObscureText: false,
-            ),
             SizedBox(
               height: 10.h,
             ),
@@ -91,6 +74,7 @@ class PhoneRegistrationScreen extends StatelessWidget {
                           itemBuilder: (Country country) => Row(
                             children: <Widget>[
                               CountryPickerUtils.getDefaultFlagImage(country),
+                              SizedBox(width: 7,),
                               Text("+${country.phoneCode}"),
                             ],
                           ),
@@ -126,15 +110,13 @@ class PhoneRegistrationScreen extends StatelessWidget {
                     height: 48.h,
                     child: ElevatedButton(
                       onPressed: () async {
-                        await phoneAuthController.phoneRegistration(
-                            firstName: firstNameController.text,
-                            lastName: lastNameController.text,
+                        await phoneAuthController.updatePhone(
                             phoneNumber: "+$phoneCode${phoneController.text}");
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppThemeData.buttonColor,
+                        backgroundColor: Colors.orangeAccent.shade400,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
+                          borderRadius: BorderRadius.circular(20.r),
                         ),
                       ),
                       child: phoneAuthController.isLoading.value

@@ -561,27 +561,30 @@ class _ProductByCategoryState extends State<ProductByCategory> {
 
     var url = Uri.parse('${NetworkService.apiUrl}/make/direct/order');
 
-    // Create the orders object dynamically based on the input lists
-    Map<String, dynamic> orders = {};
-    int index = 0;
+    List<Map<String, dynamic>> orders = [];
 
     for (int i = 0; i < quantity.length; i++) {
       if (quantity[i] > 0) {
-        orders['order$index'] = {
+        int productId = ids.length > i ? ids[i] : 0;
+      //  int additionalProductId = additionals.length > i ? additionals[i] : [];
+     //   List<int> additionalProductId = (additionals.length > i) ? [additionals[i]] : <int>[];
+        List<dynamic> additionalProductId = additionals;
+
+        orders.add({
           "qty": quantity[i],
-          "product_id": ids.elementAt(i) ?? 0,
-          "additional_product_id": additionals.elementAt(i) ?? 0,
-          "additional_product_qty": 1,
-        };
-        index++;
+          "product_id": productId,
+          "additional_product_id": additionalProductId,
+          "additional_product_qty": quantity[i],
+        });
       }
     }
 
-    // Convert the orders object to JSON
     var orderData = jsonEncode({
       "user_id": LocalDataHelper().getUserAllData()!.data!.userId!,
       "orders": orders,
     });
+
+    print('Generated JSON: $orderData');
 
     try {
       var response = await http.post(
@@ -592,7 +595,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
 
       if (response.statusCode == 200) {
         updateUserBalance(
-            LocalDataHelper().getUserToken().toString(), totalMainPrice);
+          LocalDataHelper().getUserToken().toString(),
+          totalMainPrice,
+        );
 
         Navigator.push(
           context,
@@ -616,6 +621,24 @@ class _ProductByCategoryState extends State<ProductByCategory> {
       // Handle exception or retry logic here
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

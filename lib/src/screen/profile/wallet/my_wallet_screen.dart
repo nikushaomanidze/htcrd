@@ -38,6 +38,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
 
   final currencyConverterController = Get.find<CurrencyConverterController>();
 
+
+
   final ProfileContentController _profileContentController =
       Get.put(ProfileContentController());
 

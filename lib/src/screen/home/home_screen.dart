@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:hot_card/src/Providers/MapProvider.dart';
 import 'package:hot_card/src/models/home_data_model.dart' as data_model;
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../_route/routes.dart';
@@ -178,6 +179,59 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
       },
     );
   }
+
+  bool locationPermissionChecked = false;
+
+  @override
+  void initState() {
+    super.initState();
+ //   checkAndRequestLocationPermission();
+  }
+
+  Future<void> checkAndRequestLocationPermission() async {
+    var status = await Permission.location.status;
+
+    if ((status == PermissionStatus.denied || status == PermissionStatus.permanentlyDenied) && !locationPermissionChecked) {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            title: Text('ლოკაციის გაზიარება აუცილებელია', style: TextStyle(color: Colors.orange)),
+            content: Text('თუ გსურთ ისარგებლოთ ჩვენი აპლიკაციით, გთხოვთ გაგვიზიარეთ ლოკაცია', style: TextStyle(color: Colors.orange)),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  if (status == PermissionStatus.denied) {
+                    await Permission.location.request();
+                    status = await Permission.location.status;
+                    if (status != PermissionStatus.denied) {
+                      locationPermissionChecked = true;
+                      Navigator.of(context).pop();
+                    }
+                  } else if (status == PermissionStatus.permanentlyDenied) {
+                    await openAppSettings();
+                    status = await Permission.location.status;
+                    if (status != PermissionStatus.denied) {
+                      locationPermissionChecked = true;
+                      Navigator.of(context).pop();
+                    }
+                  }
+                },
+                child: Text('გაზიარება', style: TextStyle(color: Colors.orange)),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {

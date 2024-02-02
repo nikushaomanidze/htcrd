@@ -488,7 +488,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         )
                       : const SizedBox(),
                   //facebook login button
-                  Config.enableFacebookLogin
+                /*  Config.enableFacebookLogin
                       ? Container(
                           height: 48.h,
                           width: 48.w,
@@ -512,6 +512,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         )
                       : const SizedBox(),
+
+                 */
                   Platform.isIOS
                       ? Container(
                           height: 48.h,
@@ -536,28 +538,6 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         )
                       : Container(),
-                  // LocalDataHelper().isPhoneLoginEnabled()
-                  //     ? Container(
-                  //         height: 48.h,
-                  //         width: 48.w,
-                  //         decoration: BoxDecoration(
-                  //             color: AppThemeData.socialButtonColor,
-                  //             borderRadius: BorderRadius.circular(10.r)),
-                  //         child: InkWell(
-                  //           onTap: () {
-                  //             Get.toNamed(Routes.phoneRegistration);
-                  //           },
-                  //           splashColor: Colors.transparent,
-                  //           highlightColor: Colors.transparent,
-                  //           hoverColor: Colors.transparent,
-                  //           child: Padding(
-                  //             padding: EdgeInsets.all(12.r),
-                  //             child: SvgPicture.asset(
-                  //                 "assets/icons/phone_login.svg"),
-                  //           ),
-                  //         ),
-                  //       )
-                  //     : const SizedBox(),
                 ],
               ),
             ),

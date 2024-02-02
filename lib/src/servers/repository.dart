@@ -165,12 +165,10 @@ class Repository {
 
   //User Phone Registration
   Future<bool?> postPhoneRegistration(
-      {String? firstName, String? lastName, String? phoneNumber}) async {
+      { String? phoneNumber}) async {
     var headers = {"apiKey": Config.apiKey};
     String? registrationOTpScreen = "registrationOTpScreen";
     var body = {
-      'first_name': firstName,
-      'last_name': lastName,
       'phone': phoneNumber,
     };
     var url =
@@ -522,6 +520,42 @@ class Repository {
       return null;
     }
   }
+
+  //update phone
+  Future<UserDataModel?> updatePhoneNumber({
+    required String phoneNumber,
+  }) async {
+    try {
+      var url = Uri.parse(
+          "${NetworkService.apiUrl}/user/update-phone?token=${LocalDataHelper().getUserToken()}&$langCurrCode");
+      var requestBody = http.MultipartRequest('POST', url);
+      requestBody.headers['apiKey'] = Config.apiKey;
+      requestBody.fields['phone'] = phoneNumber;
+
+      printLog("Request Body: ${requestBody.fields}");
+
+      final response = await requestBody.send();
+      final result = await http.Response.fromStream(response);
+
+      printLog("Response Body: ${result.body}");
+      printLog("Response Headers: ${response.headers}");
+
+      var data = jsonDecode(result.body);
+      printLog("----update profile: $data");
+
+      if (data['success']) {
+        Get.offAll(() => DashboardScreen());
+        UserDataModel userDataModel = UserDataModel.fromJson(data);
+        return userDataModel;
+      }
+      return null;
+    } catch (e) {
+      printLog("Error: $e");
+      throw Exception("$e");
+    }
+  }
+
+
 
   //Profile Update With Image
   Future<UserDataModel?> postUpdateProfile(

@@ -7,12 +7,28 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:848498097413:android:3f8dff3c7817be9989cb6c",
+        "mobilesdk_app_id": "1:848498097413:android:62f111323ff0342889cb6c",
         "android_client_info": {
           "package_name": "com.tapp.hotcard"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "848498097413-kovpor3vfu7akukd1m6na7bubs8do1fj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tapp.hotcard",
+            "certificate_hash": "246966391de2147b3af35a770dc0077dc804f983"
+          }
+        },
+        {
+          "client_id": "848498097413-mvcs4hgsn1hpaf4lvm4eb4u7hrp7ova4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tapp.hotcard",
+            "certificate_hash": "dc46682a40fa4dc0fbf26c3aaab40d1485ea2d84"
+          }
+        },
         {
           "client_id": "848498097413-olot8vllsmgjjk2llh5rk81sukllqhue.apps.googleusercontent.com",
           "client_type": 1,
@@ -28,7 +44,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDSdAY0btx2wzn07dSKa_kjVy-dvKDMeDI"
+          "current_key": "AIzaSyD0bgnFXM3csHmosPaedB-gCHPKHNeMwEI"
         }
       ],
       "services": {
@@ -39,10 +55,11 @@
               "client_type": 3
             },
             {
-              "client_id": "848498097413-okkngt60e24pv5l7dihla1g1hv73lsao.apps.googleusercontent.com",
+              "client_id": "848498097413-dgrku7q31l3k0fpu2ss21f8uq5agg9j1.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.tapp.hotcard"
+                "bundle_id": "com.tapp.hotcard",
+                "app_store_id": "6448475512"
               }
             }
           ]

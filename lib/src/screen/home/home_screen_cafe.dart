@@ -61,6 +61,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
 
   final homeScreenContentController = Get.find<HomeScreenController>();
 
+
   final detailsPageController = Get.lazyPut(
     () => DetailsPageController(),
     fenix: true,

@@ -235,7 +235,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(
                       height: 15,
                     ),
-                    Config.enableFacebookLogin
+                   /* Config.enableFacebookLogin
                         ? Container(
                             height: 56,
                             width: 333,
@@ -278,6 +278,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(
                       height: 15,
                     ),
+                    */
                     Platform.isIOS
                         ? Container(
                             height: 56,
