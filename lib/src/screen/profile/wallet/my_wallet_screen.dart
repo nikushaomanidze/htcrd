@@ -38,6 +38,11 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
 
   final currencyConverterController = Get.find<CurrencyConverterController>();
 
+  GlobalKey<_MyWalletScreenState> key = GlobalKey();
+
+  void refreshPage() {
+    setState(() {});
+  }
 
 
   final ProfileContentController _profileContentController =
@@ -351,7 +356,6 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
     super.initState();
     fetchCardNumber(widget.userDataModel.data!.token);
     _getId();
-
     //
   }
 
@@ -932,6 +936,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                               else
                                 InkWell(
                                   onTap: () async {
+                                    key.currentState?.refreshPage();
                                     var urlToSend =
                                         '${NetworkService.apiUrl}/user/update_card_number/';
                                     final random = Random();
@@ -951,7 +956,9 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     setState(() {
                                       cardCode1 = snapshot.data;
                                     });
-                                    Navigator.of(context).pop();
+
+
+                                 //   Navigator.of(context).maybePop();
                                   },
                                   child: Container(
                                     width: 120,
@@ -1546,6 +1553,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     else
                                       InkWell(
                                         onTap: () async {
+                                          key.currentState?.refreshPage();
                                           var urlToSend =
                                               '${NetworkService.apiUrl}/user/update_card_number/';
                                           final random = Random();
@@ -1565,7 +1573,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                           setState(() {
                                             cardCode1 = snapshot.data;
                                           });
-                                          Navigator.of(context).pop();
+                                     //     Navigator.of(context).maybePop();
                                         },
                                         child: Container(
                                           width: 120,
@@ -2200,6 +2208,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                           else
                                             InkWell(
                                               onTap: () async {
+                                                key.currentState?.refreshPage();
                                                 var urlToSend =
                                                     '${NetworkService.apiUrl}/user/update_card_number/';
                                                 final random = Random();
@@ -2225,7 +2234,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                 setState(() {
                                                   cardCode1 = snapshot.data;
                                                 });
-                                                Navigator.of(context).pop();
+                                             //   Navigator.of(context).maybePop();
                                               },
                                               child: Container(
                                                 width: 120,

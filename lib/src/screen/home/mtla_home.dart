@@ -452,7 +452,7 @@ class _MtlaHomeState extends State<MtlaHome> {
       );
     } else if (locationPermission == LocationPermission.always ||
         locationPermission == LocationPermission.whileInUse) {
-      Navigator.pushReplacement(context, route);
+      Navigator.push(context, route);
     }
   }
 
