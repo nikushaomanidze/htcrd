@@ -38,6 +38,13 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
 
   final currencyConverterController = Get.find<CurrencyConverterController>();
 
+  GlobalKey<_MyWalletScreenState> key = GlobalKey();
+
+  void refreshPage() {
+    setState(() {});
+  }
+
+
   final ProfileContentController _profileContentController =
       Get.put(ProfileContentController());
 
@@ -241,7 +248,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
     final String secondUrl = paymentResponse['links'][1]['uri'];
     final String rec_Id = paymentResponse['recId'];
     final String tbcBankLink = secondUrl;
-    // print(paymentResponse);
+     print(paymentResponse);
     // ignore: use_build_context_synchronously
     await Navigator.push(
       context,
@@ -349,7 +356,6 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
     super.initState();
     fetchCardNumber(widget.userDataModel.data!.token);
     _getId();
-
     //
   }
 
@@ -751,218 +757,378 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                             children: [
                               const Spacer(),
                               if (snapshot.data != 'Not Available')
-                                InkWell(
-                                  onTap: () async {
-                                   await fetchMomwveviUserID(
-                                            widget.userDataModel.data!.token)
-                                        .then((value) {
-                                      setState(() async {
-                                        var momwveviUserId = value;
-                                        var phoneId;
-                                        var deviceInfo = DeviceInfoPlugin();
-                                        if (Platform.isAndroid) {
-                                          var meore =
-                                              await deviceInfo.androidInfo;
-                                          phoneId = meore.id;
-                                        } else {
-                                          var meore = await deviceInfo.iosInfo;
-                                          phoneId = meore.identifierForVendor;
-                                        }
-                                        setUserDeviceId(
-                                            userId,
-                                            widget.userDataModel.data!.token,
-                                            phoneId);
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        fetchMomwveviUserID(
+                                                widget.userDataModel.data!.token)
+                                            .then((value) {
+                                          setState(() async {
+                                            var momwveviUserId = value;
+                                            var phoneId;
+                                            var deviceInfo = DeviceInfoPlugin();
+                                            if (Platform.isAndroid) {
+                                              var meore =
+                                                  await deviceInfo.androidInfo;
+                                              phoneId = meore.id;
+                                            } else {
+                                              var meore = await deviceInfo.iosInfo;
+                                              phoneId = meore.identifierForVendor;
+                                            }
+                                            setUserDeviceId(
+                                                userId,
+                                                widget.userDataModel.data!.token,
+                                                phoneId);
 
-                                        inputController.text.length >= 7 &&
-                                                inputController.text.length <=
-                                                    12
-                                            ? ammount = 15
-                                            : ammount = 28;
+                                            inputController.text.length >= 7 &&
+                                                    inputController.text.length <=
+                                                        12
+                                                ? ammount = 15
+                                                : ammount = 28;
 
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                  _profileContentController
-                                                              .profileDataModel
-                                                              .value
-                                                              .data!
-                                                              .cardStatus !=
-                                                          'Inactive'
-                                                      ? AppTags.cardUpgrade.tr
-                                                      : AppTags.activeCard.tr,
-                                                  // ak kide erti dasturi unda ro recurrent gadaxdaze tanaxmaa
-                                                  style: const TextStyle(
-                                                      fontFamily: 'bpg')),
-                                              content: SizedBox(
-                                                height: 80,
-                                                child: Column(
-                                                  children: [
-                                                    momwveviUserId != 0 &&
-                                                            momwveviUserId !=
-                                                                null
-                                                        ? Container()
-                                                        : const Text(
-                                                            'Referral Id'),
-                                                    momwveviUserId != 0 &&
-                                                            momwveviUserId !=
-                                                                null
-                                                        ? Text(AppTags
-                                                            .costsAndDate.tr)
-                                                        : TextField(
-                                                            controller:
-                                                                inputController,
-                                                            decoration:
-                                                                const InputDecoration(
-                                                                    hintText:
-                                                                        "Referral Code"),
-                                                          ),
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                                                  title: Text(
+                                                      _profileContentController
+                                                                  .profileDataModel
+                                                                  .value
+                                                                  .data!
+                                                                  .cardStatus !=
+                                                              'Inactive'
+                                                          ? AppTags.cardUpgrade.tr
+                                                          : AppTags.activeCard.tr,
+                                                      // ak kide erti dasturi unda ro recurrent gadaxdaze tanaxmaa
+                                                      ),
+                                                  content: SizedBox(
+                                                    height: 80,
+                                                    child: Column(
+                                                      children: [
+                                                        momwveviUserId != 0 &&
+                                                                momwveviUserId !=
+                                                                    null
+                                                            ? Container()
+                                                            :
+                                                        momwveviUserId != 0 &&
+                                                                momwveviUserId !=
+                                                                    null
+                                                            ? Text(AppTags
+                                                                .costsAndDate.tr)
+                                                            : TextField(
+                                                                controller:
+                                                                    inputController,
+                                                                decoration:
+                                                                    const InputDecoration(
+                                                                        hintText:
+                                                                            "Referral Code"),
+                                                              ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      child: Text(AppTags.yes.tr,
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.w600,
+                                                              fontFamily: 'bpg', color: Colors.deepOrange.shade400)),
+                                                      onPressed: () async {
+                                                        // print(inputText);
+                                                        // final String accessToken =
+                                                        //     await getToken(apiKey,
+                                                        //         clientId, clientSecret);
+                                                        // print(widget.userDataModel.data!.token);
+                                                        // print(userId);
+
+                                                        processPayment();
+                                                      },
+                                                    ),
+                                                    TextButton(
+                                                      child: Text(AppTags.no.tr,
+                                                          style: TextStyle(
+                                                              fontFamily: 'bpg', color: Colors.deepOrange.shade400)),
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                        // Perform your "no" action here
+                                                      },
+                                                    ),
                                                   ],
-                                                ),
-                                              ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: Text(AppTags.yes.tr,
-                                                      style: const TextStyle(
-                                                          fontFamily: 'bpg')),
-                                                  onPressed: () async {
-                                                    // print(inputText);
-                                                    // final String accessToken =
-                                                    //     await getToken(apiKey,
-                                                    //         clientId, clientSecret);
-                                                    // print(widget.userDataModel.data!.token);
-                                                    // print(userId);
-
-                                                    processPayment();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: Text(AppTags.no.tr,
-                                                      style: const TextStyle(
-                                                          fontFamily: 'bpg')),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                    // Perform your "no" action here
-                                                  },
-                                                ),
-                                              ],
+                                                );
+                                              },
                                             );
-                                          },
-                                        );
-                                      });
-                                    }).catchError((error) {
-                                      // Handle error
-                                      if (kDebugMode) {
-                                        print(
-                                            'Error fetching momwvevi_useris_id: $error');
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 120,
-                                    height: 140,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                          255, 15, 153, 61),
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(15)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: AppThemeData.headlineTextColor
-                                              .withOpacity(0.1),
-                                          spreadRadius: 0.r,
-                                          blurRadius: 30.r,
-                                          offset: const Offset(0,
-                                              15), // changes position of shadow
+                                          });
+                                        }).catchError((error) {
+                                          // Handle error
+                                          if (kDebugMode) {
+                                            print(
+                                                'Error fetching momwvevi_useris_id: $error');
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 120,
+                                        height: 140,
+                                        decoration: BoxDecoration(
+                                          color:  Colors.deepOrange.shade400,
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(15)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: AppThemeData.headlineTextColor
+                                                  .withOpacity(0.1),
+                                              spreadRadius: 0.r,
+                                              blurRadius: 30.r,
+                                              offset: const Offset(0,
+                                                  15), // changes position of shadow
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        const SizedBox(
-                                          height: 25,
-                                        ),
-                                        const Icon(
-                                          Icons.add,
-                                          color: Colors.white,
-                                          size: 35,
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Align(
-                                            alignment: Alignment.center,
-                                            child: SizedBox(
-                                              width: double
-                                                  .infinity, // Ensure the container takes the full width
-                                              child: Text(
-                                                _profileContentController
-                                                            .profileDataModel
-                                                            .value
-                                                            .data!
-                                                            .cardStatus !=
-                                                        AppTags.nonActive.tr
-                                                    ? AppTags.upgrade.tr
-                                                    : AppTags.activate.tr,
-                                                style: const TextStyle(
-                                                  fontFamily: 'bpg',
-                                                  color: Colors.white,
-                                                  fontSize: 12,
+                                        child: Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 25,
+                                            ),
+                                            const Icon(
+                                              Icons.add,
+                                              color: Colors.white,
+                                              size: 35,
+                                            ),
+                                            const SizedBox(
+                                              height: 3,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Align(
+                                                alignment: Alignment.center,
+                                                child: SizedBox(
+                                                  width: double
+                                                      .infinity, // Ensure the container takes the full width
+                                                  child: Text(
+                                                    'ბარათის გააქტიურება რეფერალური კოდით',
+                                                    style: const TextStyle(
+                                                      fontFamily: 'bpg',
+                                                      color: Colors.white,
+                                                      fontSize: 11,
+                                                    ),
+                                                    maxLines: 4,
+                                                    softWrap: true,
+                                                    textAlign: TextAlign
+                                                        .center, // Center the text
+                                                  ),
                                                 ),
-                                                maxLines: 2,
-                                                softWrap: true,
-                                                textAlign: TextAlign
-                                                    .center, // Center the text
                                               ),
                                             ),
-                                          ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                          ],
                                         ),
-                                        const SizedBox(
-                                          height: 25,
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(width: 10,),
+                                    InkWell(
+                                      onTap: () {
+                                        fetchMomwveviUserID(
+                                            widget.userDataModel.data!.token)
+                                            .then((value) {
+                                          setState(() async {
+                                            var momwveviUserId = value;
+                                            var phoneId;
+                                            var deviceInfo = DeviceInfoPlugin();
+                                            if (Platform.isAndroid) {
+                                              var meore =
+                                              await deviceInfo.androidInfo;
+                                              phoneId = meore.id;
+                                            } else {
+                                              var meore = await deviceInfo.iosInfo;
+                                              phoneId = meore.identifierForVendor;
+                                            }
+                                            setUserDeviceId(
+                                                userId,
+                                                widget.userDataModel.data!.token,
+                                                phoneId);
+
+                                            inputController.text.length >= 7 &&
+                                                inputController.text.length <=
+                                                    12
+                                                ? ammount = 15
+                                                : ammount = 28;
+
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                                                  title: Text(
+                                                    _profileContentController
+                                                        .profileDataModel
+                                                        .value
+                                                        .data!
+                                                        .cardStatus !=
+                                                        'Inactive'
+                                                        ? AppTags.cardUpgrade.tr
+                                                        : AppTags.activeCard.tr,
+                                                    // ak kide erti dasturi unda ro recurrent gadaxdaze tanaxmaa
+                                                  ),
+                                                  content: SizedBox(
+                                                    height: 80,
+                                                    child: Column(
+                                                      children: [
+                                                        momwveviUserId != 0 &&
+                                                            momwveviUserId !=
+                                                                null
+                                                            ? Container()
+                                                            :
+                                                        momwveviUserId != 0 &&
+                                                            momwveviUserId !=
+                                                                null
+                                                            ? Text(AppTags
+                                                            .costsAndDate.tr)
+                                                            : Text(
+                                                              "Referral Code (თუ გაქვთ)",
+                                                          style: TextStyle(color: Colors.transparent),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      child: Text(AppTags.yes.tr,
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w600,
+                                                              fontFamily: 'bpg', color: Colors.deepOrange.shade400)),
+                                                      onPressed: () async {
+                                                        // print(inputText);
+                                                        // final String accessToken =
+                                                        //     await getToken(apiKey,
+                                                        //         clientId, clientSecret);
+                                                        // print(widget.userDataModel.data!.token);
+                                                        // print(userId);
+
+                                                        processPayment();
+                                                      },
+                                                    ),
+                                                    TextButton(
+                                                      child: Text(AppTags.no.tr,
+                                                          style: TextStyle(
+                                                              fontFamily: 'bpg', color: Colors.deepOrange.shade400)),
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                        // Perform your "no" action here
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          });
+                                        }).catchError((error) {
+                                          // Handle error
+                                          if (kDebugMode) {
+                                            print(
+                                                'Error fetching momwvevi_useris_id: $error');
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 120,
+                                        height: 140,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 15, 153, 61),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(15)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: AppThemeData.headlineTextColor
+                                                  .withOpacity(0.1),
+                                              spreadRadius: 0.r,
+                                              blurRadius: 30.r,
+                                              offset: const Offset(0,
+                                                  15), // changes position of shadow
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 25,
+                                            ),
+                                            const Icon(
+                                              Icons.add,
+                                              color: Colors.white,
+                                              size: 35,
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Align(
+                                                alignment: Alignment.center,
+                                                child: SizedBox(
+                                                  width: double
+                                                      .infinity, // Ensure the container takes the full width
+                                                  child: Text(
+                                                    _profileContentController
+                                                        .profileDataModel
+                                                        .value
+                                                        .data!
+                                                        .cardStatus !=
+                                                        AppTags.nonActive.tr
+                                                        ? AppTags.upgrade.tr
+                                                        : AppTags.activate.tr,
+                                                    style: const TextStyle(
+                                                      fontFamily: 'bpg',
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                    ),
+                                                    maxLines: 2,
+                                                    softWrap: true,
+                                                    textAlign: TextAlign
+                                                        .center, // Center the text
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 25,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 )
                               else
                                 InkWell(
                                   onTap: () async {
-                                    try {
-                                      var urlToSend = '${NetworkService.apiUrl}/user/update_card_number/';
-                                      final random = Random();
-                                      const digits = '0123456789';
-                                      const length = 14;
-                                      String randomNumber = '';
-                                      for (int i = 0; i < length; i++) {
-                                        randomNumber += digits[random.nextInt(digits.length)];
-                                      }
-
-                                      // Await postData operation
-                                      await postData(
+                                    key.currentState?.refreshPage();
+                                    var urlToSend =
+                                        '${NetworkService.apiUrl}/user/update_card_number/';
+                                    final random = Random();
+                                    const digits = '0123456789';
+                                    const length = 14;
+                                    String randomNumber = '';
+                                    for (int i = 0; i < length; i++) {
+                                      randomNumber +=
+                                          digits[random.nextInt(digits.length)];
+                                    }
+                                    postData(
                                         urlToSend + userId,
                                         {"card_number": randomNumber},
-                                        widget.userDataModel.data!.token,
-                                      );
+                                        widget.userDataModel.data!.token);
 
-                                      // Update card code and close the dialog
-                                      updateCardCode(randomNumber);
+                                    updateCardCode(randomNumber);
+                                    setState(() {
+                                      cardCode1 = snapshot.data;
+                                    });
 
-                                      setState(() {
-                                        cardCode1 = snapshot.data;
-                                      });
 
-                                      Navigator.of(context).pop();
-                                    } catch (error) {
-                                      if (kDebugMode) {
-                                        print('Error during onTap (Card Update): $error');
-                                      }
-                                      // Handle errors appropriately
-                                    }
+                                 //   Navigator.of(context).maybePop();
                                   },
-
                                   child: Container(
                                     width: 120,
                                     decoration: BoxDecoration(
@@ -1556,6 +1722,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     else
                                       InkWell(
                                         onTap: () async {
+                                          key.currentState?.refreshPage();
                                           var urlToSend =
                                               '${NetworkService.apiUrl}/user/update_card_number/';
                                           final random = Random();
@@ -1575,7 +1742,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                           setState(() {
                                             cardCode1 = snapshot.data;
                                           });
-                                          Navigator.of(context).pop();
+                                     //     Navigator.of(context).maybePop();
                                         },
                                         child: Container(
                                           width: 120,
@@ -2210,6 +2377,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                           else
                                             InkWell(
                                               onTap: () async {
+                                                key.currentState?.refreshPage();
                                                 var urlToSend =
                                                     '${NetworkService.apiUrl}/user/update_card_number/';
                                                 final random = Random();
@@ -2235,7 +2403,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                 setState(() {
                                                   cardCode1 = snapshot.data;
                                                 });
-                                                Navigator.of(context).pop();
+                                             //   Navigator.of(context).maybePop();
                                               },
                                               child: Container(
                                                 width: 120,

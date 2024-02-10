@@ -204,163 +204,55 @@ class _SearchProductState extends State<SearchProduct> {
                   ),
                 ],
               ),
-        body: Obx(() => _searchController.isSearching
-            ? Center(
-                child: Lottie.asset(
-                  "assets/lottie/searching.json",
-                  height: 300.h,
-                  width: 300.w,
-                ),
-              )
-            : _searchController.searchResult.products!.isNotEmpty &&
-                    _searchController.searchResult.restaurants!.isNotEmpty
-                ? SingleChildScrollView(
-                    //height: 600,
-                    child: Column(
-                      children: [
-                        Text(
-                          AppTags.objects.tr,
-                          style:
-                              const TextStyle(fontSize: 18, fontFamily: 'BPG'),
-                        ),
-                        GridView.builder(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15.w, vertical: 8.h),
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount:
-                              _searchController.searchResult.restaurants != null
-                                  ? _searchController
-                                      .searchResult.restaurants!.length
-                                  : 0,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isMobile(context) ? 2 : 3,
-                            childAspectRatio: 0.68,
-                            mainAxisSpacing: isMobile(context) ? 15 : 20,
-                            crossAxisSpacing: isMobile(context) ? 15 : 20,
-                          ),
-                          itemBuilder: (context, index) {
-                            return SearchRestaurantCard(
-                              data: _searchController
-                                  .searchResult.restaurants![index],
-                            );
-                          },
-                        ),
-                        Text(
-                          AppTags.products.tr,
-                          style:
-                              const TextStyle(fontSize: 18, fontFamily: 'BPG'),
-                        ),
-                        GridView.builder(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 15.w, vertical: 8.h),
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: _searchController.searchResult.products !=
-                                  null
-                              ? _searchController.searchResult.products!.length
-                              : 0,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isMobile(context) ? 2 : 3,
-                            childAspectRatio: 0.68,
-                            mainAxisSpacing: isMobile(context) ? 15 : 20,
-                            crossAxisSpacing: isMobile(context) ? 15 : 20,
-                          ),
-                          itemBuilder: (context, index) {
-                            return SearchProductCard(
-                              data: _searchController
-                                  .searchResult.products![index],
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  )
-                : _searchController.searchResult.products!.isNotEmpty
-                    ? SizedBox(
-                        child: Column(
-                          children: [
-                            Text(
-                              AppTags.products.tr,
-                              style: const TextStyle(
-                                  fontSize: 18, fontFamily: 'BPG'),
-                            ),
-                            GridView.builder(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 15.w, vertical: 8.h),
-                              shrinkWrap: true,
-                              itemCount:
-                                  _searchController.searchResult.products !=
-                                          null
-                                      ? _searchController
-                                          .searchResult.products!.length
-                                      : 0,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: isMobile(context) ? 2 : 3,
-                                childAspectRatio: 0.68,
-                                mainAxisSpacing: isMobile(context) ? 15 : 20,
-                                crossAxisSpacing: isMobile(context) ? 15 : 20,
-                              ),
-                              itemBuilder: (context, index) {
-                                return SearchProductCard(
-                                  data: _searchController
-                                      .searchResult.products![index],
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      )
-                    : _searchController.searchResult.restaurants!.isNotEmpty
-                        ? SizedBox(
-                            child: Column(
-                              children: [
-                                Text(
-                                  AppTags.objects.tr,
-                                  style: const TextStyle(
-                                      fontSize: 18, fontFamily: 'BPG'),
-                                ),
-                                GridView.builder(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 15.w, vertical: 8.h),
-                                  shrinkWrap: true,
-                                  itemCount: _searchController
-                                              .searchResult.restaurants !=
-                                          null
-                                      ? _searchController
-                                          .searchResult.restaurants!.length
-                                      : 0,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: isMobile(context) ? 2 : 3,
-                                    childAspectRatio: 0.68,
-                                    mainAxisSpacing:
-                                        isMobile(context) ? 15 : 20,
-                                    crossAxisSpacing:
-                                        isMobile(context) ? 15 : 20,
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    return SearchRestaurantCard(
-                                      data: _searchController
-                                          .searchResult.restaurants![index],
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          )
-                        : SizedBox(
-                            height: 580.h,
-                            child: Center(
-                              child: Lottie.asset(
-                                "assets/lottie/notFound.json",
-                                height: 300.h,
-                                width: 300.w,
-                              ),
-                            ),
-                          )));
+      body: Obx(() => _searchController.isSearching
+          ? Center(
+        child: Lottie.asset(
+          "assets/lottie/searching.json",
+          height: 300.h,
+          width: 300.w,
+        ),
+      )
+          : _searchController.searchResult.products!.isNotEmpty
+          ? SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(
+              AppTags.products.tr,
+              style: const TextStyle(fontSize: 18, fontFamily: 'BPG'),
+            ),
+            GridView.builder(
+              padding: EdgeInsets.symmetric(
+                  horizontal: 15.w, vertical: 8.h),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _searchController.searchResult.products != null
+                  ? _searchController.searchResult.products!.length
+                  : 0,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: isMobile(context) ? 2 : 3,
+                childAspectRatio: 0.68,
+                mainAxisSpacing: isMobile(context) ? 15 : 20,
+                crossAxisSpacing: isMobile(context) ? 15 : 20,
+              ),
+              itemBuilder: (context, index) {
+                return SearchProductCard(
+                  data: _searchController.searchResult.products![index],
+                );
+              },
+            ),
+          ],
+        ),
+      )
+          : SizedBox(
+        height: 580.h,
+        child: Center(
+          child: Lottie.asset(
+            "assets/lottie/notFound.json",
+            height: 300.h,
+            width: 300.w,
+          ),
+        ),
+      ),
+      ),);
   }
 }

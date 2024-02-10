@@ -14,27 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "848498097413-kovpor3vfu7akukd1m6na7bubs8do1fj.apps.googleusercontent.com",
+          "client_id": "848498097413-n1q25463vmfkpacmme570sdok9nurvel.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.tapp.hotcard",
-            "certificate_hash": "246966391de2147b3af35a770dc0077dc804f983"
-          }
-        },
-        {
-          "client_id": "848498097413-mvcs4hgsn1hpaf4lvm4eb4u7hrp7ova4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.tapp.hotcard",
-            "certificate_hash": "dc46682a40fa4dc0fbf26c3aaab40d1485ea2d84"
-          }
-        },
-        {
-          "client_id": "848498097413-olot8vllsmgjjk2llh5rk81sukllqhue.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.tapp.hotcard",
-            "certificate_hash": "2838c0628d4f7628d94f24e36dd9f32beee7c494"
+            "certificate_hash": "1430addbf181c19d2ca9d0fb012e1a0b060ecdd0"
           }
         },
         {

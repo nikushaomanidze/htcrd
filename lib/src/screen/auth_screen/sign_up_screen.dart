@@ -332,7 +332,7 @@ class _SignupScreenState extends State<SignupScreen> {
             const SizedBox(
               height: 25,
             ),
-            SizedBox(
+          /*  SizedBox(
               width: 333,
               child: LoginEditTextField(
                 myController: authController.referralController,
@@ -341,10 +341,10 @@ class _SignupScreenState extends State<SignupScreen> {
                 // fieldIcon: Icons.man,
                 myObscureText: false,
               ),
-            ),
-            const SizedBox(
+            ),*/
+           /* const SizedBox(
               height: 25,
-            ),
+            ),*/
             SizedBox(
               width: 333,
               child: Obx(
@@ -538,28 +538,6 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         )
                       : Container(),
-                  // LocalDataHelper().isPhoneLoginEnabled()
-                  //     ? Container(
-                  //         height: 48.h,
-                  //         width: 48.w,
-                  //         decoration: BoxDecoration(
-                  //             color: AppThemeData.socialButtonColor,
-                  //             borderRadius: BorderRadius.circular(10.r)),
-                  //         child: InkWell(
-                  //           onTap: () {
-                  //             Get.toNamed(Routes.phoneRegistration);
-                  //           },
-                  //           splashColor: Colors.transparent,
-                  //           highlightColor: Colors.transparent,
-                  //           hoverColor: Colors.transparent,
-                  //           child: Padding(
-                  //             padding: EdgeInsets.all(12.r),
-                  //             child: SvgPicture.asset(
-                  //                 "assets/icons/phone_login.svg"),
-                  //           ),
-                  //         ),
-                  //       )
-                  //     : const SizedBox(),
                 ],
               ),
             ),

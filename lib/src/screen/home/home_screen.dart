@@ -11,9 +11,7 @@ import 'package:get/get.dart';
 import 'package:hot_card/src/Providers/MapProvider.dart';
 import 'package:hot_card/src/models/home_data_model.dart' as data_model;
 import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-
 import '../../_route/routes.dart';
 import '../../controllers/dashboard_controller.dart';
 import '../../controllers/details_screen_controller.dart';
@@ -71,7 +69,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     });
   }
 
-  double _currentSliderValue = 50;
+  double _currentSliderValue = 500;
   String selectedOption = AppTags.all.tr;
 
   void updateSliderValue(double value) {
@@ -187,51 +185,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     super.initState();
  //   checkAndRequestLocationPermission();
   }
-
-  Future<void> checkAndRequestLocationPermission() async {
-    var status = await Permission.location.status;
-
-    if ((status == PermissionStatus.denied || status == PermissionStatus.permanentlyDenied) && !locationPermissionChecked) {
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            title: Text('ლოკაციის გაზიარება აუცილებელია', style: TextStyle(color: Colors.orange)),
-            content: Text('თუ გსურთ ისარგებლოთ ჩვენი აპლიკაციით, გთხოვთ გაგვიზიარეთ ლოკაცია', style: TextStyle(color: Colors.orange)),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  if (status == PermissionStatus.denied) {
-                    await Permission.location.request();
-                    status = await Permission.location.status;
-                    if (status != PermissionStatus.denied) {
-                      locationPermissionChecked = true;
-                      Navigator.of(context).pop();
-                    }
-                  } else if (status == PermissionStatus.permanentlyDenied) {
-                    await openAppSettings();
-                    status = await Permission.location.status;
-                    if (status != PermissionStatus.denied) {
-                      locationPermissionChecked = true;
-                      Navigator.of(context).pop();
-                    }
-                  }
-                },
-                child: Text('გაზიარება', style: TextStyle(color: Colors.orange)),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -402,6 +355,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           return false;
                         },
                         child: ListView.builder(
+                          controller: _scrollcontroller,
                           shrinkWrap: true,
                           physics: const BouncingScrollPhysics(),
                           itemCount: homeScreenContentController
@@ -422,6 +376,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           : const ShimmerHomeContent(),
     );
   }
+
+  ScrollController _scrollcontroller = ScrollController();
+  bool isLoadingMore = false;
 
   double calculateDistance(lat1, lon1, lat2, lon2) {
     const p = 0.017453292519943295;

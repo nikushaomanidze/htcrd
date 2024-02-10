@@ -63,7 +63,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           },
           backgroundColor: currentTab == 0
               ? const Color.fromARGB(255, 239, 127, 26)
-              : Colors.grey,
+              : Color.fromARGB(255, 239, 127, 26),
           child: const Icon(Icons.home_rounded, size: 45),
         ),
       ),
@@ -84,10 +84,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
         child: BottomAppBar(
           shape: const CircularNotchedRectangle(),
-          color: Colors.white,
+          color: const Color.fromARGB(255, 239, 127, 26),
           notchMargin: 20,
           child: SizedBox(
-            height: 90,
+            height: 85,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -108,7 +108,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ImageIcon(
                           size: 20,
                           const AssetImage('assets/images/map.png'),
-                          color: currentTab == 1 ? Colors.orange : Colors.grey,
+                          color: currentTab == 1 ? Colors.white54 : Colors.white,
                         ),
                         const SizedBox(
                           height: 5,
@@ -120,7 +120,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           style: TextStyle(
                               fontSize: 11,
                               color:
-                                  currentTab == 1 ? Colors.orange : Colors.grey,
+                                  currentTab == 1 ? Colors.white54 : Colors.white,
                               fontFamily: 'bpg'),
                         )
                       ],
@@ -143,7 +143,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ImageIcon(
                           size: 20,
                           const AssetImage('assets/images/bag.png'),
-                          color: currentTab == 2 ? Colors.orange : Colors.grey,
+                          color: currentTab == 2 ? Colors.white54 : Colors.white,
                         ),
                         const SizedBox(
                           height: 5,
@@ -157,7 +157,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             style: TextStyle(
                               fontSize: 11,
                               color:
-                                  currentTab == 2 ? Colors.orange : Colors.grey,
+                                  currentTab == 2 ? Colors.white54 : Colors.white,
                               fontFamily: 'bpg',
                             ),
                           ),
@@ -193,7 +193,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ImageIcon(
                           size: 20,
                           const AssetImage('assets/images/userimage.png'),
-                          color: currentTab == 3 ? Colors.orange : Colors.grey,
+                          color: currentTab == 3 ? Colors.white54 : Colors.white,
                         ),
                         const SizedBox(
                           height: 5,
@@ -207,8 +207,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             style: TextStyle(
                                 fontSize: 11,
                                 color: currentTab == 3
-                                    ? Colors.orange
-                                    : Colors.grey,
+                                    ? Colors.white54
+                                    : Colors.white,
                                 fontFamily: 'bpg'),
                             softWrap:
                                 true, // This allows the text to wrap onto multiple lines if necessary
@@ -241,7 +241,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ImageIcon(
                           size: 20,
                           const AssetImage('assets/images/credit-card.png'),
-                          color: currentTab == 4 ? Colors.orange : Colors.grey,
+                          color: currentTab == 4 ? Colors.white54 : Colors.white,
                         ),
                         const SizedBox(
                           height: 5,
@@ -252,7 +252,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           style: TextStyle(
                             fontSize: 9.5,
                             color:
-                                currentTab == 4 ? Colors.orange : Colors.grey,
+                                currentTab == 4 ? Colors.white54 : Colors.white,
                             fontFamily: 'bpg',
                           ),
                           softWrap: true,

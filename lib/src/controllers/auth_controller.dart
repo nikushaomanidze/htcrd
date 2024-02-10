@@ -6,6 +6,8 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hot_card/src/screen/auth_screen/otp_screen.dart';
+import 'package:hot_card/src/screen/home/mtla_home.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'package:email_validator/email_validator.dart';
@@ -13,6 +15,7 @@ import 'package:email_validator/email_validator.dart';
 import '../data/local_data_helper.dart';
 import '../models/user_data_model.dart';
 import '../screen/auth_screen/login_screen.dart';
+import '../screen/auth_screen/phone_registration_screen.dart';
 import '../screen/dashboard/dashboard_screen.dart';
 import '../servers/repository.dart';
 import '../utils/app_tags.dart';
@@ -169,7 +172,7 @@ class AuthController extends GetxController {
   //Google SignIn
   _setInitialScreenGoogle(GoogleSignInAccount? googleSignInAccount) {
     if (googleSignInAccount != null) {
-      Get.offAll(() => const DashboardScreen());
+      Get.offAll(() =>  DashboardScreen());
     } else {
       Get.offAll(() => LoginScreen());
     }
@@ -198,7 +201,7 @@ class AuthController extends GetxController {
               uid: user.uid);
           if (userDataModel != null) {
             printLog("---------google auth: success");
-            Get.offAll(() => const DashboardScreen());
+            Get.offAll(() =>   DashboardScreen());
             _isLoggingIn(false);
           } else {
             printLog("---------google auth: failed");
@@ -353,7 +356,6 @@ class AuthController extends GetxController {
     try {
       printLog("From Auth: ${LocalDataHelper().box.read("userToken")}");
       await _googleSign.signOut();
-      await _googleSign.disconnect();
       await _auth.signOut();
       await Repository().logOut().then((value) {
         LocalDataHelper().box.remove("userToken");

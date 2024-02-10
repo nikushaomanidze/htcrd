@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -12,9 +11,7 @@ import 'package:hot_card/src/screen/dashboard/dashboard_screen.dart';
 import 'package:hot_card/src/servers/network_service.dart';
 import 'package:hot_card/src/servers/repository.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../utils/app_tags.dart';
-
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,21 +23,17 @@ import 'package:hot_card/src/screen/home/home_screen_gartoba.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../_route/routes.dart';
 import '../../controllers/home_screen_controller.dart';
 import '../../controllers/my_wallet_controller.dart';
 import '../../controllers/profile_content_controller.dart';
 import '../../utils/app_theme_data.dart';
 import '../../utils/responsive.dart';
-import '../splash/splash_screen.dart';
 import 'category/all_category_screen.dart';
 import 'category/product_by_category_screen.dart';
 import 'home_screen.dart';
 import 'home_screen_cafe.dart';
-
 import '../Map/Widget/GetCurrentLocation.dart';
-
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'dart:io';
 
@@ -392,44 +385,6 @@ class _MtlaHomeState extends State<MtlaHome> {
     );
   }
 
-  // void _showPopupBeforePermission(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(35.0),
-  //         ),
-  //         title: const Center(
-  //           child: Text(
-  //             'ლოკაციის გამოყენება',
-  //             style: TextStyle(fontFamily: 'bpg'),
-  //           ),
-  //         ),
-  //         content: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             const SizedBox(
-  //               height: 150, // set a fixed height
-  //               child: Text(
-  //                 'აპლიკაციას სრულყოფილად სამუშაოდ სჭირდება წვდომა თქვენს ლოკაციაზე, რათა გაჩვენოთ თქვენთვის ყველაზე მოსახერხებელი და ახლო ობიექტები.',
-  //                 style: TextStyle(fontFamily: 'bpg'),
-  //               ),
-  //             ),
-  //             ElevatedButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pop(); // Close the dialog
-  //                 // Call your function here
-  //                 // Do something after the dialog is closed
-  //               },
-  //               child: const Text('OK'),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
   Future<void> _checkAndRequestLocationPermission(
       BuildContext context, MaterialPageRoute route) async {
@@ -443,12 +398,12 @@ class _MtlaHomeState extends State<MtlaHome> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text(
-              'ლოკაციის გაზიარება აუცილებელია',
-             // style: TextStyle(color: Colors.orange),
+              AppTags.locreqtitle.tr,
+              // style: TextStyle(color: Colors.orange),
             ),
             content: Text(
-              'თუ გსურთ ისარგებლოთ ჩვენი აპლიკაციით, გთხოვთ გაგვიზიაროთ ლოკაცია',
-            //  style: TextStyle(color: Colors.orange),
+              AppTags.locreqbody.tr,
+              //  style: TextStyle(color: Colors.orange),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
@@ -467,7 +422,8 @@ class _MtlaHomeState extends State<MtlaHome> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   primary: Colors.orange.shade700,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
                 ),
                 onPressed: () async {
                   // Request location permission and close the dialog
@@ -490,59 +446,44 @@ class _MtlaHomeState extends State<MtlaHome> {
       );
     } else if (locationPermission == LocationPermission.always ||
         locationPermission == LocationPermission.whileInUse) {
-      Navigator.pushReplacement(context, route);
+      bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+      if (!isLocationServiceEnabled) {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                'ლოკაციის გაზიარება გამორთულია',
+                // style: TextStyle(color: Colors.orange),
+              ),
+              content: Text(
+                'გთხოვთ, ჩართეთ ლოკაციის გაზიარება თქვენს სმარტფონში',
+                //  style: TextStyle(color: Colors.orange),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'დახურვა',
+                    style: TextStyle(color: Colors.orange.shade700),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        Navigator.push(context, route);
+      }
     }
   }
-
-
-
-  bool locationPermissionChecked = false;
-
-  Future<void> checkAndRequestLocationPermission(BuildContext context) async {
-    PermissionStatus status = await Permission.location.status;
-
-    if (status.isDenied || status == PermissionStatus.permanentlyDenied) {
-      await showDialog(
-        context: context,
-        barrierDismissible: false, // Prevent user from closing the dialog
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(
-              'ლოკაციის გაზიარება აუცილებელია',
-              style: TextStyle(color: Colors.orange),
-            ),
-            content: Text(
-              'თუ გსურთ ისარგებლოთ ჩვენი აპლიკაციით, გთხოვთ გაგვიზიაროთ ლოკაცია',
-              style: TextStyle(color: Colors.orange),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  // Request location permission and close the dialog
-                  status = await Permission.location.request();
-                  if (status.isPermanentlyDenied) {
-                    // The user has permanently denied the location permission
-                    // You may want to navigate to the app settings to enable the permission manually
-                    openAppSettings();
-                  }
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  'თანხმობა',
-                  style: TextStyle(color: Colors.orange),
-                ),
-              ),
-            ],
-          );
-        },
-      );
-    }
-    }
-
-
 
 
 
@@ -557,7 +498,7 @@ class _MtlaHomeState extends State<MtlaHome> {
       // backgroundColor: Colors.white,
       extendBodyBehindAppBar: false,
       extendBody: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
 
       body: SafeArea(
         child: SingleChildScrollView(
@@ -913,12 +854,9 @@ class _MtlaHomeState extends State<MtlaHome> {
                           width: 20,
                         ),
                         GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MapScreen()),
-                            );
+                          onTap: () async {
+                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => MapScreen()));
+
                           },
                           child: Center(
                             child: Column(
@@ -1076,7 +1014,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                 return false;
                               },
                               child: ListView.builder(
-                                itemCount: filteredCategories.length,
+                                itemCount: 5,
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
                                   return Row(

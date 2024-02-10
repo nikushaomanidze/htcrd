@@ -15,12 +15,10 @@ class PhoneAuthController extends GetxController {
   }
 
   Future phoneRegistration(
-      {String? firstName, String? lastName, String? phoneNumber}) async {
+      {String? phoneNumber}) async {
     isLoading.value = false;
     await Repository()
         .postPhoneRegistration(
-      firstName: firstName,
-      lastName: lastName,
       phoneNumber: phoneNumber,
     )
         .then((value) {
@@ -46,6 +44,14 @@ class PhoneAuthController extends GetxController {
     await Repository()
         .postPhoneRegistrationOTP(phoneNumber: phoneNumber, otp: otp)
         .then((value) {
+      isLoading.value = true;
+    });
+  }
+
+  Future updatePhone({required String phoneNumber}) async {
+    isLoading.value = false;
+    await Repository().updatePhoneNumber(phoneNumber: phoneNumber)
+    .then((value) {
       isLoading.value = true;
     });
   }

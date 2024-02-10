@@ -443,4 +443,6 @@ class AppTags {
   static const String goToMainPage = "goToMainPage";
   static const String chooseProductsFirst = "chooseProductsFirst";
   static const String back = "back";
+  static const String locreqtitle = 'locreqtitle';
+  static const String locreqbody = 'locreqbody';
 }

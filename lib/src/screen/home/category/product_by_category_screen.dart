@@ -1061,33 +1061,25 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                 quantity[index] !=
                                                                         0
                                                                     ? Text(
-                                                                        '${quantity[index]}',
-                                                                        style: TextStyle(
-                                                                            color: finalIndex == index
-                                                                                ? Colors.white
-                                                                                : Colors.black,
-                                                                            fontSize: 15,
-                                                                            fontFamily: 'bpg',
-                                                                            fontWeight: FontWeight.w500),
-                                                                      )
+                                                                  '${quantity[index] <= 3 ? quantity[index] : 3}',
+                                                                  style: TextStyle(
+                                                                      color: finalIndex == index
+                                                                          ? Colors.white
+                                                                          : Colors.black,
+                                                                      fontSize: 15,
+                                                                      fontFamily: 'bpg',
+                                                                      fontWeight: FontWeight.w500),
+                                                                )
                                                                     : Container(),
-                                                                const SizedBox(
-                                                                  width: 5,
-                                                                ),
+                                                              //  const SizedBox(width: 5,),
                                                                 GestureDetector(
+                                                                  behavior: HitTestBehavior.translucent,
                                                                   onTap: () {
                                                                     active_ac =
                                                                         true;
                                                                     if (differentAdditionalDishes ==
                                                                         3) {
-                                                                      setState(
-                                                                          () {
-                                                                        if (addedIndexes
-                                                                            .contains(index)) {
-                                                                          quantity[index] +=
-                                                                              1;
-                                                                        }
-                                                                      });
+
 
                                                                       showDialog(
                                                                         context:
@@ -1096,6 +1088,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                             (BuildContext
                                                                                 context) {
                                                                           return AlertDialog(
+                                                                            shape: RoundedRectangleBorder(
+                                                                              borderRadius: BorderRadius.circular(25)
+                                                                            ),
                                                                             title:
                                                                                 Text(
                                                                               AppTags.limitExpired.tr,
@@ -1108,6 +1103,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                               TextButton(
                                                                                 child: Text(
                                                                                   AppTags.close.tr,
+                                                                                  style: TextStyle(color: Colors.deepOrange.shade400),
                                                                                 ),
                                                                                 onPressed: () {
                                                                                   Navigator.of(context).pop();
@@ -1162,9 +1158,8 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                     }
                                                                   },
                                                                   child:
-                                                                      SizedBox(
-                                                                    width: 22,
-                                                                    height: 22,
+                                                                      Padding(
+                                                                        padding: EdgeInsets.all(12.0),
                                                                     child: Center(
                                                                         child: Icon(
                                                                       Icons.add,
@@ -1231,7 +1226,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                               ],
                                                             ),
                                                             const SizedBox(
-                                                              width: 20,
+                                                              width: 32,
                                                             )
                                                           ],
                                                         ),

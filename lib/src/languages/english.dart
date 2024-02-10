@@ -394,4 +394,6 @@ const Map<String, String> enUS = {
   "mm": "M",
   "searchFood": "Search Food",
   "goToMainPage": "Main Page",
+  "locreqtitle": "Location Permission is Required",
+  "locreqbody": "If you want to use our app, you need to share location"
 };

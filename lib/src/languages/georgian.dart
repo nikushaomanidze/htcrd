@@ -393,4 +393,6 @@ const Map<String, String> kaGE = {
   "friendsList": "მეგობრების სია",
   "searchFood": "მოძებნე",
   "goToMainPage": "მთავარი გვერდი",
+  "locreqtitle": 'ლოკაციის გაზიარება აუცილებელია',
+  "locreqbody": 'თუ გსურთ ისარგებლოთ ჩვენი აპლიკაციით, გთხოვთ გაგვიზიაროთ ლოკაცია',
 };

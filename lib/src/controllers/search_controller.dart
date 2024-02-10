@@ -3,6 +3,8 @@ import 'package:get/state_manager.dart';
 import '../models/search_product_model.dart';
 import '../servers/repository.dart';
 
+import 'dart:async';
+
 class SearchController extends GetxController {
   final Rx<SearchProductModel> _searchResult = SearchProductModel().obs;
   SearchProductModel get searchResult => _searchResult.value;
@@ -11,16 +13,32 @@ class SearchController extends GetxController {
   final RxBool _isSearchFieldEmpty = true.obs;
   bool get isSearchFieldEmpty => _isSearchFieldEmpty.value;
 
-  search(String searchValue) async {
-    _isSearching(true);
-    await Repository().getSearchProducts(searchKey: searchValue).then((value) {
-      if (value.products!.isNotEmpty || value.restaurants!.isNotEmpty) {
-        _searchResult.value = value;
-      } else {
+  Timer? _debounceTimer;
+
+  search(String searchValue) {
+    if (_debounceTimer != null && _debounceTimer!.isActive) {
+      _debounceTimer!.cancel();
+    }
+
+    _debounceTimer = Timer(Duration(milliseconds: 500), () async {
+      _isSearching(true);
+
+      try {
+        // Clear previous search results
         searchResult.products = [];
         searchResult.restaurants = [];
+
+        final value = await Repository().getSearchProducts(searchKey: searchValue);
+
+        if (value.products!.isNotEmpty || value.restaurants!.isNotEmpty) {
+          _searchResult.value = value;
+        } else {
+          // If both products and restaurants are empty, you may want to handle this case
+          // You can set _searchResult.value to an empty SearchProductModel or take other appropriate action
+        }
+      } finally {
+        _isSearching(false);
       }
-      _isSearching(false);
     });
   }
 
@@ -30,8 +48,16 @@ class SearchController extends GetxController {
 
   @override
   void onInit() {
+    // Clear initial search results
     searchResult.products = [];
     searchResult.restaurants = [];
     super.onInit();
   }
+
+  @override
+  void onClose() {
+    _debounceTimer?.cancel();
+    super.onClose();
+  }
 }
+

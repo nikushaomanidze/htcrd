@@ -3,7 +3,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hot_card/src/_route/routes.dart';
+import 'package:hot_card/src/screen/dashboard/dashboard_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../Providers/MapProvider.dart';
@@ -23,6 +26,11 @@ class MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Consumer<MapProvider>(
       builder: (context, value, child) => Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () => Get.to(DashboardScreen()),),
+        ),
         extendBodyBehindAppBar: true,
         extendBody: true,
         backgroundColor: Colors.transparent,
