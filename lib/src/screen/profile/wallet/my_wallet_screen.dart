@@ -156,7 +156,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
   Future<void> makeCardActive(String userId, String totalDays, String token,
       String recId, String reff_code) async {
     final url =
-        Uri.parse('${NetworkService.apiUrl}/user/make_card_active/$userId');
+    Uri.parse('${NetworkService.apiUrl}/user/make_card_active/$userId');
 
     try {
       final Map<String, String> headers = {
@@ -198,7 +198,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
   }
 
   Future<Map<String, dynamic>> payment(
-      String apiKey, String token, int amount) async {
+      String apiKey, String token, double amount) async {
     const url = 'https://api.tbcbank.ge/v1/tpay/payments';
     final headers = {
       'Content-Type': 'application/json',
@@ -243,8 +243,24 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
   void processPayment() async {
     final String accessToken1 = await getToken(apiKey, clientId, clientSecret);
     final String accessToken = widget.userDataModel.data!.token;
+    dynamic validationResponse = await validateReferralCode(inputController.text);
+    bool paymentProcessed = false;
+
+    double paymentAmount = 28.0; // Default payment amount. it is 0.1 because of debugging, this will later change to 28
+
+// Check the validation response
+    if (validationResponse is Map<String, dynamic> &&
+        validationResponse['exists'] == true) {
+      // Referral code is valid, set the payment amount to 15
+      paymentAmount = 15.0;
+    }
+
     final Map<String, dynamic> paymentResponse = await payment(
-        apiKey, accessToken1, inputController.text.isNotEmpty && inputController.text.length >= 7 ? 15 : 28);
+      apiKey,
+      accessToken1,
+      paymentAmount,
+    );
+ //   inputController.text.isNotEmpty && inputController.text.length >= 7 ? 15 : 28
     final String secondUrl = paymentResponse['links'][1]['uri'];
     final String rec_Id = paymentResponse['recId'];
     final String tbcBankLink = secondUrl;
@@ -259,42 +275,184 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
             child: WebView(
               initialUrl: tbcBankLink,
               javascriptMode: JavascriptMode.unrestricted,
-              onPageStarted: (url) {},
+              debuggingEnabled: true,
+              onPageStarted: (url) {    print('WebView page started: $url');
+              },
               onPageFinished: (val) async {
-                if (val == "https://www.google.com/") {
-                  PaymentProvider paymentProvider =
-                      Provider.of<PaymentProvider>(context, listen: false);
-                  if (kDebugMode) {
-                    var returnval = await paymentProvider.mCheckPaymentFunction(
-                        payID: paymentResponse["payId"], token: accessToken);
-                    // final recId = returnval['recurringCard']['recId'];
+                print('WebView page finished: $val');
 
-                    print(
-                        'return value return value return value return value $returnval');
+                try {
+                  // Check if payment has already been processed
+                  if (!paymentProcessed && val.contains("status=true")) {
+                    paymentProcessed = true; // Set the flag to true to prevent multiple executions
+
+                    print('Payment successful');
+
+                    // Perform actions directly without calling mCheckPaymentFunction
+                    const snackBar = SnackBar(
+                      content: Text('Payment Successful!'),
+                      backgroundColor: Colors.green,
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                    final recId = rec_Id;
+                    makeCardActive(userId, '30', accessToken, recId, inputController.text);
+
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                          (route) => false,
+                    );
+                    updateUserReferral(userId, inputController.text);
                   }
-
-                  const snackBar = SnackBar(
-                    content: Text('Payment Successfully!'),
-                    backgroundColor: Colors.green,
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-                  final recId = rec_Id;
-                  makeCardActive(
-                      userId, '30', accessToken, recId, inputController.text);
-
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const DashboardScreen()),
-                    (route) => false,
-                  );
+                } catch (error) {
+                  print('Error during payment processing: $error');
                 }
               },
+
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Future<dynamic> validateReferralCode(String referralCode) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://hotcard.online/api/check-referral-code'),
+        body: {'referral_code': referralCode},
+      );
+
+      print('Server Response: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Parse the response JSON
+        final Map<String, dynamic> responseBody = json.decode(response.body);
+
+        // Log the response for debugging
+        print('Validation Response: $responseBody');
+
+        return responseBody;
+      } else {
+        print('Error validating referral code - StatusCode: ${response.statusCode}, Body: ${response.body}');
+        return {'exists': false}; // or return an error indicator
+      }
+    } catch (e) {
+      print('Error validating referral code: $e');
+      return {'exists': false}; // or return an error indicator
+    }
+  }
+
+  Future<void> updateUserReferral(String userId, String referralCode) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://hotcard.online/api/update-referral?user_id=$userId&referral_code=$referralCode'),
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        // Successful update
+        print('Referral code updated successfully');
+      } else {
+        // Handle error based on response status code or body
+        print('Error updating referral code - StatusCode: ${response.statusCode}, Body: ${response.body}');
+      }
+    } catch (e) {
+      // Handle any unexpected errors during the request
+      print('Error updating referral code: $e');
+    }
+  }
+
+
+  bool _isValid = false;
+
+  Future<void> showValidationDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          title: Text('Enter Referral Code'),
+          content: TextField(
+            controller: inputController,
+            decoration: InputDecoration(
+              hintText: 'Enter referral code',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Validate the referral code
+                bool isValid = await validateReferralCode(
+                    inputController.text);
+
+                // Update the state to reflect the validation result
+                setState(() {
+                  _isValid = isValid;
+                });
+
+                Navigator.of(context).pop();
+                // Show the validation result
+                showResultDialog();
+              },
+              child: Text('Validate'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showResultDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Validation Result'),
+          content: Text(
+            _isValid ? 'Valid Referral Code' : 'Not Valid Referral Code',
+            style: TextStyle(
+              color: _isValid ? Colors.green : Colors.red,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showErrorDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          title: Text('Error'),
+          content: Text('Invalid Referral Code. Please try again.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK', style: TextStyle(color: Color.fromARGB(255, 239, 127, 26)),),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -761,6 +919,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                   children: [
                                     InkWell(
                                       onTap: () {
+                                    //    showValidationDialog();
                                         fetchMomwveviUserID(
                                                 widget.userDataModel.data!.token)
                                             .then((value) {
@@ -781,11 +940,11 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                 widget.userDataModel.data!.token,
                                                 phoneId);
 
-                                            inputController.text.length >= 7 &&
+                                        /*    inputController.text.length >= 7 &&
                                                     inputController.text.length <=
                                                         12
                                                 ? ammount = 15
-                                                : ammount = 28;
+                                                : ammount = 28;*/
 
                                             showDialog(
                                               context: context,
@@ -793,62 +952,83 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                 return AlertDialog(
                                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                                                   title: Text(
-                                                      _profileContentController
-                                                                  .profileDataModel
-                                                                  .value
-                                                                  .data!
-                                                                  .cardStatus !=
-                                                              'Inactive'
-                                                          ? AppTags.cardUpgrade.tr
-                                                          : AppTags.activeCard.tr,
-                                                      // ak kide erti dasturi unda ro recurrent gadaxdaze tanaxmaa
-                                                      ),
+                                                    _profileContentController.profileDataModel.value.data!.cardStatus != 'Inactive'
+                                                        ? AppTags.cardUpgrade.tr
+                                                        : '',
+                                                 //   AppTags.activeCard.tr,
+                                                  ),
                                                   content: SizedBox(
-                                                    height: 80,
+                                                    height: 110,
                                                     child: Column(
                                                       children: [
-                                                        momwveviUserId != 0 &&
-                                                                momwveviUserId !=
-                                                                    null
-                                                            ? Container()
-                                                            :
-                                                        momwveviUserId != 0 &&
-                                                                momwveviUserId !=
-                                                                    null
-                                                            ? Text(AppTags
-                                                                .costsAndDate.tr)
-                                                            : TextField(
-                                                                controller:
-                                                                    inputController,
-                                                                decoration:
-                                                                    const InputDecoration(
-                                                                        hintText:
-                                                                            "Referral Code"),
+                                                        if (momwveviUserId == 0 || momwveviUserId == null)
+                                                          TextField(
+                                                            controller: inputController,
+                                                            decoration:  InputDecoration(
+                                                              enabledBorder: OutlineInputBorder(
+                                                                borderRadius: BorderRadius.circular(20.0),
+                                                                borderSide: BorderSide(color: Color.fromARGB(255, 239, 127, 26))
                                                               ),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                borderRadius: BorderRadius.circular(20.0),
+                                                                borderSide:  BorderSide(color: Color.fromARGB(255, 239, 127, 26)),
+                                                              ),
+                                                              hintText: "რეფერალური კოდი", hintStyle: TextStyle(fontSize: 13),
+                                                            ),
+                                                          ),
+                                                        SizedBox(height: 15,),
+                                                        Text('(გამოწერის ღირებულება ავტომატურად ჩამოგეჭრებათ ყოველთვე)',style: TextStyle(fontSize: 13, color: Colors.grey),),
                                                       ],
                                                     ),
                                                   ),
                                                   actions: <Widget>[
                                                     TextButton(
-                                                      child: Text(AppTags.yes.tr,
-                                                          style: TextStyle(
-                                                            fontWeight: FontWeight.w600,
-                                                              fontFamily: 'bpg', color: Colors.deepOrange.shade400)),
-                                                      onPressed: () async {
-                                                        // print(inputText);
-                                                        // final String accessToken =
-                                                        //     await getToken(apiKey,
-                                                        //         clientId, clientSecret);
-                                                        // print(widget.userDataModel.data!.token);
-                                                        // print(userId);
+                                                      child: Text(
+                                                        AppTags.yes.tr,
+                                                        style: TextStyle(
+                                                          fontWeight: FontWeight.w600,
+                                                          fontFamily: 'bpg',
+                                                          color: Colors.deepOrange.shade400,
+                                                        ),
+                                                      ),
+                                                        onPressed: () async {
+                                                          try {
+                                                            if (momwveviUserId != 0 && momwveviUserId != null) {
+                                                              // Handle case where momwveviUserId is not zero or null
+                                                              // For example:
+                                                              // showErrorMessage('MomwveviUserId is not allowed in this context.');
+                                                              return;
+                                                            }
 
-                                                        processPayment();
-                                                      },
+                                                            // Validate the referral code
+                                                            dynamic validationResponse = await validateReferralCode(inputController.text);
+
+                                                            // Check if the referral code is valid
+                                                            if (validationResponse is Map<String, dynamic> && validationResponse['exists'] == true) {
+                                                              // Referral code is valid, continue with the payment process
+                                                              processPayment();
+                                                            } else {
+                                                              // Referral code is not valid, show an error message
+                                                              showErrorDialog();
+                                                            }
+                                                          } catch (e) {
+                                                            // Handle any unexpected errors during the validation process
+                                                            print('Error during validation: $e');
+                                                            // Show a generic error message to the user if needed
+                                                            // showErrorMessage('An unexpected error occurred.');
+                                                          }
+                                                        }
+
+
                                                     ),
                                                     TextButton(
-                                                      child: Text(AppTags.no.tr,
-                                                          style: TextStyle(
-                                                              fontFamily: 'bpg', color: Colors.deepOrange.shade400)),
+                                                      child: Text(
+                                                        AppTags.no.tr,
+                                                        style: TextStyle(
+                                                          fontFamily: 'bpg',
+                                                          color: Colors.deepOrange.shade400,
+                                                        ),
+                                                      ),
                                                       onPressed: () {
                                                         Navigator.of(context).pop();
                                                         // Perform your "no" action here
@@ -976,6 +1156,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                     height: 80,
                                                     child: Column(
                                                       children: [
+                                                        Text('(გამოწერის ღირებულება ავტომატურად ჩამოგეჭრებათ ყოველთვე)',style: TextStyle(fontSize: 13, color: Colors.grey),),
                                                         momwveviUserId != 0 &&
                                                             momwveviUserId !=
                                                                 null
@@ -1000,12 +1181,11 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                               fontWeight: FontWeight.w600,
                                                               fontFamily: 'bpg', color: Colors.deepOrange.shade400)),
                                                       onPressed: () async {
-                                                        // print(inputText);
-                                                        // final String accessToken =
-                                                        //     await getToken(apiKey,
-                                                        //         clientId, clientSecret);
-                                                        // print(widget.userDataModel.data!.token);
-                                                        // print(userId);
+                                                     //    final String accessToken =
+                                                      //       await getToken(apiKey,
+                                                      //           clientId, clientSecret);
+                                                      //   print(widget.userDataModel.data!.token);
+                                                      //   print(userId);
 
                                                         processPayment();
                                                       },

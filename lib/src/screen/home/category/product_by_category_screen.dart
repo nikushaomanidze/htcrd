@@ -580,7 +580,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     }
 
     var orderData = jsonEncode({
-      "user_id": LocalDataHelper().getUserAllData()!.data!.userId!,
+      "user_id": LocalDataHelper().getUserAllData()!.data!.userId,
       "orders": orders,
     });
 
@@ -1225,7 +1225,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                       ),
                                                               ],
                                                             ),
-                                                            const SizedBox(
+                                                           const SizedBox(
                                                               width: 32,
                                                             )
                                                           ],

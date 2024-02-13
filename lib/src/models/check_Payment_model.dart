@@ -71,7 +71,7 @@ class CheckPaymentModel {
         currency: json["currency"],
         resultCode: json["resultCode"],
         amount: json["amount"]?.toDouble(),
-        confirmedAmount: json["confirmedAmount"]?.toDouble(),
+        confirmedAmount: json["confirmedAmount"],
         returnedAmount: json["returnedAmount"],
         links: json["links"],
         transactionId: json["transactionId"],

@@ -60,14 +60,6 @@ class LoginScreen extends StatelessWidget {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // SizedBox(
-            //   width: 115.w,
-            //   height: 115.h,
-            //   child: Image.asset("assets/logos/logo.png"),
-            // ),
-            // SizedBox(
-            //   height: 30.h,
-            // ),
             Text(
               'Login',
               style: AppThemeData.welComeTextStyle_24
@@ -111,19 +103,7 @@ class LoginScreen extends StatelessWidget {
                     myController: authController.passwordController,
                     keyboardType: TextInputType.text,
                     hintText: AppTags.password.tr,
-                    // fieldIcon: Icons.lock,
                     myObscureText: authController.isVisible.value,
-                    // suffixIcon: InkWell(
-                    //   onTap: () {
-                    //     authController.isVisibleUpdate();
-                    //   },
-                    //   child: Icon(
-                    //     authController.isVisible.value
-                    //         ? Icons.visibility
-                    //         : Icons.visibility_off,
-                    //     color: AppThemeData.iconColor,
-                    //   ),
-                    // ),
                   ),
                 ),
               ),
@@ -173,7 +153,7 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(
                 height: 50,
               ),
-              Padding(
+           /*   Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 child: Text(
                   AppTags.orUse.tr,
@@ -181,7 +161,7 @@ class LoginScreen extends StatelessWidget {
                       ? AppThemeData.forgotTextStyle_12
                       : AppThemeData.todayDealNewStyle,
                 ),
-              ),
+              ),*/
               const SizedBox(
                 height: 25,
               ),
@@ -191,7 +171,7 @@ class LoginScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     //google login button
-                    Config.enableGoogleLogin
+                   /* Config.enableGoogleLogin
                         ? Container(
                             height: 56,
                             width: 333,
@@ -235,7 +215,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(
                       height: 15,
                     ),
-                   /* Config.enableFacebookLogin
+                    Config.enableFacebookLogin
                         ? Container(
                             height: 56,
                             width: 333,
@@ -278,7 +258,7 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(
                       height: 15,
                     ),
-                    */
+
                     Platform.isIOS
                         ? Container(
                             height: 56,
@@ -318,7 +298,7 @@ class LoginScreen extends StatelessWidget {
                                 ),
                               ),
                             ))
-                        : const SizedBox(),
+                        : const SizedBox(),*/
                     // LocalDataHelper().isPhoneLoginEnabled()
                     //     ? Container(
                     //         height: 48.h,

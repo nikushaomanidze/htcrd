@@ -24,6 +24,7 @@ import '../../utils/responsive.dart';
 import '../../widgets/loader/shimmer_home_content.dart';
 import '../../widgets/product_card_widgets/home_product_card.dart';
 import '../../widgets/shop_card_widget.dart';
+import '../Map/Widget/GetCurrentLocation.dart';
 import 'campaign/all_campaign_screen.dart';
 import 'campaign/campaign_screen.dart';
 import 'category/all_product_screen.dart';
@@ -43,6 +44,7 @@ import 'video_shopping/all_video_shopping.dart';
 class HomeScreenContent extends StatefulWidget {
   const HomeScreenContent({Key? key}) : super(key: key);
 
+
   @override
   State<HomeScreenContent> createState() => _HomeScreenContentState();
 }
@@ -50,6 +52,12 @@ class HomeScreenContent extends StatefulWidget {
 class _HomeScreenContentState extends State<HomeScreenContent> {
   final DashboardController homeScreenController =
       Get.find<DashboardController>();
+
+  GlobalKey<_HomeScreenContentState> key = GlobalKey();
+
+  void refreshPage() {
+    setState(() {});
+  }
 
   final MyWalletController myWalletController = Get.put(MyWalletController());
 
@@ -178,12 +186,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     );
   }
 
-  bool locationPermissionChecked = false;
 
   @override
   void initState() {
     super.initState();
- //   checkAndRequestLocationPermission();
   }
 
   @override

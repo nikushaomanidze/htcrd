@@ -87,7 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           color: const Color.fromARGB(255, 239, 127, 26),
           notchMargin: 20,
           child: SizedBox(
-            height: 85,
+            height: 70,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[

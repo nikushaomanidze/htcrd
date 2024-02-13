@@ -29,7 +29,7 @@ class MapScreenState extends State<MapScreen> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () => Get.to(DashboardScreen()),),
+          leading: IconButton(icon: Icon(Icons.arrow_back, color: Color.fromARGB(255, 239, 127, 26),), onPressed: () => Get.to(DashboardScreen()),),
         ),
         extendBodyBehindAppBar: true,
         extendBody: true,

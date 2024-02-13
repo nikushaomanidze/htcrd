@@ -6,8 +6,6 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hot_card/src/screen/auth_screen/otp_screen.dart';
-import 'package:hot_card/src/screen/home/mtla_home.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'package:email_validator/email_validator.dart';
@@ -15,7 +13,6 @@ import 'package:email_validator/email_validator.dart';
 import '../data/local_data_helper.dart';
 import '../models/user_data_model.dart';
 import '../screen/auth_screen/login_screen.dart';
-import '../screen/auth_screen/phone_registration_screen.dart';
 import '../screen/dashboard/dashboard_screen.dart';
 import '../servers/repository.dart';
 import '../utils/app_tags.dart';
@@ -113,7 +110,7 @@ class AuthController extends GetxController {
     _isLoggingIn(true);
     await Repository().loginWithEmailPassword(email, password).then(
       (value) {
-        if (value) Get.offAll(() => const DashboardScreen());
+        if (value) Get.offAllNamed('/dashboardScreen');
         _isLoggingIn(false);
       },
     );
@@ -172,7 +169,7 @@ class AuthController extends GetxController {
   //Google SignIn
   _setInitialScreenGoogle(GoogleSignInAccount? googleSignInAccount) {
     if (googleSignInAccount != null) {
-      Get.offAll(() =>  DashboardScreen());
+      Get.offAllNamed('/dashboardScreen');
     } else {
       Get.offAll(() => LoginScreen());
     }
@@ -201,7 +198,7 @@ class AuthController extends GetxController {
               uid: user.uid);
           if (userDataModel != null) {
             printLog("---------google auth: success");
-            Get.offAll(() =>   DashboardScreen());
+            Get.offAllNamed('/dashboardScreen');
             _isLoggingIn(false);
           } else {
             printLog("---------google auth: failed");
@@ -322,7 +319,7 @@ class AuthController extends GetxController {
               image: user.photoURL ?? "",
               providerId: "apple.com",
               uid: user.uid)
-          .then((value) => Get.offAll(() => const DashboardScreen()));
+          .then((value) => Get.offAllNamed('/dashboardScreen'));
     } else {
       Get.snackbar(
         AppTags.login.tr,
