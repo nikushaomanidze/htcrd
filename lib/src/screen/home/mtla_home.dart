@@ -752,8 +752,9 @@ class _MtlaHomeState extends State<MtlaHome> {
                                   style: const TextStyle(
                                       color: Color.fromARGB(255, 14, 13, 13),
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 12,
-                                      fontFamily: 'bpg'),
+                                      fontSize: 12.5,
+                                      fontFamily: 'bpg'
+                                  ),
                                 )
                               ],
                             ),
@@ -798,8 +799,9 @@ class _MtlaHomeState extends State<MtlaHome> {
                                   style: const TextStyle(
                                       color: Color.fromARGB(255, 14, 13, 13),
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 12,
-                                      fontFamily: 'bpg'),
+                                      fontSize: 12.5,
+                                      fontFamily: 'bpg'
+                                  ),
                                 )
                               ],
                             ),
@@ -844,7 +846,8 @@ class _MtlaHomeState extends State<MtlaHome> {
                                       color: Color.fromARGB(255, 14, 13, 13),
                                       fontWeight: FontWeight.w500,
                                       fontSize: 12,
-                                      fontFamily: 'bpg'),
+                                      fontFamily: 'bpg'
+                                  ),
                                 )
                               ],
                             ),
@@ -889,8 +892,9 @@ class _MtlaHomeState extends State<MtlaHome> {
                                   style: const TextStyle(
                                       color: Color.fromARGB(255, 14, 13, 13),
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 12,
-                                      fontFamily: 'bpg'),
+                                      fontSize: 12.5,
+                                      fontFamily: 'bpg'
+                                  ),
                                 )
                               ],
                             ),
@@ -934,8 +938,9 @@ class _MtlaHomeState extends State<MtlaHome> {
                                   style: const TextStyle(
                                       color: Color.fromARGB(255, 14, 13, 13),
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 12,
-                                      fontFamily: 'bpg'),
+                                      fontSize: 12.5,
+                                      fontFamily: 'bpg'
+                                  ),
                                 )
                               ],
                             ),
@@ -958,7 +963,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                       style: const TextStyle(
                           fontFamily: 'bpg',
                           fontSize: 18,
-                          fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.w600),
                     ),
                     const Spacer(),
                     GestureDetector(
@@ -973,9 +978,10 @@ class _MtlaHomeState extends State<MtlaHome> {
                         AppTags.seeAll.tr,
                         style: const TextStyle(
                             color: Color.fromARGB(255, 252, 96, 17),
-                            fontSize: 12,
+                            fontSize: 12.5,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'bpg'),
+                            fontFamily: 'bpg'
+                        ),
                       ),
                     ),
                   ],

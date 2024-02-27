@@ -639,6 +639,9 @@ class _ProductByCategoryState extends State<ProductByCategory> {
 
   int switchnum = 1;
 
+  int selectedPill = 1;
+
+
   int differentDishes = 0;
   int differentAdditionalDishes = 0;
   int currentTab = 0;
@@ -656,10 +659,20 @@ class _ProductByCategoryState extends State<ProductByCategory> {
       return Container();
     };
     return Scaffold(
+     /* appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+        Navigator.of(context).pop();
+        },
+        ),
+      ),*/
         extendBody: true,
         floatingActionButton: SizedBox(
           width: 70,
-          height: 70,
+          height: 71,
           child: Column(
             children: [
               FloatingActionButton(
@@ -737,9 +750,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                       if (snapshot.hasData) {
                         return Column(
                           children: [
-                            const SizedBox(
-                              height: 35,
-                            ),
+                            const SizedBox(height: 75,),
                             Row(
                               children: [
                                 const SizedBox(
@@ -759,37 +770,36 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                 //   height: 70,
                                 // ),
                                 Center(
-                                    child: Padding(
-                                  padding: const EdgeInsets.only(top: 70.0),
-                                  child: Text(
-                                    AppTags.chooseProduct.tr,
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: 'bpg',
-                                        color: Colors.white),
-                                  ),
-                                )),
+                                    child: Text(
+                                        AppTags.chooseProduct.tr,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: 'bpg',
+                                            color: Colors.white),
+                                      ),
+                                    ),
                                 const Spacer(),
                                 const SizedBox(
                                   width: 25,
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 190,
+                           // const SizedBox(height: 180,),
+                            Container(
+                              height: MediaQuery.sizeOf(context).height * 0.1935,
                             ),
                             Container(
                               width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * 0.7,
-                            //  height: 496,
+                              height: MediaQuery.of(context).size.height * 0.7,
+                              //  height: 496,
                               decoration: const BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.only(
                                   topLeft:
-                                      Radius.circular(50.0), // top-left corner
+                                  Radius.circular(50.0), // top-left corner
                                   topRight:
-                                      Radius.circular(50.0), // top-right corner
+                                  Radius.circular(50.0), // top-right corner
                                   bottomRight: Radius.circular(
                                       0.0), // bottom-right corner
                                   bottomLeft: Radius.circular(
@@ -814,10 +824,10 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                             fontSize: 22,
                                             fontFamily: 'metro-bold',
                                             color:
-                                                Color.fromARGB(255, 74, 75, 77),
+                                            Color.fromARGB(255, 74, 75, 77),
                                           ),
                                           maxLines:
-                                              2, // Set the maximum number of lines
+                                          2, // Set the maximum number of lines
                                           overflow: TextOverflow
                                               .ellipsis, // Handle overflow with ellipsis
                                         ),
@@ -855,7 +865,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                             fontSize: 14,
                                             fontFamily: 'metro-bold',
                                             color:
-                                                Color.fromARGB(255, 74, 75, 77),
+                                            Color.fromARGB(255, 74, 75, 77),
                                             fontWeight: FontWeight.w700),
                                       ),
                                     ],
@@ -865,536 +875,533 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                   ),
                                   switchnum == 1
                                       ? SizedBox(
-                                          height: 320,
-                                          child: NotificationListener<
-                                              OverscrollIndicatorNotification>(
-                                            onNotification: (overscroll) {
-                                              overscroll
-                                                  .disallowIndicator(); // This will prevent the overscroll glow effect
-                                              return false;
-                                            },
-                                            child: ListView.builder(
-                                              // itemExtent: 200.
-                                              padding: const EdgeInsets.all(0),
-                                              shrinkWrap: true,
-                                              // physics:
-                                              //     const NeverScrollableScrollPhysics(),
-                                              itemCount:
-                                                  snapshot.data!['data'].length,
+                                  //  height: 260,
+                                    height: MediaQuery.sizeOf(context).height * 0.4,
+                                    child: NotificationListener<
+                                        OverscrollIndicatorNotification>(
+                                      onNotification: (overscroll) {
+                                        overscroll
+                                            .disallowIndicator(); // This will prevent the overscroll glow effect
+                                        return false;
+                                      },
+                                      child: ListView.builder(
+                                        // itemExtent: 200.
+                                        padding: const EdgeInsets.all(0),
+                                        shrinkWrap: true,
+                                        // physics:
+                                        //     const NeverScrollableScrollPhysics(),
+                                        itemCount:
+                                        snapshot.data!['data'].length,
 
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                List<dynamic> dataList =
-                                                    snapshot.data!['data'];
+                                        itemBuilder:
+                                            (BuildContext context,
+                                            int index) {
+                                          List<dynamic> dataList =
+                                          snapshot.data!['data'];
 
-                                                dataList.sort((a, b) => a[
-                                                        'current_stock']
-                                                    .compareTo(
-                                                        b['current_stock']));
+                                          dataList.sort((a, b) => a[
+                                          'current_stock']
+                                              .compareTo(
+                                              b['current_stock']));
 
-                                                return Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                          .fromLTRB(0, 0, 0, 0),
-                                                      child: Container(
-                                                        height: 90,
-                                                        color:
-                                                            finalIndex == index
-                                                                ? const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    239,
-                                                                    127,
-                                                                    26)
-                                                                : const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    246,
-                                                                    246,
-                                                                    246),
-                                                        child: Row(
-                                                          children: [
-                                                            const SizedBox(
-                                                              width: 20,
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      top: 8.0),
-                                                              child: ClipRRect(
-                                                                borderRadius: BorderRadius.circular(15),
-                                                                 child: Image.network(
-                                                                dataList[index]
-                                                                    ['image'],
-                                                                width: 90,
-                                                                height: 90,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),),
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 15,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 135,
-                                                              child: Text(
-                                                                dataList[index][
-                                                                        'title']
-                                                                    .toString(),
-                                                                maxLines: 3,
-                                                                style: TextStyle(
-                                                                    color: finalIndex ==
-                                                                            index
-                                                                        ? Colors
-                                                                            .white
-                                                                        : Colors
-                                                                            .black,
-                                                                    fontSize:
-                                                                        13,
-                                                                    fontFamily:
-                                                                        'bpg',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500),
-                                                              ),
-                                                            ),
-                                                            const Spacer(),
-                                                            Row(
-                                                              children: [
-                                                                GestureDetector(
-                                                                  onTap: () {
-                                                                    setState(
-                                                                        () {
-                                                                      active_ac =
-                                                                          true;
-                                                                      differentAdditionalDishes -=
-                                                                          1;
-                                                                      additionalWNames
-                                                                          .remove(
-                                                                              additionalfinalId);
-                                                                      additionals
-                                                                          .remove(
-                                                                              additionalfinalId);
-                                                                      finalIndex =
-                                                                          index;
-                                                                      quantity[index] >=
-                                                                              1
-                                                                          ? quantity[index] -=
-                                                                              1
-                                                                          : quantity[
-                                                                              index];
-
-                                                                      selectedQty =
-                                                                          quantity[
-                                                                              index];
-                                                                      if (!addedIndexes.contains(
-                                                                              index) &&
-                                                                          (quantity[index] !=
-                                                                              0)) {
-                                                                        differentDishes -=
-                                                                            1;
-                                                                      } else if (quantity[
-                                                                              index] ==
-                                                                          0) {
-                                                                        addedIndexes.removeWhere((element) =>
-                                                                            element ==
-                                                                            index);
-                                                                        mainWNames.remove(dataList[index]
-                                                                            [
-                                                                            'id']);
-                                                                        differentDishes -=
-                                                                            1;
-                                                                      }
-                                                                    });
-                                                                  },
-                                                                  child: quantity[
-                                                                              index] !=
-                                                                          0
-                                                                      ? SizedBox(
-                                                                          width:
-                                                                              22,
-                                                                          height:
-                                                                              22,
-                                                                          child: Center(
-                                                                              child: Icon(
-                                                                            size:
-                                                                                22,
-                                                                            Icons.remove,
-                                                                            color: finalIndex == index
-                                                                                ? Colors.white
-                                                                                : const Color.fromARGB(255, 252, 96, 17),
-                                                                          )),
-                                                                        )
-                                                                      : Container(
-                                                                          width:
-                                                                              30,
-                                                                        ),
-                                                                ),
-                                                                const SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                quantity[index] !=
-                                                                        0
-                                                                    ? Text(
-                                                                  '${quantity[index] <= 3 ? quantity[index] : 3}',
-                                                                  style: TextStyle(
-                                                                      color: finalIndex == index
-                                                                          ? Colors.white
-                                                                          : Colors.black,
-                                                                      fontSize: 15,
-                                                                      fontFamily: 'bpg',
-                                                                      fontWeight: FontWeight.w500),
-                                                                )
-                                                                    : Container(),
-                                                              //  const SizedBox(width: 5,),
-                                                                GestureDetector(
-                                                                  behavior: HitTestBehavior.translucent,
-                                                                  onTap: () {
-                                                                    active_ac =
-                                                                        true;
-                                                                    if (differentAdditionalDishes ==
-                                                                        3) {
-
-
-                                                                      showDialog(
-                                                                        context:
-                                                                            context,
-                                                                        builder:
-                                                                            (BuildContext
-                                                                                context) {
-                                                                          return AlertDialog(
-                                                                            shape: RoundedRectangleBorder(
-                                                                              borderRadius: BorderRadius.circular(25)
-                                                                            ),
-                                                                            title:
-                                                                                Text(
-                                                                              AppTags.limitExpired.tr,
-                                                                            ),
-                                                                            content:
-                                                                                Text(
-                                                                              AppTags.limitIs3.tr,
-                                                                            ),
-                                                                            actions: <Widget>[
-                                                                              TextButton(
-                                                                                child: Text(
-                                                                                  AppTags.close.tr,
-                                                                                  style: TextStyle(color: Colors.deepOrange.shade400),
-                                                                                ),
-                                                                                onPressed: () {
-                                                                                  Navigator.of(context).pop();
-                                                                                },
-                                                                              ),
-                                                                            ],
-                                                                          );
-                                                                        },
-                                                                      );
-                                                                    } else {
-                                                                      setState(
-                                                                          () {
-                                                                        if (daysLeft ==
-                                                                            'Inactive') {
-                                                                          Navigator
-                                                                              .push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                              builder: (context) => _profileContentController.user!.value.data != null ? MyWalletScreen(userDataModel: _profileContentController.user!.value) : const ProfileContent(),
-                                                                            ),
-                                                                          );
-                                                                        } else {
-                                                                          finalIndex =
-                                                                              index;
-                                                                          mainDishPrice =
-                                                                              double.parse(dataList[index]['formatted_price'].toString());
-                                                                          totalMainPrice +=
-                                                                              double.parse(dataList[index]['formatted_price'].toString());
-                                                                          mainWNames[dataList[index]
-                                                                              [
-                                                                              'id']] = dataList[
-                                                                                  index]
-                                                                              [
-                                                                              'title'];
-                                                                          switchnum =
-                                                                              2;
-                                                                          quantity[index] +=
-                                                                              1;
-                                                                          if (!addedIndexes
-                                                                              .contains(index)) {
-                                                                            differentDishes +=
-                                                                                1;
-                                                                            addedIndexes.add(index);
-                                                                          }
-
-                                                                          additionalfinalIndex =
-                                                                              250;
-                                                                          selectedQty =
-                                                                              quantity[index];
-                                                                        }
-                                                                      });
-                                                                    }
-                                                                  },
-                                                                  child:
-                                                                      Padding(
-                                                                        padding: EdgeInsets.all(12.0),
-                                                                    child: Center(
-                                                                        child: Icon(
-                                                                      Icons.add,
-                                                                      size: 22,
-                                                                      color: finalIndex ==
-                                                                              index
-                                                                          ? Colors
-                                                                              .white
-                                                                          : const Color
-                                                                              .fromARGB(
-                                                                              255,
-                                                                              252,
-                                                                              96,
-                                                                              17),
-                                                                    )),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                              width: dataList[index]
-                                                                              [
-                                                                              'formatted_price']
-                                                                          .toString()
-                                                                          .length ==
-                                                                      1
-                                                                  ? 20
-                                                                  : dataList[index]['formatted_price']
-                                                                              .toString()
-                                                                              .length ==
-                                                                          2
-                                                                      ? 12
-                                                                      : 1,
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                quantity[index] !=
-                                                                        0
-                                                                    ? FittedBox(
-                                                                        fit: BoxFit
-                                                                            .scaleDown,
-                                                                        child:
-                                                                            Text(
-                                                                          softWrap:
-                                                                              true,
-                                                                          style:
-                                                                              TextStyle(color: finalIndex == index ? Colors.white : Colors.black),
-                                                                          (dataList[index]['formatted_price'] * quantity[index]).toString() +
-                                                                              '₾'.toString(),
-                                                                          textAlign:
-                                                                              TextAlign.left,
-                                                                        ),
-                                                                      )
-                                                                    : Text(
-                                                                        style: TextStyle(
-                                                                            color: finalIndex == index
-                                                                                ? Colors.white
-                                                                                : Colors.black),
-                                                                        (dataList[index]['formatted_price']).toString() +
-                                                                            '₾'.toString(),
-                                                                        textAlign:
-                                                                            TextAlign.left,
-                                                                      ),
-                                                              ],
-                                                            ),
-                                                           const SizedBox(
-                                                              width: 32,
-                                                            )
-                                                          ],
+                                          return Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets
+                                                    .fromLTRB(0, 0, 0, 0),
+                                                child: Container(
+                                                  height: 90,
+                                                  color:
+                                                  finalIndex == index
+                                                      ? const Color
+                                                      .fromARGB(
+                                                      255,
+                                                      239,
+                                                      127,
+                                                      26)
+                                                      : const Color
+                                                      .fromARGB(
+                                                      255,
+                                                      246,
+                                                      246,
+                                                      246),
+                                                  child: Row(
+                                                    children: [
+                                                      const SizedBox(
+                                                        width: 20,
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .only(
+                                                            top: 8.0),
+                                                        child: ClipRRect(
+                                                          borderRadius: BorderRadius.circular(15),
+                                                          child: Image.network(
+                                                            dataList[index]
+                                                            ['image'],
+                                                            width: 90,
+                                                            height: 90,
+                                                            fit: BoxFit
+                                                                .cover,
+                                                          ),),
+                                                      ),
+                                                      const SizedBox(width: 15,),
+                                                      SizedBox(
+                                                        width: 110,
+                                                        child: Text(
+                                                          dataList[index][
+                                                          'title']
+                                                              .toString(),
+                                                          maxLines: 3,
+                                                          style: TextStyle(
+                                                              color: finalIndex ==
+                                                                  index
+                                                                  ? Colors
+                                                                  .white
+                                                                  : Colors
+                                                                  .black,
+                                                              fontSize:
+                                                              12,
+                                                              fontFamily:
+                                                              'bpg',
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .w500),
                                                         ),
                                                       ),
-                                                    ),
-                                                    // const Divider(),
-                                                  ],
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        )
-                                      : Row(
-                                          children: [
-                                            const SizedBox(
-                                              width: 20,
-                                            ),
-                                            Container(
-                                              width: 350,
-                                              height: 225,
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                    image: AssetImage(locale
-                                                                .value ==
-                                                            'ka_GE'
-                                                        ? 'assets/images/background_11.png'
-                                                        : locale.value ==
-                                                                'uk_UA'
-                                                            ? 'assets/images/background_11_ukr.png'
-                                                            : 'assets/images/background_11_eng.png'),
-                                                    fit: BoxFit.cover),
-                                              ),
-                                              child: Center(
-                                                child: Row(
-                                                  children: [
-                                                    const SizedBox(
-                                                      width: 50,
-                                                    ),
-                                                    Expanded(
-                                                      child: SizedBox(
-                                                          height: 200,
-                                                          child:
-                                                              SingleChildScrollView(
-                                                            child: Column(
-                                                              children: [
-                                                                FutureBuilder(
-                                                                  future:
-                                                                      getCheaperProducts(
-                                                                    int.parse(widget
-                                                                        .id!
-                                                                        .toString()),
-                                                                    double.parse(
-                                                                        mainDishPrice
-                                                                            .toString()),
-                                                                  ),
-                                                                  builder: (context,
-                                                                      snapshot) {
-                                                                    if (snapshot
-                                                                        .hasData) {
-                                                                      return SingleChildScrollView(
-                                                                        physics:
-                                                                            const ScrollPhysics(),
-                                                                        child:
-                                                                            Column(
-                                                                          children: [
-                                                                            NotificationListener<OverscrollIndicatorNotification>(
-                                                                              onNotification: (overscroll) {
-                                                                                overscroll.disallowIndicator(); // This will prevent the overscroll glow effect
-                                                                                return false;
-                                                                              },
-                                                                              child: ListView.builder(
-                                                                                physics: const NeverScrollableScrollPhysics(),
-                                                                                shrinkWrap: true,
-                                                                                itemCount: snapshot.data!.length,
-                                                                                itemBuilder: (BuildContext context, int index) {
-                                                                                  List<dynamic> dataList3 = snapshot.data!;
+                                                     // const Spacer(),
+                                                      Row(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              setState(
+                                                                      () {
+                                                                    active_ac =
+                                                                    true;
+                                                                    differentAdditionalDishes -=
+                                                                    1;
+                                                                    additionalWNames
+                                                                        .remove(
+                                                                        additionalfinalId);
+                                                                    additionals
+                                                                        .remove(
+                                                                        additionalfinalId);
+                                                                    finalIndex =
+                                                                        index;
+                                                                    quantity[index] >=
+                                                                        1
+                                                                        ? quantity[index] -=
+                                                                    1
+                                                                        : quantity[
+                                                                    index];
 
-                                                                                  dataList3.sort((a, b) => a['current_stock'].compareTo(b['current_stock']));
-                                                                                  return GestureDetector(
-                                                                                    onTap: () {
-                                                                                      setState(() {
-                                                                                        additionalfinalIndex = index;
-                                                                                        additionalfinalId = dataList3[index]['id'];
-                                                                                        additionals.add(additionalfinalId);
-                                                                                        additionalWNames[dataList3[index]['id']] = dataList3[index]['title'];
-                                                                                        differentAdditionalDishes += 1;
-                                                                                        switchnum = 1;
-                                                                                      });
-                                                                                    },
-                                                                                    child: Container(
-                                                                                      color: additionalfinalIndex == index ? const Color.fromARGB(255, 239, 127, 26) : Colors.transparent,
-                                                                                      child: Row(
-                                                                                        children: [
-                                                                                          const SizedBox(width: 30),
-                                                                                          Column(
-                                                                                            children: [
-                                                                                              const SizedBox(height: 20),
-                                                                                              Row(
-                                                                                                children: [
-                                                                                                  Container(
-                                                                                                    width: 50,
-                                                                                                    height: 50,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      borderRadius: BorderRadius.circular(25), // Half of the width/height for a circular shape
-                                                                                                    ),
-                                                                                                    child: ClipRRect(
-                                                                                                      borderRadius: BorderRadius.circular(25), // Same as above for the child
-                                                                                                      child: Image.network(
-                                                                                                        dataList3[index]['image'].toString(),
-                                                                                                        fit: BoxFit.cover,
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                  const SizedBox(
-                                                                                                    width: 15,
-                                                                                                  ),
-                                                                                                  SizedBox(
-                                                                                                    width: 80,
-                                                                                                    child: Text(
-                                                                                                      dataList3[index]['title'].toString(),
-                                                                                                      style: TextStyle(fontFamily: 'metro-bold', fontSize: 13, fontWeight: FontWeight.w400, color: additionalfinalIndex == index ? Colors.white : Colors.black),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                  SizedBox(
-                                                                                                    width: 35,
-                                                                                                    child: Text(
-                                                                                                      '${dataList3[index]['formatted_price']}₾',
-                                                                                                      style: TextStyle(fontFamily: 'metro-bold', fontSize: 10, fontWeight: FontWeight.w300, color: additionalfinalIndex == index ? Colors.white : Colors.black),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                  const SizedBox(
-                                                                                                    width: 5,
-                                                                                                  ),
-                                                                                                  const SizedBox(
-                                                                                                    width: 50,
-                                                                                                    child: Icon(
-                                                                                                      Icons.add,
-                                                                                                      size: 22,
-                                                                                                      color: Color.fromARGB(255, 252, 96, 17),
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                  const SizedBox(width: 5),
-                                                                                                ],
-                                                                                              ),
-                                                                                              const SizedBox(height: 20),
-                                                                                            ],
-                                                                                          ),
-                                                                                        ],
-                                                                                      ),
-                                                                                    ),
-                                                                                  );
-                                                                                },
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      );
-                                                                    } else if (snapshot
-                                                                        .hasError) {
-                                                                      return Text(
-                                                                          "An error has occurred: ${snapshot.error}");
+                                                                    selectedQty =
+                                                                    quantity[
+                                                                    index];
+                                                                    if (!addedIndexes.contains(
+                                                                        index) &&
+                                                                        (quantity[index] !=
+                                                                            0)) {
+                                                                      differentDishes -=
+                                                                      1;
+                                                                    } else if (quantity[
+                                                                    index] ==
+                                                                        0) {
+                                                                      addedIndexes.removeWhere((element) =>
+                                                                      element ==
+                                                                          index);
+                                                                      mainWNames.remove(dataList[index]
+                                                                      [
+                                                                      'id']);
+                                                                      differentDishes -=
+                                                                      1;
                                                                     }
-                                                                    return const Center(
-                                                                      child:
-                                                                          SizedBox(
-                                                                        width:
-                                                                            50,
-                                                                        height:
-                                                                            50,
-                                                                        child:
-                                                                            RefreshProgressIndicator(),
+                                                                  });
+                                                            },
+                                                            child: quantity[
+                                                            index] !=
+                                                                0
+                                                                ? SizedBox(
+                                                              width:
+                                                              22,
+                                                              height:
+                                                              22,
+                                                              child: Center(
+                                                                  child: Icon(
+                                                                    size:
+                                                                    22,
+                                                                    Icons.remove,
+                                                                    color: finalIndex == index
+                                                                        ? Colors.white
+                                                                        : const Color.fromARGB(255, 252, 96, 17),
+                                                                  )),
+                                                            )
+                                                                : Container(
+                                                              width:
+                                                              30,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          quantity[index] !=
+                                                              0
+                                                              ? Text(
+                                                            '${quantity[index] <= 3 ? quantity[index] : 3}',
+                                                            style: TextStyle(
+                                                                color: finalIndex == index
+                                                                    ? Colors.white
+                                                                    : Colors.black,
+                                                                fontSize: 15,
+                                                                fontFamily: 'bpg',
+                                                                fontWeight: FontWeight.w500),
+                                                          )
+                                                              : Container(),
+                                                          //  const SizedBox(width: 5,),
+                                                          GestureDetector(
+                                                            behavior: HitTestBehavior.translucent,
+                                                            onTap: () {
+                                                              active_ac =
+                                                              true;
+                                                              if (differentAdditionalDishes ==
+                                                                  3) {
+
+
+                                                                showDialog(
+                                                                  context:
+                                                                  context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                  context) {
+                                                                    return AlertDialog(
+                                                                      shape: RoundedRectangleBorder(
+                                                                          borderRadius: BorderRadius.circular(25)
                                                                       ),
+                                                                      title:
+                                                                      Text(
+                                                                        AppTags.limitExpired.tr,
+                                                                      ),
+                                                                      content:
+                                                                      Text(
+                                                                        AppTags.limitIs3.tr,
+                                                                      ),
+                                                                      actions: <Widget>[
+                                                                        TextButton(
+                                                                          child: Text(
+                                                                            AppTags.close.tr,
+                                                                            style: TextStyle(color: Colors.deepOrange.shade400),
+                                                                          ),
+                                                                          onPressed: () {
+                                                                            Navigator.of(context).pop();
+                                                                          },
+                                                                        ),
+                                                                      ],
                                                                     );
                                                                   },
-                                                                ),
-                                                              ],
+                                                                );
+                                                              } else {
+                                                                setState(
+                                                                        () {
+                                                                      if (daysLeft ==
+                                                                          'Inactive') {
+                                                                        Navigator
+                                                                            .push(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                            builder: (context) => _profileContentController.user!.value.data != null ? MyWalletScreen(userDataModel: _profileContentController.user!.value) : const ProfileContent(),
+                                                                          ),
+                                                                        );
+                                                                      } else {
+                                                                        finalIndex =
+                                                                            index;
+                                                                        mainDishPrice =
+                                                                            double.parse(dataList[index]['formatted_price'].toString());
+                                                                        totalMainPrice +=
+                                                                            double.parse(dataList[index]['formatted_price'].toString());
+                                                                        mainWNames[dataList[index]
+                                                                        [
+                                                                        'id']] = dataList[
+                                                                        index]
+                                                                        [
+                                                                        'title'];
+                                                                        switchnum =
+                                                                        2;
+                                                                        quantity[index] +=
+                                                                        1;
+                                                                        if (!addedIndexes
+                                                                            .contains(index)) {
+                                                                          differentDishes +=
+                                                                          1;
+                                                                          addedIndexes.add(index);
+                                                                        }
+
+                                                                        additionalfinalIndex =
+                                                                        250;
+                                                                        selectedQty =
+                                                                        quantity[index];
+                                                                      }
+                                                                    });
+                                                              }
+                                                            },
+                                                            child:
+                                                            Padding(
+                                                              padding: EdgeInsets.all(12.0),
+                                                              child: Center(
+                                                                  child: Icon(
+                                                                    Icons.add,
+                                                                    size: 22,
+                                                                    color: finalIndex ==
+                                                                        index
+                                                                        ? Colors
+                                                                        .white
+                                                                        : const Color
+                                                                        .fromARGB(
+                                                                        255,
+                                                                        252,
+                                                                        96,
+                                                                        17),
+                                                                  )),
                                                             ),
-                                                          )),
-                                                    ),
-                                                  ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        width: dataList[index]
+                                                        [
+                                                        'formatted_price']
+                                                            .toString()
+                                                            .length ==
+                                                            1
+                                                            ? 15
+                                                            : dataList[index]['formatted_price']
+                                                            .toString()
+                                                            .length ==
+                                                            2
+                                                            ? 15
+                                                            : 10,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          quantity[index] !=
+                                                              0
+                                                              ? FittedBox(
+                                                            fit: BoxFit
+                                                                .scaleDown,
+                                                            child:
+                                                            Text(
+                                                              softWrap:
+                                                              true,
+                                                              style:
+                                                              TextStyle(color: finalIndex == index ? Colors.white : Colors.black),
+                                                              (dataList[index]['formatted_price'] * quantity[index]).toString() +
+                                                                  '₾'.toString(),
+                                                              textAlign:
+                                                              TextAlign.left,
+                                                            ),
+                                                          )
+                                                              : Text(
+                                                            style: TextStyle(
+                                                                color: finalIndex == index
+                                                                    ? Colors.white
+                                                                    : Colors.black,
+                                                              fontSize: 15
+                                                            ),
+                                                            (dataList[index]['formatted_price']).toString() +
+                                                                '₾'.toString(),
+                                                            textAlign:
+                                                            TextAlign.left,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                   //    SizedBox(width: MediaQuery.sizeOf(context).width * 0.005,)
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                            const SizedBox(
-                                              width: 20,
-                                            )
-                                          ],
+                                              // const Divider(),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  )
+                                      : Row(
+                                    children: [
+                                      const SizedBox(width: 20,),
+                                      Container(
+                                       // width: 370,
+                                        //height: 300,
+                                        width: MediaQuery.sizeOf(context).width * 0.9,
+                                        height: MediaQuery.sizeOf(context).height * 0.34,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: AssetImage(locale
+                                                  .value ==
+                                                  'ka_GE'
+                                                  ? 'assets/images/background_11.png'
+                                                  : locale.value ==
+                                                  'uk_UA'
+                                                  ? 'assets/images/background_11_ukr.png'
+                                                  : 'assets/images/background_11_eng.png'),
+                                              fit: BoxFit.fill),
                                         ),
+                                        child: Center(
+                                          child: Row(
+                                            children: [
+                                              const SizedBox(width: 50,),
+                                              Expanded(
+                                                child: SizedBox(
+                                                  //  height: 280,
+                                                    height: MediaQuery.sizeOf(context).height * 0.27,
+
+                                                    child:
+                                                    SingleChildScrollView(
+                                                      child: Column(
+                                                        children: [
+                                                          FutureBuilder(
+                                                            future:
+                                                            getCheaperProducts(
+                                                              int.parse(widget
+                                                                  .id!
+                                                                  .toString()),
+                                                              double.parse(
+                                                                  mainDishPrice
+                                                                      .toString()),
+                                                            ),
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              if (snapshot
+                                                                  .hasData) {
+                                                                return SingleChildScrollView(
+                                                                  physics:
+                                                                  const ScrollPhysics(),
+                                                                  child:
+                                                                  Column(
+                                                                    children: [
+                                                                      NotificationListener<OverscrollIndicatorNotification>(
+                                                                        onNotification: (overscroll) {
+                                                                          overscroll.disallowIndicator(); // This will prevent the overscroll glow effect
+                                                                          return false;
+                                                                        },
+                                                                        child: ListView.builder(
+                                                                          physics: const NeverScrollableScrollPhysics(),
+                                                                          shrinkWrap: true,
+                                                                          itemCount: snapshot.data!.length,
+                                                                          itemBuilder: (BuildContext context, int index) {
+                                                                            List<dynamic> dataList3 = snapshot.data!;
+
+                                                                            dataList3.sort((a, b) => a['current_stock'].compareTo(b['current_stock']));
+                                                                            return GestureDetector(
+                                                                              onTap: () {
+                                                                                setState(() {
+                                                                                  additionalfinalIndex = index;
+                                                                                  additionalfinalId = dataList3[index]['id'];
+                                                                                  additionals.add(additionalfinalId);
+                                                                                  additionalWNames[dataList3[index]['id']] = dataList3[index]['title'];
+                                                                                  differentAdditionalDishes += 1;
+                                                                                  switchnum = 1;
+                                                                                });
+                                                                              },
+                                                                              child: Container(
+                                                                                color: additionalfinalIndex == index ? const Color.fromARGB(255, 239, 127, 26) : Colors.transparent,
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    const SizedBox(width: 30),
+                                                                                    Column(
+                                                                                      children: [
+                                                                                      //  const SizedBox(height: 20),
+                                                                                        Row(
+                                                                                          children: [
+                                                                                            Container(
+                                                                                              width: 50,
+                                                                                              height: 50,
+                                                                                              decoration: BoxDecoration(
+                                                                                                borderRadius: BorderRadius.circular(15), // Half of the width/height for a circular shape
+                                                                                              ),
+                                                                                              child: ClipRRect(
+                                                                                                borderRadius: BorderRadius.circular(15), // Same as above for the child
+                                                                                                child: Image.network(
+                                                                                                  dataList3[index]['image'].toString(),
+                                                                                                  fit: BoxFit.cover,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ),
+                                                                                            const SizedBox(
+                                                                                              width: 15,
+                                                                                            ),
+                                                                                            SizedBox(
+                                                                                              width: 90,
+                                                                                              child: Text(
+                                                                                                dataList3[index]['title'].toString(),
+                                                                                                style: TextStyle(fontFamily: 'metro-bold', fontSize: 14, fontWeight: FontWeight.w400, color: additionalfinalIndex == index ? Colors.white : Colors.black),
+                                                                                              ),
+                                                                                            ),
+                                                                                            const SizedBox(width: 15,),
+                                                                                            SizedBox(
+                                                                                              width: 45,
+                                                                                              child: Text(
+                                                                                                '${dataList3[index]['formatted_price']}₾',
+                                                                                                style: TextStyle(fontFamily: 'metro-bold', fontSize: 14, fontWeight: FontWeight.w300, color: additionalfinalIndex == index ? Colors.white : Colors.black),
+                                                                                              ),
+                                                                                            ),
+                                                                                            const SizedBox(
+                                                                                              width: 54,
+                                                                                              child: Icon(
+                                                                                                Icons.add,
+                                                                                                size: 25,
+                                                                                                color: Color.fromARGB(255, 252, 96, 17),
+                                                                                              ),
+                                                                                            ),
+                                                                                            const SizedBox(width: 5),
+                                                                                          ],
+                                                                                        ),
+                                                                                     //   const SizedBox(height: 20),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              } else if (snapshot
+                                                                  .hasError) {
+                                                                return Text(
+                                                                    "An error has occurred: ${snapshot.error}");
+                                                              }
+                                                              return const Center(
+                                                                child:
+                                                                SizedBox(
+                                                                  width:
+                                                                  50,
+                                                                  height:
+                                                                  50,
+                                                                  child:
+                                                                  RefreshProgressIndicator(),
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      )
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -1420,7 +1427,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
           ),
           Stack(alignment: Alignment.centerRight, children: [
             const Padding(
-              padding: EdgeInsets.only(top: 630, right: 850),
+              padding: EdgeInsets.only(top: 570, right: 850),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 60),
@@ -1476,5 +1483,74 @@ class _ProductByCategoryState extends State<ProductByCategory> {
             )
           ]),
         ]));
+  }
+}
+
+class OutlinedPill extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onPressed;
+
+  const OutlinedPill({
+    required this.label,
+    required this.isSelected,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: InkWell(
+        onTap: onPressed,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? Colors.blue : Colors.grey,
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.blue : Colors.grey,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class YourCustomSecondPillContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Customize the content for the second pill
+    return Container(
+      color: Colors.green,
+      child: Center(
+        child: Text(
+          'Your Custom Content for Second Pill',
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
+    );
+  }
+}
+
+class YourCustomThirdPillContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Customize the content for the third pill
+    return Container(
+      color: Colors.orange,
+      child: Center(
+        child: Text(
+          'Your Custom Content for Third Pill',
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
+    );
   }
 }
