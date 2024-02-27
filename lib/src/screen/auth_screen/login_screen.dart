@@ -171,7 +171,7 @@ class LoginScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     //google login button
-                   /* Config.enableGoogleLogin
+                    Config.enableGoogleLogin
                         ? Container(
                             height: 56,
                             width: 333,
@@ -212,10 +212,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                           )
                         : const SizedBox(),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Config.enableFacebookLogin
+                  /*  Config.enableFacebookLogin
                         ? Container(
                             height: 56,
                             width: 333,
@@ -254,7 +251,7 @@ class LoginScreen extends StatelessWidget {
                                 ),
                               ),
                             ))
-                        : const SizedBox(),
+                        : const SizedBox(),*/
                     const SizedBox(
                       height: 15,
                     ),
@@ -298,7 +295,7 @@ class LoginScreen extends StatelessWidget {
                                 ),
                               ),
                             ))
-                        : const SizedBox(),*/
+                        : const SizedBox(),
                     // LocalDataHelper().isPhoneLoginEnabled()
                     //     ? Container(
                     //         height: 48.h,

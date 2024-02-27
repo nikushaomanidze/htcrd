@@ -421,7 +421,7 @@ class _MtlaHomeState extends State<MtlaHome> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.orange.shade700,
+                  backgroundColor: Colors.orange.shade700,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
                 ),

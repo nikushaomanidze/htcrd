@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../_route/routes.dart';
@@ -23,19 +24,20 @@ class SplashController extends GetxController {
   String? whatsNew;
   bool? updateSkippable;
   String? url;
+  PackageInfo? packageInfo;
 
   @override
   void onInit() async {
     super.onInit();
-    // packageInfo = await PackageInfo.fromPlatform().then(
-    //   (value) {
-    //     appName = value.appName;
-    //     packageName = value.packageName;
-    //     appVersion = value.version;
-    //     buildNumber = value.buildNumber;
-    //     return null;
-    //   },
-    // );
+     packageInfo = await PackageInfo.fromPlatform().then(
+       (value) {
+         appName = value.appName;
+        packageName = value.packageName;
+         appVersion = value.version;
+         buildNumber = value.buildNumber;
+         return null;
+       },
+     );
     handleConfigData();
   }
 

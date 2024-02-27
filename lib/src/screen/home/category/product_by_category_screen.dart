@@ -122,7 +122,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     }
   }
 
-  void _launchTiktok() async {
+  void _launchYt() async {
     String url = widget.soc_yt.toString();
     if (await canLaunchUrl(Uri.parse(url))) {
       await launch(url);
@@ -216,7 +216,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                 const Spacer(),
                 GestureDetector(
                   onTap: () {
-                    _launchTiktok();
+                    _launchYt();
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -623,28 +623,6 @@ class _ProductByCategoryState extends State<ProductByCategory> {
   }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   int finalIndex = 125;
   double mainDishPrice = 0;
   double totalMainPrice = 0;
@@ -803,7 +781,8 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                             ),
                             Container(
                               width: MediaQuery.of(context).size.width,
-                              height: 496,
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            //  height: 496,
                               decoration: const BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.only(
@@ -886,7 +865,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                   ),
                                   switchnum == 1
                                       ? SizedBox(
-                                          height: 290,
+                                          height: 320,
                                           child: NotificationListener<
                                               OverscrollIndicatorNotification>(
                                             onNotification: (overscroll) {
@@ -947,15 +926,16 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                   const EdgeInsets
                                                                       .only(
                                                                       top: 8.0),
-                                                              child:
-                                                                  Image.network(
+                                                              child: ClipRRect(
+                                                                borderRadius: BorderRadius.circular(15),
+                                                                 child: Image.network(
                                                                 dataList[index]
                                                                     ['image'],
                                                                 width: 90,
                                                                 height: 90,
                                                                 fit: BoxFit
                                                                     .cover,
-                                                              ),
+                                                              ),),
                                                             ),
                                                             const SizedBox(
                                                               width: 15,
