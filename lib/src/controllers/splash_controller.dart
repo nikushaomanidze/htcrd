@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../_route/routes.dart';
 import '../data/local_data_helper.dart';
 import '../servers/repository.dart';
@@ -108,12 +106,12 @@ class SplashController extends GetxController {
       context: Get.context!,
       builder: (context) => CupertinoAlertDialog(
         title: const Center(
-          child: Text('Update Available'),
+          child: Text('განაახლეთ აპლიკაცია'),
         ),
         content: Column(
           children: [
             Text(
-                "You can now update this app from $appVersion to $configVersion"),
+                "ხელმისაწვდომია განახლება: $appVersion - $configVersion"),
             SizedBox(
               height: 20.h,
             ),
@@ -121,7 +119,7 @@ class SplashController extends GetxController {
               children: [
                 whatsNew != null
                     ? const Text(
-                        "What's New",
+                        "რა შეიცვალა",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -151,9 +149,9 @@ class SplashController extends GetxController {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                ElevatedButton(
+                TextButton(
                   child:
-                      Text(updateSkippable != null ? 'May be Later' : 'Cancel'),
+                      Text(updateSkippable != null ? 'დახურვა' : 'Cancel'),
                   onPressed: () {
                     if (updateSkippable != null) {
                       updateSkippable!
@@ -169,7 +167,11 @@ class SplashController extends GetxController {
                   width: 10.w,
                 ),
                 ElevatedButton(
-                  child: const Text('Update'),
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                    backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 239, 127, 26))
+                  ),
+                  child: const Text('განახლება'),
                   onPressed: () {
                     if (url != null) {
                       launchUrl(Uri.parse(url!));
@@ -201,14 +203,14 @@ class SplashController extends GetxController {
       context: Get.context!,
       builder: (context) => AlertDialog(
         title: const Center(
-          child: Text('Update Available'),
+          child: Text('განაახლეთ აპლიკაცია'),
         ),
         content: SizedBox(
           height: 250.h,
           child: Column(
             children: [
               Text(
-                  "You can now update this app from $appVersion to $configVersion"),
+                  "ხელმისაწვდომია განახლება: $appVersion - $configVersion"),
               SizedBox(
                 height: 20.h,
               ),
@@ -216,7 +218,7 @@ class SplashController extends GetxController {
                 children: [
                   whatsNew != null
                       ? const Text(
-                          "What's New",
+                          "რა შეიცვალა",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -249,7 +251,7 @@ class SplashController extends GetxController {
                 children: [
                   ElevatedButton(
                     child: Text(
-                        updateSkippable != null ? 'May be Later' : 'Cancel'),
+                        updateSkippable != null ? 'დახურვა' : 'Cancel'),
                     onPressed: () {
                       if (updateSkippable != null) {
                         updateSkippable!
@@ -265,7 +267,7 @@ class SplashController extends GetxController {
                     width: 10.w,
                   ),
                   ElevatedButton(
-                    child: const Text('Update'),
+                    child: const Text('განახლება'),
                     onPressed: () {
                       if (url != null) {
                         launchUrl(Uri.parse(url!));
