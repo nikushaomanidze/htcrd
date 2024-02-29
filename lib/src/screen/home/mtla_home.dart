@@ -320,7 +320,7 @@ class _MtlaHomeState extends State<MtlaHome> {
           title: Center(
             child: Text(
               AppTags.socialNetworks.tr,
-              style: const TextStyle(fontFamily: 'bpg'),
+            //  style: const TextStyle(fontFamily: 'bpg'),
             ),
           ),
           content: SizedBox(
@@ -435,7 +435,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                   }
                   Navigator.of(context).pop();
                 },
-                child: Text(
+                child: const Text(
                   'თანხმობა',
                   style: TextStyle(color: Colors.white),
                 ),
@@ -454,11 +454,11 @@ class _MtlaHomeState extends State<MtlaHome> {
           barrierDismissible: false,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text(
+              title: const Text(
                 'ლოკაციის გაზიარება გამორთულია',
                 // style: TextStyle(color: Colors.orange),
               ),
-              content: Text(
+              content: const Text(
                 'გთხოვთ, ჩართეთ ლოკაციის გაზიარება თქვენს სმარტფონში',
                 //  style: TextStyle(color: Colors.orange),
               ),
@@ -604,7 +604,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                           255, 65, 65, 65),
                                                       fontSize: 25.5,
                                                       fontWeight: FontWeight.w600,
-                                                      fontFamily: 'bpg',
+                                                    //  fontFamily: 'bpg',
                                                     ),
                                                   );
                                                 }),
@@ -642,7 +642,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                 fontSize: isMobile(context)
                                                     ? 12.sp
                                                     : 11.sp,
-                                                fontFamily: "bpg",
+                                              //  fontFamily: "bpg",
                                                 color: const Color.fromARGB(
                                                     255, 255, 255, 255),
                                               ),
@@ -676,7 +676,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                 fontSize: isMobile(context)
                                                     ? 12.sp
                                                     : 11.sp,
-                                                fontFamily: "bpg",
+                                              //  fontFamily: "bpg",
                                                 color: AppThemeData
                                                     .lightBackgroundColor,
                                               ),
@@ -704,7 +704,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                       children: [
                         GestureDetector(
                         onTap: () async {
-                       await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => HomeScreenContent()));
+                       await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const HomeScreenContent()));
                /*   PermissionStatus status = await Permission.location.status;
                   if (status.isDenied || status.isPermanentlyDenied) {
                   // Permission is denied or permanently denied, do nothing or show a message
@@ -753,7 +753,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                       color: Color.fromARGB(255, 14, 13, 13),
                                       fontWeight: FontWeight.w500,
                                       fontSize: 12.5,
-                                      fontFamily: 'bpg'
+                                    //  fontFamily: 'bpg'
                                   ),
                                 )
                               ],
@@ -765,7 +765,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => HomeScreenCafeContent()));
+                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const HomeScreenCafeContent()));
 
                           },
                           child: Center(
@@ -800,7 +800,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                       color: Color.fromARGB(255, 14, 13, 13),
                                       fontWeight: FontWeight.w500,
                                       fontSize: 12.5,
-                                      fontFamily: 'bpg'
+                                   //   fontFamily: 'bpg'
                                   ),
                                 )
                               ],
@@ -812,7 +812,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => HomeScreenGartoba()));
+                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const HomeScreenGartoba()));
                           },
                           child: Center(
                             child: Column(
@@ -846,7 +846,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                       color: Color.fromARGB(255, 14, 13, 13),
                                       fontWeight: FontWeight.w500,
                                       fontSize: 12,
-                                      fontFamily: 'bpg'
+                                    //  fontFamily: 'bpg'
                                   ),
                                 )
                               ],
@@ -858,7 +858,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => MapScreen()));
+                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const MapScreen()));
 
                           },
                           child: Center(
@@ -893,7 +893,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                       color: Color.fromARGB(255, 14, 13, 13),
                                       fontWeight: FontWeight.w500,
                                       fontSize: 12.5,
-                                      fontFamily: 'bpg'
+                                    //  fontFamily: 'bpg'
                                   ),
                                 )
                               ],
@@ -939,7 +939,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                       color: Color.fromARGB(255, 14, 13, 13),
                                       fontWeight: FontWeight.w500,
                                       fontSize: 12.5,
-                                      fontFamily: 'bpg'
+                                   //   fontFamily: 'bpg'
                                   ),
                                 )
                               ],
@@ -961,7 +961,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                     Text(
                       AppTags.topObjects.tr,
                       style: const TextStyle(
-                          fontFamily: 'bpg',
+                        //  fontFamily: 'bpg',
                           fontSize: 18,
                           fontWeight: FontWeight.w600),
                     ),
@@ -980,23 +980,21 @@ class _MtlaHomeState extends State<MtlaHome> {
                             color: Color.fromARGB(255, 252, 96, 17),
                             fontSize: 12.5,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'bpg'
+                         //   fontFamily: 'bpg'
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 5,
-              ),
+             // const SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 200,
+                      height: 230,
                       width: MediaQuery.of(context).size.width - 20,
                       child: FutureBuilder<List<dynamic>>(
                         future: cacheApiResponse(),
@@ -1069,9 +1067,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                 },
                                                 child: Column(
                                                   children: [
-                                                    const SizedBox(
-                                                      height: 20,
-                                                    ),
+                                                    const SizedBox(height: 20,),
                                                     Container(
                                                       width: 250,
                                                       height: 130,
@@ -1115,7 +1111,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                             child: Text(
                                               filteredCategories[index]['title']
                                                   .toString(),
-                                              maxLines: 1,
+                                              maxLines: 2,
                                               textAlign: TextAlign.left,
                                               overflow: TextOverflow.ellipsis,
                                               style: AppThemeData
@@ -1129,9 +1125,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                           FontWeight.w500),
                                             ),
                                           ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
+                                          const SizedBox(height: 2,),
                                           SizedBox(
                                             width: 250,
                                             child: Align(
@@ -1187,7 +1181,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                                 128,
                                                                 128,
                                                                 128),
-                                                        fontFamily: 'bpg',
+                                                      //  fontFamily: 'bpg',
                                                         fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.w300),
@@ -1382,7 +1376,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                           color: const Color
                                                               .fromARGB(
                                                               255, 128, 128, 128),
-                                                          fontFamily: 'bpg',
+                                                         // fontFamily: 'bpg',
                                                           fontSize: 12,
                                                           fontWeight:
                                                               FontWeight.w300),

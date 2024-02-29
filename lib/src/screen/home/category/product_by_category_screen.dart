@@ -817,17 +817,17 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                         width: 20,
                                       ),
                                       SizedBox(
-                                        width: 180, // Set the desired width
+                                        width: 200, // Set the desired width
                                         child: Text(
                                           widget.title.toString(),
                                           style: const TextStyle(
-                                            fontSize: 22,
+                                            fontSize: 21,
                                             fontFamily: 'metro-bold',
                                             color:
                                             Color.fromARGB(255, 74, 75, 77),
                                           ),
                                           maxLines:
-                                          2, // Set the maximum number of lines
+                                          3, // Set the maximum number of lines
                                           overflow: TextOverflow
                                               .ellipsis, // Handle overflow with ellipsis
                                         ),
@@ -851,9 +851,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(
-                                    height: 25,
-                                  ),
+                                  const SizedBox(height: 18,),
                                   Row(
                                     children: [
                                       const SizedBox(
@@ -862,8 +860,8 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                       Text(
                                         AppTags.deals.tr,
                                         style: const TextStyle(
-                                            fontSize: 14,
-                                            fontFamily: 'metro-bold',
+                                            fontSize: 15,
+                                           // fontFamily: 'metro-bold',
                                             color:
                                             Color.fromARGB(255, 74, 75, 77),
                                             fontWeight: FontWeight.w700),
@@ -964,9 +962,8 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                   : Colors
                                                                   .black,
                                                               fontSize:
-                                                              12,
-                                                              fontFamily:
-                                                              'bpg',
+                                                              13,
+                                                            //  fontFamily: 'bpg',
                                                               fontWeight:
                                                               FontWeight
                                                                   .w500),
@@ -1148,7 +1145,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                             },
                                                             child:
                                                             Padding(
-                                                              padding: EdgeInsets.all(12.0),
+                                                              padding: const EdgeInsets.all(12.0),
                                                               child: Center(
                                                                   child: Icon(
                                                                     Icons.add,
@@ -1312,7 +1309,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                     const SizedBox(width: 30),
                                                                                     Column(
                                                                                       children: [
-                                                                                      //  const SizedBox(height: 20),
+                                                                                        const SizedBox(height: 10),
                                                                                         Row(
                                                                                           children: [
                                                                                             Container(
@@ -1336,7 +1333,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                               width: 90,
                                                                                               child: Text(
                                                                                                 dataList3[index]['title'].toString(),
-                                                                                                style: TextStyle(fontFamily: 'metro-bold', fontSize: 14, fontWeight: FontWeight.w400, color: additionalfinalIndex == index ? Colors.white : Colors.black),
+                                                                                                style: TextStyle(fontFamily: 'metro-bold', fontSize: 11, fontWeight: FontWeight.w400, color: additionalfinalIndex == index ? Colors.white : Colors.black),
                                                                                               ),
                                                                                             ),
                                                                                             const SizedBox(width: 15,),
@@ -1491,7 +1488,7 @@ class OutlinedPill extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onPressed;
 
-  const OutlinedPill({
+  const OutlinedPill({super.key,
     required this.label,
     required this.isSelected,
     required this.onPressed,
@@ -1524,12 +1521,14 @@ class OutlinedPill extends StatelessWidget {
 }
 
 class YourCustomSecondPillContent extends StatelessWidget {
+  const YourCustomSecondPillContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     // Customize the content for the second pill
     return Container(
       color: Colors.green,
-      child: Center(
+      child: const Center(
         child: Text(
           'Your Custom Content for Second Pill',
           style: TextStyle(fontSize: 18),
@@ -1540,12 +1539,14 @@ class YourCustomSecondPillContent extends StatelessWidget {
 }
 
 class YourCustomThirdPillContent extends StatelessWidget {
+  const YourCustomThirdPillContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     // Customize the content for the third pill
     return Container(
       color: Colors.orange,
-      child: Center(
+      child: const Center(
         child: Text(
           'Your Custom Content for Third Pill',
           style: TextStyle(fontSize: 18),

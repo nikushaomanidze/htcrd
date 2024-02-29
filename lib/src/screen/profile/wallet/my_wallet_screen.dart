@@ -221,7 +221,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       "installmentProducts": [
         {"Name": "Subscription", "Price": amount, "Quantity": 1},
       ],
-      "callbackUrl": "https://www.google.com/",
+      "callbackUrl": "https://hotcard.online/api/callback",
       "preAuth": false,
       "language": "EN",
       "merchantPaymentId": "P123123",
@@ -246,13 +246,13 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
     dynamic validationResponse = await validateReferralCode(inputController.text);
     bool paymentProcessed = false;
 
-    double paymentAmount = 28.0; // Default payment amount. it is 0.1 because of debugging, this will later change to 28
+    double paymentAmount = 0.05; // Default payment amount. it is 0.1 because of debugging, this will later change to 28
 
 // Check the validation response
     if (validationResponse is Map<String, dynamic> &&
         validationResponse['exists'] == true) {
       // Referral code is valid, set the payment amount to 15
-      paymentAmount = 15.0;
+      paymentAmount = 0.05;
     }
 
     final Map<String, dynamic> paymentResponse = await payment(

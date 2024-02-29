@@ -202,11 +202,12 @@ class SplashController extends GetxController {
     showCupertinoDialog(
       context: Get.context!,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Center(
           child: Text('განაახლეთ აპლიკაცია'),
         ),
         content: SizedBox(
-          height: 250.h,
+          height: 200.h,
           child: Column(
             children: [
               Text(
@@ -249,7 +250,7 @@ class SplashController extends GetxController {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  ElevatedButton(
+                  TextButton(
                     child: Text(
                         updateSkippable != null ? 'დახურვა' : 'Cancel'),
                     onPressed: () {
@@ -267,6 +268,10 @@ class SplashController extends GetxController {
                     width: 10.w,
                   ),
                   ElevatedButton(
+                   style: ButtonStyle(
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+                        backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 239, 127, 26))
+                    ),
                     child: const Text('განახლება'),
                     onPressed: () {
                       if (url != null) {
