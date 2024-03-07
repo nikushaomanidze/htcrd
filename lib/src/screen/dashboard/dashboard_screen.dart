@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../controllers/profile_content_controller.dart';
 import 'package:hot_card/src/screen/home/category/all_category_screen.dart';
@@ -33,6 +35,107 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   final ProfileContentController _profileContentController =
       Get.put(ProfileContentController());
+
+
+  Future<void> _checkAndRequestLocationPermission(
+      BuildContext context) async {
+    LocationPermission locationPermission = await Geolocator.checkPermission();
+
+    if (locationPermission == LocationPermission.denied ||
+        locationPermission == LocationPermission.deniedForever) {
+      await showDialog(
+        context: context,
+        barrierDismissible: false, // Prevent user from closing the dialog
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              AppTags.locreqtitle.tr,
+              // style: TextStyle(color: Colors.orange),
+            ),
+            content: Text(
+              AppTags.locreqbody.tr,
+              //  style: TextStyle(color: Colors.orange),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  // Handle cancel action
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'არ ვეთანხმები',
+                  style: TextStyle(color: Colors.orange.shade700),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange.shade700,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+                onPressed: () async {
+                  // Request location permission and close the dialog
+                  locationPermission = await Geolocator.requestPermission();
+                  if (locationPermission == LocationPermission.deniedForever) {
+                    // The user has permanently denied the location permission
+                    // You may want to navigate to the app settings to enable the permission manually
+                    openAppSettings();
+                  }
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  'თანხმობა',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    } else if (locationPermission == LocationPermission.always ||
+        locationPermission == LocationPermission.whileInUse) {
+      bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+      if (!isLocationServiceEnabled) {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text(
+                'ლოკაციის გაზიარება გამორთულია',
+                // style: TextStyle(color: Colors.orange),
+              ),
+              content: const Text(
+                'გთხოვთ, ჩართეთ ლოკაციის გაზიარება თქვენს სმარტფონში',
+                //  style: TextStyle(color: Colors.orange),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'დახურვა',
+                    style: TextStyle(color: Colors.orange.shade700),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+       // Navigator.push(context, route);
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: MaterialButton(
                     minWidth: 5,
                     onPressed: () {
+                      _checkAndRequestLocationPermission(context);
                       setState(() {
                         isPressed = false;
 

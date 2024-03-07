@@ -67,6 +67,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
     fenix: true,
   );
 
+
   Future<List<dynamic>> fetchCategories() async {
     final response = await http.get(Uri.parse(
         '${NetworkService.apiUrl}/category/all?lang=${LocalDataHelper().getLangCode() ?? "en"}'));
@@ -203,6 +204,14 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+
+    });
   }
 
   @override

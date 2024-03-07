@@ -8,7 +8,6 @@ import 'package:lottie/lottie.dart';
 
 import '../../controllers/search_controller.dart' as searcc;
 import '../../utils/app_tags.dart';
-import '../../utils/app_theme_data.dart';
 import '../../utils/responsive.dart';
 import '../../widgets/product_card_widgets/search_product_card.dart';
 
@@ -216,10 +215,12 @@ class _SearchProductState extends State<SearchProduct> {
           ? SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(height: 5,),
             Text(
               AppTags.products.tr,
               style: const TextStyle(fontSize: 18, fontFamily: 'BPG'),
             ),
+            const SizedBox(height: 5,),
             GridView.builder(
               padding: EdgeInsets.symmetric(
                   horizontal: 15.w, vertical: 8.h),

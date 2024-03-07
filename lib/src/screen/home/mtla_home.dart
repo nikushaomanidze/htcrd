@@ -765,8 +765,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const HomeScreenCafeContent()));
-
+                            await _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const HomeScreenCafeContent()));
                           },
                           child: Center(
                             child: Column(
@@ -777,7 +776,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                     border: Border.all(
                                       color: Colors
                                           .orange, // Choose your border color
-                                      width: 3.0, // Choose your border width
+                                      width: 2.0, // Choose your border width
                                     ),
                                   ),
                                   child: ClipRRect(
@@ -1076,12 +1075,12 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                             const BorderRadius
                                                                 .all(
                                                                 Radius.circular(
-                                                                    10)),
+                                                                    15)),
                                                         border: Border.all(
                                                           color: Colors
                                                               .orange, // Choose your border color
                                                           width:
-                                                              2.0, // Choose your border width
+                                                              1.5, // Choose your border width
                                                         ),
                                                         image: DecorationImage(
                                                           image: filteredCategories[

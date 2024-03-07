@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,7 +17,7 @@ import '../../../controllers/home_screen_controller.dart';
 import '../../../models/add_to_cart_list_model.dart';
 import '../../../models/product_by_category_model.dart';
 import '../../../servers/repository.dart';
-
+import 'package:flutter/services.dart';
 import 'package:blobs/blobs.dart';
 import 'package:hot_card/src/screen/home/category/all_category_screen.dart';
 import 'package:hot_card/src/utils/app_tags.dart';
@@ -436,7 +435,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                   child: SizedBox(
                                       width: 50,
                                       height: 50,
-                                      child: RefreshProgressIndicator()));
+                                      child: RefreshProgressIndicator(color: Colors.orange,)));
                             },
                           ),
                         ],
@@ -732,9 +731,10 @@ class _ProductByCategoryState extends State<ProductByCategory> {
           Container(
             decoration: BoxDecoration(
                 image: DecorationImage(
-              image: NetworkImage(widget.imgurl.toString()),
-              fit: BoxFit.cover,
-            )),
+                  image: NetworkImage(widget.imgurl.toString()),
+                  fit: BoxFit.cover,
+                )
+            ),
             child: Container(
               decoration: const BoxDecoration(
                   image: DecorationImage(
@@ -834,9 +834,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
+                                  const SizedBox(height: 5,),
                                   Row(
                                     children: [
                                       const SizedBox(
@@ -851,8 +849,8 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 18,),
-                                  Row(
+                              //    const SizedBox(height: 18,),
+                                 Row(
                                     children: [
                                       const SizedBox(
                                         width: 20,
@@ -868,6 +866,36 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                       ),
                                     ],
                                   ),
+                            /*  Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        OutlinedPill(
+                                          label: AppTags.deals.tr,
+                                          onPressed: () {
+
+                                          },
+                                        ),
+                                        OutlinedPill(
+                                          label: 'Placeholder 1',
+                                          onPressed: () {
+
+                                          },
+                                        ),
+                                        OutlinedPill(
+                                          label: 'Placeholder 2',
+                                          onPressed: () {
+
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                ]
+                                                            ),
+                              ),*/
+
                                   const SizedBox(
                                     height: 10,
                                   ),
@@ -896,6 +924,29 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                             int index) {
                                           List<dynamic> dataList =
                                           snapshot.data!['data'];
+
+                                          void _showImageDialog(BuildContext context) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return Dialog(
+                                                  backgroundColor: Colors.transparent,
+                                                  child: SizedBox(
+                                                    width: double.infinity,
+                                                    height: 250,
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(25),
+                                                      child: Image.network(
+                                                        dataList[index]
+                                                        ['image'], // Replace with your image URL
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          }
 
                                           dataList.sort((a, b) => a[
                                           'current_stock']
@@ -935,16 +986,21 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                         const EdgeInsets
                                                             .only(
                                                             top: 8.0),
-                                                        child: ClipRRect(
-                                                          borderRadius: BorderRadius.circular(15),
-                                                          child: Image.network(
-                                                            dataList[index]
-                                                            ['image'],
-                                                            width: 90,
-                                                            height: 90,
-                                                            fit: BoxFit
-                                                                .cover,
-                                                          ),),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            _showImageDialog(context);
+                                                          },
+                                                          child: ClipRRect(
+                                                            borderRadius: BorderRadius.circular(15),
+                                                            child: Image.network(
+                                                              dataList[index]
+                                                              ['image'],
+                                                              width: 90,
+                                                              height: 90,
+                                                              fit: BoxFit
+                                                                  .cover,
+                                                            ),),
+                                                        ),
                                                       ),
                                                       const SizedBox(width: 15,),
                                                       SizedBox(
@@ -974,6 +1030,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                         children: [
                                                           GestureDetector(
                                                             onTap: () {
+                                                              HapticFeedback.lightImpact();
                                                               setState(
                                                                       () {
                                                                     active_ac =
@@ -1061,6 +1118,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                           GestureDetector(
                                                             behavior: HitTestBehavior.translucent,
                                                             onTap: () {
+                                                              HapticFeedback.lightImpact();
                                                               active_ac =
                                                               true;
                                                               if (differentAdditionalDishes ==
@@ -1293,6 +1351,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                             dataList3.sort((a, b) => a['current_stock'].compareTo(b['current_stock']));
                                                                             return GestureDetector(
                                                                               onTap: () {
+                                                                                HapticFeedback.lightImpact();
                                                                                 setState(() {
                                                                                   additionalfinalIndex = index;
                                                                                   additionalfinalId = dataList3[index]['id'];
@@ -1309,7 +1368,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                     const SizedBox(width: 30),
                                                                                     Column(
                                                                                       children: [
-                                                                                        const SizedBox(height: 10),
+                                                                                        const SizedBox(height: 5),
                                                                                         Row(
                                                                                           children: [
                                                                                             Container(
@@ -1333,7 +1392,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                               width: 90,
                                                                                               child: Text(
                                                                                                 dataList3[index]['title'].toString(),
-                                                                                                style: TextStyle(fontFamily: 'metro-bold', fontSize: 11, fontWeight: FontWeight.w400, color: additionalfinalIndex == index ? Colors.white : Colors.black),
+                                                                                                style: TextStyle(fontFamily: 'metro-bold', fontSize: 11.5, fontWeight: FontWeight.w400, color: additionalfinalIndex == index ? Colors.white : Colors.black),
                                                                                               ),
                                                                                             ),
                                                                                             const SizedBox(width: 15,),
@@ -1381,7 +1440,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                   height:
                                                                   50,
                                                                   child:
-                                                                  RefreshProgressIndicator(),
+                                                                  RefreshProgressIndicator(color: Colors.orange,),
                                                                 ),
                                                               );
                                                             },
@@ -1481,16 +1540,16 @@ class _ProductByCategoryState extends State<ProductByCategory> {
           ]),
         ]));
   }
+
+
 }
 
 class OutlinedPill extends StatelessWidget {
   final String label;
-  final bool isSelected;
   final VoidCallback onPressed;
 
   const OutlinedPill({super.key,
     required this.label,
-    required this.isSelected,
     required this.onPressed,
   });
 
@@ -1505,13 +1564,13 @@ class OutlinedPill extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected ? Colors.blue : Colors.grey,
+              color: Colors.black,
             ),
           ),
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.blue : Colors.grey,
+              color:  Colors.black,
             ),
           ),
         ),

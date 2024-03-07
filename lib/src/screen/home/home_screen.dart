@@ -185,12 +185,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
       },
     );
   }
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  
 
   @override
   Widget build(BuildContext context) {

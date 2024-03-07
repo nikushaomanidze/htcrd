@@ -9,11 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:hot_card/src/Providers/PaymentProvider.dart';
 import 'package:hot_card/src/screen/dashboard/dashboard_screen.dart';
 import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../../controllers/currency_converter_controller.dart';
 import '../../../controllers/my_wallet_controller.dart';
@@ -246,13 +244,13 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
     dynamic validationResponse = await validateReferralCode(inputController.text);
     bool paymentProcessed = false;
 
-    double paymentAmount = 0.05; // Default payment amount. it is 0.1 because of debugging, this will later change to 28
+    double paymentAmount = 28.0; // Default payment amount. it is 0.1 because of debugging, this will later change to 28
 
 // Check the validation response
     if (validationResponse is Map<String, dynamic> &&
         validationResponse['exists'] == true) {
       // Referral code is valid, set the payment amount to 15
-      paymentAmount = 0.05;
+      paymentAmount = 15.0;
     }
 
     final Map<String, dynamic> paymentResponse = await payment(
@@ -1108,6 +1106,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                       ),
                                     ),
                                     SizedBox(width: 10,),
+                                   // const Spacer(),
                                     InkWell(
                                       onTap: () {
                                         fetchMomwveviUserID(
@@ -2806,15 +2805,15 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                           ],
                         ));
                       }
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator(color: Colors.orange,));
                     },
                   );
                 }
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator(color: Colors.orange,));
               },
             );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: Colors.orange,));
         },
       ),
     );

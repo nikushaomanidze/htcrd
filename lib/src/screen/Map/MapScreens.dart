@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hot_card/src/_route/routes.dart';
 import 'package:hot_card/src/screen/dashboard/dashboard_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +28,7 @@ class MapScreenState extends State<MapScreen> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          leading: IconButton(icon: Icon(Icons.arrow_back, color: Color.fromARGB(255, 239, 127, 26),), onPressed: () => Get.to(DashboardScreen()),),
+          leading: IconButton(icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 239, 127, 26),), onPressed: () => Get.to(const DashboardScreen()),),
         ),
         extendBodyBehindAppBar: true,
         extendBody: true,

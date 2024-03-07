@@ -34,7 +34,7 @@ class SearchProductCard extends StatelessWidget {
         width: 165.w,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(7.r)),
+          borderRadius: BorderRadius.all(Radius.circular(10.r)),
           boxShadow: [
             BoxShadow(
               color: AppThemeData.boxShadowColor.withOpacity(0.1),
@@ -155,9 +155,12 @@ class SearchProductCard extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.all(8.r),
-                      child: Image.network(
-                        data.image!,
-                        fit: BoxFit.cover,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.network(
+                          data.image!,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
@@ -516,10 +519,12 @@ class SearchRestaurantCard extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.all(8.r),
-                      child: Image.network(
+                      child: ClipRRect (
+                        borderRadius: BorderRadius.circular(20),
+                         child:  Image.network(
                         data.image!,
                         fit: BoxFit.cover,
-                      ),
+                      )),
                     ),
                   ),
                   SizedBox(height: 14.h),

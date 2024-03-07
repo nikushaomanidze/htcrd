@@ -465,7 +465,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   //google login button
-                  /* Config.enableGoogleLogin
+                   Config.enableGoogleLogin
                       ? Container(
                           height: 48.h,
                           width: 48.w,
@@ -488,7 +488,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         )
                       : const SizedBox(),
                   //facebook login button
-                  Config.enableFacebookLogin
+                /*  Config.enableFacebookLogin
                       ? Container(
                           height: 48.h,
                           width: 48.w,
@@ -511,9 +511,9 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
                         )
-                      : const SizedBox(),
+                      : const SizedBox(),*/
 
-
+                  SizedBox(width: 5,),
                   Platform.isIOS
                       ? Container(
                           height: 48.h,
@@ -537,7 +537,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
                         )
-                      : Container(),*/
+                      : Container(),
                 ],
               ),
             ),
