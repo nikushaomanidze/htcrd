@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -7,13 +9,14 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:email_validator/email_validator.dart';
 
 import '../data/local_data_helper.dart';
 import '../models/user_data_model.dart';
 import '../screen/auth_screen/login_screen.dart';
 import '../screen/dashboard/dashboard_screen.dart';
+import '../servers/network_service.dart';
 import '../servers/repository.dart';
 import '../utils/app_tags.dart';
 import '../utils/constants.dart';
@@ -104,31 +107,78 @@ class AuthController extends GetxController {
     );
   }
 
-//General LogIn
-  void loginWithEmailPassword(
-      {required String email, required String password}) async {
-    _isLoggingIn(true);
-    await Repository().loginWithEmailPassword(email, password).then(
-      (value) {
-        if (value) Get.offAllNamed('/dashboardScreen');
-        _isLoggingIn(false);
-      },
+  var daysLeft;
+
+  Future<String> fetchCardNumber(String token) async {
+    final response = await http.get(
+      Uri.parse('${NetworkService.apiUrl}/user/profile'),
+      headers: {'Authorization': 'Bearer $token'},
     );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      daysLeft = data['data']['available_subscription_days'] ?? 'Inactive';
+      if (daysLeft > 0) {
+        return daysLeft.toString();
+      } else {
+        daysLeft = 'Inactive';
+        return daysLeft;
+      }
+    } else {
+      final response = await http.get(
+        Uri.parse('${NetworkService.apiUrl}/user/profile'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        daysLeft = data['data']['available_subscription_days'] ?? 'Inactive';
+        if (daysLeft > 0) {
+          return daysLeft;
+        } else {
+          daysLeft = 'Inactive';
+          return daysLeft;
+        }
+      } else {
+        daysLeft = 'Inactive2';
+        throw Exception('Failed to load data');
+      }
+    }
+  }
+
+  void navigateBasedOnDaysLeft() async {
+    String daysLeft = await fetchCardNumber(LocalDataHelper().getUserToken().toString());
+    if (daysLeft == 'Inactive') {
+      Get.offAllNamed('/onboarding');
+    } else {
+      Get.offAllNamed('/dashboardScreen');
+    }
+  }
+
+//General LogIn
+  void loginWithEmailPassword({required String email, required String password}) async {
+    _isLoggingIn(true);
+    await Repository().loginWithEmailPassword(email, password).then((value) async {
+      if (value) {
+        navigateBasedOnDaysLeft();
+      }
+      _isLoggingIn(false);
+    });
   }
 
   //General SignUp
   Future signUp(
       {required String firstName,
-      required String lastName,
-      required String email,
-      required String password,
-      required String phone,
-      required String card_number,
-      required String referral_code,
-      required String confirmPassword,
-      required String countryCode,
-      context
-      // required bool switchValue,
+        required String lastName,
+        required String email,
+        required String password,
+        required String phone,
+        required String card_number,
+        required String referral_code,
+        required String confirmPassword,
+        required String countryCode,
+        context
+        // required bool switchValue,
       }) async {
     _isLoggingIn(true);
 
@@ -169,7 +219,7 @@ class AuthController extends GetxController {
   //Google SignIn
   _setInitialScreenGoogle(GoogleSignInAccount? googleSignInAccount) {
     if (googleSignInAccount != null) {
-      Get.offAllNamed('/dashboardScreen');
+      navigateBasedOnDaysLeft();
     } else {
       Get.offAll(() => LoginScreen());
     }
@@ -198,7 +248,7 @@ class AuthController extends GetxController {
               uid: user.uid);
           if (userDataModel != null) {
             printLog("---------google auth: success");
-            Get.offAllNamed('/dashboardScreen');
+            navigateBasedOnDaysLeft();
             _isLoggingIn(false);
           } else {
             printLog("---------google auth: failed");
@@ -319,7 +369,7 @@ class AuthController extends GetxController {
               image: user.photoURL ?? "",
               providerId: "apple.com",
               uid: user.uid)
-          .then((value) => Get.offAllNamed('/dashboardScreen'));
+          .then((value) => navigateBasedOnDaysLeft());
     } else {
       Get.snackbar(
         AppTags.login.tr,

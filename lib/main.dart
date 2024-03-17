@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
             translations: AppTranslations(),
             fallbackLocale: const Locale('ka', 'GE'),
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: false),
+            theme: ThemeData(primarySwatch: Colors.orange, useMaterial3: false),
             initialRoute: Routes.splashScreen,
             getPages: Routes.list,
             builder: (context, child) {

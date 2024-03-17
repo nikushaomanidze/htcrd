@@ -167,7 +167,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           backgroundColor: currentTab == 0
               ? const Color.fromARGB(255, 239, 127, 26)
               : Color.fromARGB(255, 239, 127, 26),
-          child: const Icon(Icons.home_rounded, size: 45),
+          child: const Icon(Icons.home_rounded, size: 45, color: Colors.white,),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

@@ -13,6 +13,7 @@ import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:pagination_view/pagination_view.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../../controllers/home_screen_controller.dart';
 import '../../../models/add_to_cart_list_model.dart';
 import '../../../models/product_by_category_model.dart';
@@ -104,11 +105,28 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     }
   }
 
+  YoutubePlayerController? _ytController;
+  bool showYoutubePlayer = false;
+
   @override
   void initState() {
     super.initState();
 
-    // Call your function here
+    try {
+      final videoID = YoutubePlayer.convertUrlToId(widget.soc_yt.toString());
+
+      if (videoID != null && videoID.isNotEmpty) {
+        _ytController = YoutubePlayerController(
+          initialVideoId: videoID,
+          flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
+        );
+        showYoutubePlayer = true;
+      }
+    } catch (e) {
+      print("Exception: $e");
+      showYoutubePlayer = false;
+    }
+
     fetchCardNumber(LocalDataHelper().getUserToken().toString());
   }
 
@@ -136,7 +154,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     // Check the platform
     if (Platform.isIOS) {
       // Apple Maps URL for iOS
-      url = 'http://maps.apple.com/?q=$latlong';
+      url = 'google.navigation:q=$latlong&mode=d';
     } else {
       // Google Maps URL for other platforms
       url = 'google.navigation:q=$latlong&mode=d';
@@ -670,8 +688,8 @@ class _ProductByCategoryState extends State<ProductByCategory> {
       ),*/
         extendBody: true,
         floatingActionButton: SizedBox(
-          width: 70,
-          height: 71,
+          width: 80,
+          height: 81,
           child: Column(
             children: [
               FloatingActionButton(
@@ -681,6 +699,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                               title: Text(AppTags.error.tr),
                               content: Text(AppTags.chooseProductsFirst.tr),
                               actions: [
@@ -689,7 +708,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                     Navigator.of(context)
                                         .pop(); // Close the popup
                                   },
-                                  child: const Text('OK'),
+                                  child: Text('OK', style: TextStyle(color: Colors.deepOrange.shade400),),
                                 ),
                               ],
                             );
@@ -697,12 +716,15 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                         )
                       : sendOrder(quantity, ids, additionals, context,
                           additionalWNames);
+
+                  HapticFeedback.mediumImpact();
+
                   // print('Order Sent!');
 
                   // currentTab = 0; // Set the selected tab index
                 },
                 backgroundColor: const Color.fromARGB(255, 239, 127, 26),
-                child: const Icon(Icons.done_rounded, size: 45),
+                child: const Icon(Icons.done_rounded, size: 45, color: Colors.white,),
               ),
               const SizedBox(
                 height: 15,
@@ -731,16 +753,11 @@ class _ProductByCategoryState extends State<ProductByCategory> {
           Container(
             decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(widget.imgurl.toString()),
+                  image: AssetImage('assets/images/backgroundicons.png'),
                   fit: BoxFit.cover,
                 )
             ),
             child: Container(
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                image: AssetImage('assets/images/shadow_zemodan.png'),
-                fit: BoxFit.cover,
-              )),
               child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: FutureBuilder(
@@ -750,7 +767,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                       if (snapshot.hasData) {
                         return Column(
                           children: [
-                            const SizedBox(height: 75,),
+                            const SizedBox(height: 50,),
                             Row(
                               children: [
                                 const SizedBox(
@@ -761,15 +778,15 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                     Navigator.of(context).pop();
                                   },
                                   child: const Icon(
-                                    Icons.arrow_back,
-                                    color: Colors.white,
+                                    Icons.arrow_back_ios,
+                                    color: Colors.black,
                                   ),
                                 ),
                                 const Spacer(),
                                 // const SizedBox(
                                 //   height: 70,
                                 // ),
-                                Center(
+                              /*  Center(
                                     child: Text(
                                         AppTags.chooseProduct.tr,
                                         style: const TextStyle(
@@ -778,22 +795,71 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                             fontFamily: 'bpg',
                                             color: Colors.white),
                                       ),
-                                    ),
+                                    ),*/
                                 const Spacer(),
                                 const SizedBox(
                                   width: 25,
                                 ),
                               ],
                             ),
-                           // const SizedBox(height: 180,),
+                            const SizedBox(height: 12,),
                             Container(
-                              height: MediaQuery.sizeOf(context).height * 0.1935,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              height: MediaQuery.sizeOf(context).height * 0.2,
+                              width: MediaQuery.sizeOf(context).width * 0.89,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: _ytController != null
+                                    ? Stack(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: YoutubePlayer(
+                                          controller: _ytController!,
+                                          aspectRatio: 9 / 16,
+                                          showVideoProgressIndicator: true,
+                                          onReady: () {
+                                            // Handle onReady event if needed
+                                          },
+                                          onEnded: (data) {
+                                            // Handle onEnded event if needed
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned.fill(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => FullScreenVideoPage(
+                                                videoId: _ytController!.initialVideoId,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        behavior: HitTestBehavior.translucent, // Ensure GestureDetector captures taps even on transparent areas
+                                      ),
+                                    ),
+                                  ],
+                                )
+                                    : Container(
+                                  // Empty container with the same height
+                                  height: MediaQuery.sizeOf(context).height * 0.1935,
+                                ),
+                              ),
                             ),
+                            SizedBox(height: 18,),
                             Container(
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height * 0.7,
                               //  height: 496,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.only(
                                   topLeft:
@@ -805,11 +871,21 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                   bottomLeft: Radius.circular(
                                       0.0), // bottom-left corner
                                 ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color.fromARGB(255, 74, 75, 77)
+                                        .withOpacity(0.2),
+                                    spreadRadius: 15,
+                                    blurRadius: 15,
+                                    offset:
+                                    Offset(0, 3), // Set the desired shadow offset
+                                  ),
+                                ],
                               ),
                               child: Column(
                                 children: [
                                   const SizedBox(
-                                    height: 30,
+                                    height: 32,
                                   ),
                                   Row(
                                     children: [
@@ -834,7 +910,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 5,),
+                                  const SizedBox(height: 2,),
                                   Row(
                                     children: [
                                       const SizedBox(
@@ -849,7 +925,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                       ),
                                     ],
                                   ),
-                              //    const SizedBox(height: 18,),
+                                  const SizedBox(height: 10,),
                                  Row(
                                     children: [
                                       const SizedBox(
@@ -970,12 +1046,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                       239,
                                                       127,
                                                       26)
-                                                      : const Color
-                                                      .fromARGB(
-                                                      255,
-                                                      246,
-                                                      246,
-                                                      246),
+                                                      : Colors.white,
                                                   child: Row(
                                                     children: [
                                                       const SizedBox(
@@ -985,7 +1056,8 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                         padding:
                                                         const EdgeInsets
                                                             .only(
-                                                            top: 8.0),
+                                                            top: 8.0,
+                                                        bottom: 8),
                                                         child: GestureDetector(
                                                           onTap: () {
                                                             _showImageDialog(context);
@@ -1474,7 +1546,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                         height: 50,
                         child: CircularProgressIndicator(
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                              AlwaysStoppedAnimation<Color>(Colors.orange),
                         ),
                       ));
                     },
@@ -1611,6 +1683,57 @@ class YourCustomThirdPillContent extends StatelessWidget {
           style: TextStyle(fontSize: 18),
         ),
       ),
+    );
+  }
+}
+
+class FullScreenVideoPage extends StatelessWidget {
+  final String videoId;
+
+  FullScreenVideoPage({required this.videoId});
+
+  @override
+  Widget build(BuildContext context) {
+    final YoutubePlayerController _ytController = YoutubePlayerController(
+      initialVideoId: videoId,
+      flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        leading: IconButton(icon: Icon(Icons.arrow_back_ios, color: Colors.white,),
+          onPressed: () {
+          Navigator.pop(context);
+        },),
+      ),
+      body: Center(
+          child: Container(
+            height: MediaQuery.sizeOf(context).height * 1,
+            child: YoutubePlayer(
+              controller: _ytController,
+              aspectRatio: 9 / 16,
+              showVideoProgressIndicator: true,
+              onReady: () {
+                _ytController.play();
+              },
+              onEnded: (data) {
+              },
+              bottomActions: [
+                CurrentPosition(),
+                ProgressBar(
+                  isExpanded: true,
+                  colors: ProgressBarColors(
+                    playedColor: Colors.orange,
+                    handleColor: Colors.orange.shade700,
+                  ),
+                ),
+                RemainingDuration(),
+              ],
+            ),
+          ),
+        ),
+
     );
   }
 }

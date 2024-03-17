@@ -352,7 +352,7 @@ class Repository {
       bool loginSuccess = await loginWithEmailPassword(email, password);
       if (loginSuccess) {
         // Navigate to dashboard screen after successful login
-        Get.offAllNamed('/dashboardScreen');
+        Get.offAllNamed('/onboarding');
       //  Get.offAllNamed('LogIn');
       } else {
         // Handle login failure

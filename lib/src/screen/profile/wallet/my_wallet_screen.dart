@@ -7,11 +7,13 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hot_card/src/screen/dashboard/dashboard_screen.dart';
 import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../../controllers/currency_converter_controller.dart';
 import '../../../controllers/my_wallet_controller.dart';
@@ -287,11 +289,11 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                     print('Payment successful');
 
                     // Perform actions directly without calling mCheckPaymentFunction
-                    const snackBar = SnackBar(
+                  /*  const snackBar = SnackBar(
                       content: Text('Payment Successful!'),
                       backgroundColor: Colors.green,
                     );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);*/
 
                     final recId = rec_Id;
                     makeCardActive(userId, '30', accessToken, recId, inputController.text);
@@ -301,7 +303,43 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                       MaterialPageRoute(builder: (context) => const DashboardScreen()),
                           (route) => false,
                     );
+
+                    showDialog(
+                      barrierDismissible: true,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Lottie.asset(
+                                'assets/lottie/done.json', // Replace with the path to your Lottie file
+                                width: 100, // Adjust the width as needed
+                                height: 100, // Adjust the height as needed
+                                repeat: false,
+                                reverse: false,
+                              ),
+                              SizedBox(height: 10),
+                              Center(
+                                child: Text(
+                                  'გადახდა წარმატებულია',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                    HapticFeedback.mediumImpact();
+
                     updateUserReferral(userId, inputController.text);
+
+
+
                   }
                 } catch (error) {
                   print('Error during payment processing: $error');
@@ -1105,7 +1143,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 10,),
+                                    SizedBox(width: 13,),
                                    // const Spacer(),
                                     InkWell(
                                       onTap: () {
@@ -1178,7 +1216,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                       child: Text(AppTags.yes.tr,
                                                           style: TextStyle(
                                                               fontWeight: FontWeight.w600,
-                                                              fontFamily: 'bpg', color: Colors.deepOrange.shade400)),
+                                                               color: Colors.deepOrange.shade400)),
                                                       onPressed: () async {
                                                      //    final String accessToken =
                                                       //       await getToken(apiKey,
@@ -1192,7 +1230,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                     TextButton(
                                                       child: Text(AppTags.no.tr,
                                                           style: TextStyle(
-                                                              fontFamily: 'bpg', color: Colors.deepOrange.shade400)),
+                                                               color: Colors.deepOrange.shade400)),
                                                       onPressed: () {
                                                         Navigator.of(context).pop();
                                                         // Perform your "no" action here
@@ -1366,21 +1404,18 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                                               title: Text(
                                                 AppTags.cardCencellation.tr,
-                                                style: const TextStyle(
-                                                    fontFamily: 'bpg'),
+
                                               ),
                                               content: Text(
                                                   AppTags
                                                       .cardCencellationCosts.tr,
-                                                  style: const TextStyle(
-                                                      fontFamily: 'bpg')),
+                                                  ),
                                               actions: <Widget>[
                                                 TextButton(
-                                                  child: Text(AppTags.yes.tr,
-                                                      style: const TextStyle(
-                                                          fontFamily: 'bpg')),
+                                                  child: Text(AppTags.yes.tr, style: TextStyle(color: Colors.orange,fontWeight: FontWeight.w600),),
                                                   onPressed: () {
                                                     makeCardActive(
                                                         userId,
@@ -1394,9 +1429,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                   },
                                                 ),
                                                 TextButton(
-                                                  child: Text(AppTags.no.tr,
-                                                      style: const TextStyle(
-                                                          fontFamily: 'bpg')),
+                                                  child: Text(AppTags.no.tr, style: TextStyle(color: Colors.orange)),
                                                   onPressed: () {
                                                     Navigator.of(context).pop();
                                                     // Perform your "no" action here
@@ -2652,6 +2685,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                       builder: (BuildContext
                                                           context) {
                                                         return AlertDialog(
+                                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                                                           title: Text(
                                                             AppTags
                                                                 .cardCencellation
@@ -2665,17 +2699,13 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                               AppTags
                                                                   .cardCencellationCosts
                                                                   .tr,
-                                                              style: const TextStyle(
-                                                                  fontFamily:
-                                                                      'bpg')),
+                                                              ),
                                                           actions: <Widget>[
                                                             TextButton(
                                                               child: Text(
                                                                   AppTags
                                                                       .yes.tr,
-                                                                  style: const TextStyle(
-                                                                      fontFamily:
-                                                                          'bpg')),
+                                                                  ),
                                                               onPressed: () {
                                                                 makeCardActive(
                                                                     userId,
@@ -2696,9 +2726,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                             TextButton(
                                                               child: Text(
                                                                   AppTags.no.tr,
-                                                                  style: const TextStyle(
-                                                                      fontFamily:
-                                                                          'bpg')),
+                                                                  ),
                                                               onPressed: () {
                                                                 Navigator.of(
                                                                         context)

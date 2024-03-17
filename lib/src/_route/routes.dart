@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:hot_card/src/screen/home/mtla_home.dart';
+import 'package:hot_card/src/screen/onboarding_screen.dart';
 import 'package:hot_card/src/screen/profile/profile_screen.dart';
 
 import '../bindings/dashboard_bindings.dart';
@@ -71,6 +72,7 @@ class Routes {
   static const String shopScreen = '/shopScreen';
   static const String detailsVideoShopping = '/detailsVideoShopping';
   static const String videoPlayer = '/videoPlayer';
+  static const String onboarding = '/onboarding';
 
   static var list = [
     GetPage(
@@ -85,6 +87,10 @@ class Routes {
       name: splashScreen,
       page: () => const SplashScreen(),
       binding: SplashBinding(),
+    ),
+    GetPage(
+      name: onboarding,
+      page: () => const OnBoardingScreen(),
     ),
     GetPage(
       name: dashboardScreen,

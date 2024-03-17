@@ -447,7 +447,7 @@ class _ProfileContentState extends State<ProfileContent> {
               // divider(),
               userDataModel.data!.userId != null
                   ? userDataModel.data!.userId! > 0 &&
-                          userDataModel.data!.userId! <= 100
+                          userDataModel.data!.userId! <= 200
                       ? InkWell(
                           onTap: () {
                             Get.toNamed(Routes.voucherList);
@@ -458,7 +458,7 @@ class _ProfileContentState extends State<ProfileContent> {
                   : Container(),
               userDataModel.data!.userId != null
                   ? userDataModel.data!.userId! > 0 &&
-                          userDataModel.data!.userId! <= 100
+                          userDataModel.data!.userId! <= 200
                       ? divider()
                       : Container()
                   : Container(),
