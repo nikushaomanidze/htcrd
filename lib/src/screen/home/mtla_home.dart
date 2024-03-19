@@ -28,6 +28,7 @@ import '../../controllers/home_screen_controller.dart';
 import '../../controllers/my_wallet_controller.dart';
 import '../../controllers/profile_content_controller.dart';
 import '../../utils/app_theme_data.dart';
+import '../../utils/notifications.dart';
 import '../../utils/responsive.dart';
 import 'category/all_category_screen.dart';
 import 'category/product_by_category_screen.dart';
@@ -66,37 +67,24 @@ class _MtlaHomeState extends State<MtlaHome> {
   }
 
   Future<List<dynamic>> cacheApiResponse() async {
-    String url =
-        '${NetworkService.apiUrl}/category/all?lang=${LocalDataHelper().getLangCode() ?? "en"}'; // Replace with your API endpoint URL
+    String url = '${NetworkService.apiUrl}/category/all?lang=${LocalDataHelper().getLangCode() ?? "en"}'; // Replace with your API endpoint URL
 
-    DefaultCacheManager manager = DefaultCacheManager();
+    final apiResponse = await makeApiRequest(url);
 
-    FileInfo? fileInfo = await manager.getFileFromCache(url);
+    if (apiResponse != null) {
+      Map<String, dynamic> jsonData = jsonDecode(apiResponse.body);
+      final categories = jsonData['data']['categories'];
 
-    if (fileInfo != null && fileInfo.file.existsSync()) {
-      // API response is cached, you can read and parse the JSON data
-      String cachedData = await fileInfo.file.readAsString();
-      Map<String, dynamic> jsonData = jsonDecode(cachedData);
-      final categories = jsonData['data']['categories'][0]['sub_categories'];
-      final secondCategories =
-          jsonData['data']['categories'][1]['sub_categories'];
+      List<dynamic> allSubCategories = [];
+      categories.forEach((category) {
+        List<dynamic> subCategories = category['sub_categories'];
+        allSubCategories.addAll(subCategories);
+      });
 
-      return categories + secondCategories;
+      return allSubCategories;
     } else {
-      // API response is not cached, make the API request and cache it
-      final apiResponse = await makeApiRequest(url);
-      if (apiResponse != null) {
-        // ignore: unused_local_variable
-        File file = await manager.putFile(
-            url, Uint8List.fromList(apiResponse.bodyBytes));
-        // Now, you can parse the JSON data
-        Map<String, dynamic> jsonData = jsonDecode(apiResponse.body);
-        final categories = jsonData['data']['categories'];
-        return categories;
-      } else {
-        // Handle the case when the API request fails
-        return []; // Return an empty list or handle the error accordingly
-      }
+      // Handle the case when the API request fails
+      return []; // Return an empty list or handle the error accordingly
     }
   }
 
@@ -261,6 +249,7 @@ class _MtlaHomeState extends State<MtlaHome> {
     myWalletController.getMyWallet();
     super.initState();
     mUpdate();
+    FirebaseApi().initNotifications();
     LocalDataHelper().getUserToken() != null
         ? checkAndUpdateCardNumber(
             LocalDataHelper().getUserAllData()!.data!.userId.toString(),
@@ -480,7 +469,12 @@ class _MtlaHomeState extends State<MtlaHome> {
           },
         );
       } else {
-        Navigator.push(context, route);
+        setState(() {
+          MapProvider provider = Provider.of<MapProvider>(context, listen: false);
+          provider.mGetLocationCategory();
+          provider.mUpdateAllMarkers(context: context);
+          Navigator.push(context, route);
+        });
       }
     }
   }
@@ -704,20 +698,9 @@ class _MtlaHomeState extends State<MtlaHome> {
                       children: [
                         GestureDetector(
                         onTap: () async {
-                       await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const HomeScreenContent()));
-               /*   PermissionStatus status = await Permission.location.status;
-                  if (status.isDenied || status.isPermanentlyDenied) {
-                  // Permission is denied or permanently denied, do nothing or show a message
-                    _checkAndRequestLocationPermission(context);
-                  } else {
-                  // Permission is granted, navigate to HomeScreenContent
-                  Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreenContent()),
-                  );
-                  } */
-
-
+                          setState(() async {
+                            await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const HomeScreenContent()));
+                          });
                   },
 
 
@@ -765,7 +748,9 @@ class _MtlaHomeState extends State<MtlaHome> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            await _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const HomeScreenCafeContent()));
+                            setState(() async {
+                              await _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const HomeScreenCafeContent()));
+                            });
                           },
                           child: Center(
                             child: Column(
@@ -1017,7 +1002,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                 return false;
                               },
                               child: ListView.builder(
-                                itemCount: 5,
+                                itemCount: filteredCategories.length,
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
                                   return Row(
@@ -1077,25 +1062,16 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                                 Radius.circular(
                                                                     15)),
                                                         border: Border.all(
-                                                          color: Colors
-                                                              .orange, // Choose your border color
+                                                          color: const Color.fromARGB(255, 239, 127, 26), // Choose your border color
                                                           width:
-                                                              1.5, // Choose your border width
+                                                              1, // Choose your border width
                                                         ),
                                                         image: DecorationImage(
-                                                          image: filteredCategories[
-                                                                          index][
-                                                                      'banner'] !=
-                                                                  null
-                                                              ? NetworkImage(
-                                                                  filteredCategories[
-                                                                          index]
-                                                                      ['banner'])
-                                                              : const NetworkImage(
-                                                                  'https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg'),
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      ),
+                                  image: NetworkImage(filteredCategories[index]['banner']),
+                                  fit: BoxFit.cover,
+                                  ),
+
+                                  ),
                                                     )
                                                   ],
                                                 ),
@@ -1124,7 +1100,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                                                           FontWeight.w500),
                                             ),
                                           ),
-                                          const SizedBox(height: 2,),
+                                          const SizedBox(height: 2.5,),
                                           SizedBox(
                                             width: 250,
                                             child: Align(

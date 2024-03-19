@@ -154,7 +154,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
     // Check the platform
     if (Platform.isIOS) {
       // Apple Maps URL for iOS
-      url = 'google.navigation:q=$latlong&mode=d';
+      url = 'http://maps.apple.com/?q=$latlong';
     } else {
       // Google Maps URL for other platforms
       url = 'google.navigation:q=$latlong&mode=d';
@@ -190,7 +190,6 @@ class _ProductByCategoryState extends State<ProductByCategory> {
           title: Center(
             child: Text(
               AppTags.socialNetworks.tr,
-              style: const TextStyle(fontFamily: 'bpg'),
             ),
           ),
           content: SizedBox(
@@ -751,7 +750,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
             child: const SizedBox()),
         body: Stack(children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/backgroundicons.png'),
                   fit: BoxFit.cover,
@@ -767,7 +766,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                       if (snapshot.hasData) {
                         return Column(
                           children: [
-                            const SizedBox(height: 50,),
+                            const SizedBox(height: 55,),
                             Row(
                               children: [
                                 const SizedBox(
@@ -807,7 +806,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(25),
                               ),
-                              height: MediaQuery.sizeOf(context).height * 0.2,
+                              height: MediaQuery.sizeOf(context).height * 0.18,
                               width: MediaQuery.sizeOf(context).width * 0.89,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
@@ -834,14 +833,16 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                     Positioned.fill(
                                       child: GestureDetector(
                                         onTap: () {
-                                          Navigator.push(
+                                          HapticFeedback.lightImpact();
+                                          _launchYt();
+                                         /* Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => FullScreenVideoPage(
                                                 videoId: _ytController!.initialVideoId,
                                               ),
                                             ),
-                                          );
+                                          );*/
                                         },
                                         behavior: HitTestBehavior.translucent, // Ensure GestureDetector captures taps even on transparent areas
                                       ),
@@ -854,14 +855,14 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 18,),
+                            const SizedBox(height: 18,),
                             Container(
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height * 0.7,
                               //  height: 496,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.only(
+                                borderRadius: const BorderRadius.only(
                                   topLeft:
                                   Radius.circular(50.0), // top-left corner
                                   topRight:
@@ -873,12 +874,12 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Color.fromARGB(255, 74, 75, 77)
+                                    color: const Color.fromARGB(255, 74, 75, 77)
                                         .withOpacity(0.2),
                                     spreadRadius: 15,
                                     blurRadius: 15,
                                     offset:
-                                    Offset(0, 3), // Set the desired shadow offset
+                                    const Offset(0, 3), // Set the desired shadow offset
                                   ),
                                 ],
                               ),
@@ -893,7 +894,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                         width: 20,
                                       ),
                                       SizedBox(
-                                        width: 200, // Set the desired width
+                                        width: 300, // Set the desired width
                                         child: Text(
                                           widget.title.toString(),
                                           style: const TextStyle(
@@ -910,7 +911,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 2,),
+                                  const SizedBox(height: 3,),
                                   Row(
                                     children: [
                                       const SizedBox(
@@ -920,13 +921,34 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                         widget.category.toString(),
                                         style: const TextStyle(
                                             fontSize: 13,
-                                            fontFamily: 'bpg',
-                                            color: Colors.orange),
+                                            color: Color.fromARGB(255, 239, 127, 26)),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 10,),
-                                 Row(
+                                 // const SizedBox(height: 10,),
+                                  HorizontalOutlinedPillScroll(
+                                    items: [AppTags.deals.tr, AppTags.contact.tr, AppTags.socialNetworks.tr, AppTags.map.tr],
+                                    onTapFunctions: [
+                                          () {
+                                      HapticFeedback.mediumImpact();
+                                      },
+                                          () {
+                                            HapticFeedback.mediumImpact();
+                                            launchPhoneCall(widget.number.toString());
+
+                                          },
+                                          () {
+                                            HapticFeedback.mediumImpact();
+                                            _showPopup(context);
+
+                                          },
+                                          () {
+                                            HapticFeedback.mediumImpact();
+                                            navigateTo(widget.latlong);
+                                      },
+                                    ],
+                                  ),
+                                /* Row(
                                     children: [
                                       const SizedBox(
                                         width: 20,
@@ -941,7 +963,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                             fontWeight: FontWeight.w700),
                                       ),
                                     ],
-                                  ),
+                                  ),*/
                             /*  Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -973,7 +995,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                               ),*/
 
                                   const SizedBox(
-                                    height: 10,
+                                    height: 4,
                                   ),
                                   switchnum == 1
                                       ? SizedBox(
@@ -1182,7 +1204,6 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                     ? Colors.white
                                                                     : Colors.black,
                                                                 fontSize: 15,
-                                                                fontFamily: 'bpg',
                                                                 fontWeight: FontWeight.w500),
                                                           )
                                                               : Container(),
@@ -1472,7 +1493,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                                                                                               width: 45,
                                                                                               child: Text(
                                                                                                 '${dataList3[index]['formatted_price']}₾',
-                                                                                                style: TextStyle(fontFamily: 'metro-bold', fontSize: 14, fontWeight: FontWeight.w300, color: additionalfinalIndex == index ? Colors.white : Colors.black),
+                                                                                                style: TextStyle( fontSize: 14, fontWeight: FontWeight.w600, color: additionalfinalIndex == index ? Colors.white : Colors.black),
                                                                                               ),
                                                                                             ),
                                                                                             const SizedBox(
@@ -1553,9 +1574,11 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                   )),
             ),
           ),
-          Stack(alignment: Alignment.centerRight, children: [
+          Stack(
+            alignment: Alignment.centerRight,
+              children: [
             const Padding(
-              padding: EdgeInsets.only(top: 570, right: 850),
+              padding: EdgeInsets.fromLTRB(670,560,0, 0),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 60),
@@ -1568,12 +1591,14 @@ class _ProductByCategoryState extends State<ProductByCategory> {
             Padding(
               padding: const EdgeInsets.only(right: 35),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                },
                 icon: const Icon(Icons.favorite,
                     color: Color(0xffe07527), size: 27),
               ),
             ),
-            Padding(
+          /*  Padding(
               padding: const EdgeInsets.only(right: 135, top: 110),
               child: SizedBox(
                 width: 45,
@@ -1608,7 +1633,7 @@ class _ProductByCategoryState extends State<ProductByCategory> {
                     },
                     icon: Image.asset('assets/images/loc.png')),
               ),
-            )
+            )*/
           ]),
         ]));
   }
@@ -1641,7 +1666,7 @@ class OutlinedPill extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               color:  Colors.black,
             ),
           ),
@@ -1702,7 +1727,7 @@ class FullScreenVideoPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        leading: IconButton(icon: Icon(Icons.arrow_back_ios, color: Colors.white,),
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios, color: Colors.white,),
           onPressed: () {
           Navigator.pop(context);
         },),
@@ -1734,6 +1759,78 @@ class FullScreenVideoPage extends StatelessWidget {
           ),
         ),
 
+    );
+  }
+}
+
+class HorizontalOutlinedPillScroll extends StatelessWidget {
+  final List<String> items;
+  final List<VoidCallback> onTapFunctions;
+
+  const HorizontalOutlinedPillScroll({
+    required this.items,
+    required this.onTapFunctions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(items.length, (index) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: OutlinedPillButton(
+              text: items[index],
+              filled: index == 0,
+              onTap: onTapFunctions[index],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class OutlinedPillButton extends StatelessWidget {
+  final String text;
+  final bool filled;
+  final VoidCallback onTap;
+
+  const OutlinedPillButton({
+    required this.text,
+    required this.filled,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: onTap,
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            side: const BorderSide(
+              color: Colors.black,
+              style: BorderStyle.solid
+            ),
+          ),
+        ),
+        backgroundColor: filled
+            ? MaterialStateProperty.all<Color>(Colors.orange)
+            : MaterialStateProperty.all<Color>(Colors.transparent),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: filled ? Colors.white : Colors.black,
+            fontWeight: filled ? FontWeight.w600 : FontWeight.normal
+          ),
+        ),
+      ),
     );
   }
 }

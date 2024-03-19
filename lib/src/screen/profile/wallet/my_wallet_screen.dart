@@ -226,7 +226,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       "language": "EN",
       "merchantPaymentId": "P123123",
       "saveCard": true,
-      "saveCardToDate": "0924"
+      "saveCardToDate": "0599"
     };
 
     final response = await http.post(Uri.parse(url),
@@ -322,8 +322,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 repeat: false,
                                 reverse: false,
                               ),
-                              SizedBox(height: 10),
-                              Center(
+                              const SizedBox(height: 10),
+                              const Center(
                                 child: Text(
                                   'გადახდა წარმატებულია',
                                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -409,10 +409,10 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-          title: Text('Enter Referral Code'),
+          title: const Text('Enter Referral Code'),
           content: TextField(
             controller: inputController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Enter referral code',
             ),
           ),
@@ -421,7 +421,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
@@ -438,7 +438,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                 // Show the validation result
                 showResultDialog();
               },
-              child: Text('Validate'),
+              child: const Text('Validate'),
             ),
           ],
         );
@@ -451,7 +451,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Validation Result'),
+          title: const Text('Validation Result'),
           content: Text(
             _isValid ? 'Valid Referral Code' : 'Not Valid Referral Code',
             style: TextStyle(
@@ -463,7 +463,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -477,14 +477,14 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-          title: Text('Error'),
-          content: Text('Invalid Referral Code. Please try again.'),
+          title: const Text('Error'),
+          content: const Text('Invalid Referral Code. Please try again.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK', style: TextStyle(color: Color.fromARGB(255, 239, 127, 26)),),
+              child: const Text('OK', style: TextStyle(color: Color.fromARGB(255, 239, 127, 26)),),
             ),
           ],
         );
@@ -955,6 +955,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                   children: [
                                     InkWell(
                                       onTap: () {
+                                        HapticFeedback.lightImpact();
                                     //    showValidationDialog();
                                         fetchMomwveviUserID(
                                                 widget.userDataModel.data!.token)
@@ -1003,17 +1004,17 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                             decoration:  InputDecoration(
                                                               enabledBorder: OutlineInputBorder(
                                                                 borderRadius: BorderRadius.circular(20.0),
-                                                                borderSide: BorderSide(color: Color.fromARGB(255, 239, 127, 26))
+                                                                borderSide: const BorderSide(color: Color.fromARGB(255, 239, 127, 26))
                                                               ),
                                                               focusedBorder: OutlineInputBorder(
                                                                 borderRadius: BorderRadius.circular(20.0),
-                                                                borderSide:  BorderSide(color: Color.fromARGB(255, 239, 127, 26)),
+                                                                borderSide:  const BorderSide(color: Color.fromARGB(255, 239, 127, 26)),
                                                               ),
-                                                              hintText: "რეფერალური კოდი", hintStyle: TextStyle(fontSize: 13),
+                                                              hintText: "რეფერალური კოდი", hintStyle: const TextStyle(fontSize: 13),
                                                             ),
                                                           ),
-                                                        SizedBox(height: 15,),
-                                                        Text('(გამოწერის ღირებულება ავტომატურად ჩამოგეჭრებათ ყოველთვე)',style: TextStyle(fontSize: 13, color: Colors.grey),),
+                                                        const SizedBox(height: 15,),
+                                                        const Text('(გამოწერის ღირებულება ავტომატურად ჩამოგეჭრებათ ყოველთვე)',style: TextStyle(fontSize: 13, color: Colors.grey),),
                                                       ],
                                                     ),
                                                   ),
@@ -1021,37 +1022,29 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                     TextButton(
                                                       child: Text(
                                                         AppTags.yes.tr,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontWeight: FontWeight.w600,
                                                           fontFamily: 'bpg',
-                                                          color: Colors.deepOrange.shade400,
+                                                          color: Color.fromARGB(255, 239, 127, 26),
                                                         ),
                                                       ),
                                                         onPressed: () async {
+                                                        HapticFeedback.mediumImpact();
                                                           try {
                                                             if (momwveviUserId != 0 && momwveviUserId != null) {
-                                                              // Handle case where momwveviUserId is not zero or null
-                                                              // For example:
-                                                              // showErrorMessage('MomwveviUserId is not allowed in this context.');
                                                               return;
                                                             }
 
                                                             // Validate the referral code
                                                             dynamic validationResponse = await validateReferralCode(inputController.text);
 
-                                                            // Check if the referral code is valid
                                                             if (validationResponse is Map<String, dynamic> && validationResponse['exists'] == true) {
-                                                              // Referral code is valid, continue with the payment process
                                                               processPayment();
                                                             } else {
-                                                              // Referral code is not valid, show an error message
                                                               showErrorDialog();
                                                             }
                                                           } catch (e) {
-                                                            // Handle any unexpected errors during the validation process
-                                                            print('Error during validation: $e');
-                                                            // Show a generic error message to the user if needed
-                                                            // showErrorMessage('An unexpected error occurred.');
+
                                                           }
                                                         }
 
@@ -1062,7 +1055,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                         AppTags.no.tr,
                                                         style: TextStyle(
                                                           fontFamily: 'bpg',
-                                                          color: Colors.deepOrange.shade400,
+                                                          color: const Color.fromARGB(255, 239, 127, 26),
                                                         ),
                                                       ),
                                                       onPressed: () {
@@ -1087,7 +1080,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                         width: 120,
                                         height: 140,
                                         decoration: BoxDecoration(
-                                          color:  Colors.deepOrange.shade400,
+                                          color:  const Color.fromARGB(255, 239, 127, 26),
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(15)),
                                           boxShadow: [
@@ -1101,21 +1094,21 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                             ),
                                           ],
                                         ),
-                                        child: Column(
+                                        child: const Column(
                                           children: [
-                                            const SizedBox(
+                                            SizedBox(
                                               height: 25,
                                             ),
-                                            const Icon(
+                                            Icon(
                                               Icons.add,
                                               color: Colors.white,
                                               size: 35,
                                             ),
-                                            const SizedBox(
+                                            SizedBox(
                                               height: 3,
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding: EdgeInsets.all(8.0),
                                               child: Align(
                                                 alignment: Alignment.center,
                                                 child: SizedBox(
@@ -1123,7 +1116,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                       .infinity, // Ensure the container takes the full width
                                                   child: Text(
                                                     'ბარათის გააქტიურება რეფერალური კოდით',
-                                                    style: const TextStyle(
+                                                    style: TextStyle(
                                                       fontFamily: 'bpg',
                                                       color: Colors.white,
                                                       fontSize: 11,
@@ -1136,17 +1129,18 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(
+                                            SizedBox(
                                               height: 5,
                                             ),
                                           ],
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 13,),
+                                    const SizedBox(width: 13,),
                                    // const Spacer(),
                                     InkWell(
                                       onTap: () {
+                                        HapticFeedback.mediumImpact();
                                         fetchMomwveviUserID(
                                             widget.userDataModel.data!.token)
                                             .then((value) {
@@ -1193,7 +1187,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                     height: 80,
                                                     child: Column(
                                                       children: [
-                                                        Text('(გამოწერის ღირებულება ავტომატურად ჩამოგეჭრებათ ყოველთვე)',style: TextStyle(fontSize: 13, color: Colors.grey),),
+                                                        const Text('(გამოწერის ღირებულება ავტომატურად ჩამოგეჭრებათ ყოველთვე)',style: TextStyle(fontSize: 13, color: Colors.grey),),
                                                         momwveviUserId != 0 &&
                                                             momwveviUserId !=
                                                                 null
@@ -1204,7 +1198,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                                 null
                                                             ? Text(AppTags
                                                             .costsAndDate.tr)
-                                                            : Text(
+                                                            : const Text(
                                                               "Referral Code (თუ გაქვთ)",
                                                           style: TextStyle(color: Colors.transparent),
                                                         ),
@@ -1216,8 +1210,9 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                       child: Text(AppTags.yes.tr,
                                                           style: TextStyle(
                                                               fontWeight: FontWeight.w600,
-                                                               color: Colors.deepOrange.shade400)),
+                                                               color: const Color.fromARGB(255, 239, 127, 26))),
                                                       onPressed: () async {
+                                                        HapticFeedback.mediumImpact();
                                                      //    final String accessToken =
                                                       //       await getToken(apiKey,
                                                       //           clientId, clientSecret);
@@ -1230,7 +1225,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                     TextButton(
                                                       child: Text(AppTags.no.tr,
                                                           style: TextStyle(
-                                                               color: Colors.deepOrange.shade400)),
+                                                               color: const Color.fromARGB(255, 239, 127, 26))),
                                                       onPressed: () {
                                                         Navigator.of(context).pop();
                                                         // Perform your "no" action here
@@ -1322,6 +1317,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                               else
                                 InkWell(
                                   onTap: () async {
+                                    HapticFeedback.mediumImpact();
                                     key.currentState?.refreshPage();
                                     var urlToSend =
                                         '${NetworkService.apiUrl}/user/update_card_number/';
@@ -1400,6 +1396,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                           'Inactive'
                                   ? InkWell(
                                       onTap: () {
+                                        HapticFeedback.mediumImpact();
                                         showDialog(
                                           context: context,
                                           builder: (BuildContext context) {
@@ -1415,7 +1412,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                   ),
                                               actions: <Widget>[
                                                 TextButton(
-                                                  child: Text(AppTags.yes.tr, style: TextStyle(color: Colors.orange,fontWeight: FontWeight.w600),),
+                                                  child: Text(AppTags.yes.tr, style: const TextStyle(color: const Color.fromARGB(255, 239, 127, 26),fontWeight: FontWeight.w600),),
                                                   onPressed: () {
                                                     makeCardActive(
                                                         userId,
@@ -1429,7 +1426,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                   },
                                                 ),
                                                 TextButton(
-                                                  child: Text(AppTags.no.tr, style: TextStyle(color: Colors.orange)),
+                                                  child: Text(AppTags.no.tr, style: const TextStyle(color: const Color.fromARGB(255, 239, 127, 26))),
                                                   onPressed: () {
                                                     Navigator.of(context).pop();
                                                     // Perform your "no" action here
@@ -1736,6 +1733,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     if (snapshot.data != 'Not Available')
                                       InkWell(
                                         onTap: () {
+                                          HapticFeedback.mediumImpact();
                                           fetchMomwveviUserID(widget
                                                   .userDataModel.data!.token)
                                               .then((value) {
@@ -1934,6 +1932,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     else
                                       InkWell(
                                         onTap: () async {
+                                          HapticFeedback.mediumImpact();
                                           key.currentState?.refreshPage();
                                           var urlToSend =
                                               '${NetworkService.apiUrl}/user/update_card_number/';
@@ -2018,6 +2017,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                 'Inactive'
                                         ? InkWell(
                                             onTap: () {
+                                              HapticFeedback.mediumImpact();
                                               showDialog(
                                                 context: context,
                                                 builder:
@@ -2374,6 +2374,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                           if (snapshot.data != 'Not Available')
                                             InkWell(
                                               onTap: () {
+                                                HapticFeedback.mediumImpact();
                                                 fetchMomwveviUserID(widget
                                                         .userDataModel
                                                         .data!
@@ -2589,6 +2590,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                           else
                                             InkWell(
                                               onTap: () async {
+                                                HapticFeedback.mediumImpact();
                                                 key.currentState?.refreshPage();
                                                 var urlToSend =
                                                     '${NetworkService.apiUrl}/user/update_card_number/';
@@ -2680,6 +2682,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                       'Inactive'
                                               ? InkWell(
                                                   onTap: () {
+                                                    HapticFeedback.mediumImpact();
                                                     showDialog(
                                                       context: context,
                                                       builder: (BuildContext

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnBoardingScreen extends StatefulWidget {
@@ -58,7 +59,10 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       onLastPage
                       ? ElevatedButton(
                         onPressed: () {
-                          Navigator.pushNamedAndRemoveUntil(context, '/dashboardScreen', (route) => false);
+                          HapticFeedback.lightImpact();
+                          setState(() {
+                            Navigator.pushNamedAndRemoveUntil(context, '/dashboardScreen', (route) => false);
+                          });
                         },
                         style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
@@ -72,6 +76,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                         ),
                       ) : ElevatedButton(
                         onPressed: () {
+                          HapticFeedback.lightImpact();
                           _controller.nextPage(
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.ease

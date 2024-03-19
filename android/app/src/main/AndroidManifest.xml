@@ -64,6 +64,9 @@
             tools:ignore="MissingClass" />
          <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyDpWYAn_iFWMz3q8Q69jWoK6lVY7tD23BA"/>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
     </application>
     <queries>
         <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />

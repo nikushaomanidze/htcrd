@@ -13,7 +13,7 @@ if (flutterRoot == null) {
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
-    flutterVersionCode = '62'
+    flutterVersionCode = '68'
 }
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
@@ -103,4 +103,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.onesignal:OneSignal:[3.9.1, 3.99.99]'
     implementation 'com.facebook.android:facebook-android-sdk:[8,9]'
+    implementation 'androidx.multidex:multidex:2.0.1'
 }

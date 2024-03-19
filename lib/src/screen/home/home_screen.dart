@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -107,16 +108,15 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                   left: 0,
                   right: 0,
                   child: AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     title: Text(
                       AppTags.filter.tr,
-                      style: const TextStyle(fontFamily: 'bpg'),
                     ),
                     content: SingleChildScrollView(
                       child: ListBody(
                         children: <Widget>[
                           Text(
                             AppTags.category.tr,
-                            style: const TextStyle(fontFamily: 'bpg'),
                           ),
                           Center(
                             child: DropdownButton<String>(
@@ -149,13 +149,12 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           ),
                           Text(
                             AppTags.distanceMeter.tr,
-                            style: const TextStyle(fontFamily: 'bpg'),
                           ),
                           Slider(
                             value: _currentSliderValue,
                             max: 500,
                             divisions: _currentSliderValue <= 10 ? 500 : 100,
-                            activeColor: const Color.fromARGB(255, 221, 153, 6),
+                            activeColor: const Color.fromARGB(255, 239, 127, 26),
                             label: _currentSliderValue < 1
                                 ? "${_currentSliderValue.toStringAsFixed(1)} ${AppTags.km.tr}"
                                 : "${_currentSliderValue.round()} ${AppTags.km.tr}",
@@ -170,8 +169,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: const Text('Close'),
+                        child: const Text('გაფილტრვა',style: TextStyle(fontWeight: FontWeight.w600, color: const Color.fromARGB(255, 239, 127, 26)),),
                         onPressed: () {
+                          HapticFeedback.mediumImpact();
                           Navigator.of(context).pop();
                         },
                       ),
@@ -436,12 +436,17 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
               alignment: Alignment.centerRight,
               child: GestureDetector(
                 onTap: () {
+                  HapticFeedback.lightImpact();
                   showPopupDialog(context);
                 },
                 child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                    color: const Color.fromARGB(255, 232, 232, 232),
+
+                  ),
                   width: 37,
                   height: 37,
-                  color: const Color.fromARGB(255, 232, 232, 232),
                   child: const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Image(
@@ -624,7 +629,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                           decoration: BoxDecoration(
                                               borderRadius:
                                                   const BorderRadius.all(
-                                                      Radius.circular(5)),
+                                                      Radius.circular(15)),
                                               image: DecorationImage(
                                                   image: homeScreenContentController
                                                               .homeDataModel
@@ -650,7 +655,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                           child: Container(
                                             decoration: const BoxDecoration(
                                                 borderRadius: BorderRadius.all(
-                                                    Radius.circular(5)),
+                                                    Radius.circular(15)),
                                                 image: DecorationImage(
                                                   image: AssetImage(
                                                       'assets/images/shadow.png'),

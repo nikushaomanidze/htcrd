@@ -171,7 +171,7 @@ class SplashController extends GetxController {
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
                     backgroundColor: MaterialStateProperty.all(const Color.fromARGB(255, 239, 127, 26))
                   ),
-                  child: const Text('განახლება'),
+                  child: const Text('განახლება',style: TextStyle(color: Colors.white),),
                   onPressed: () {
                     if (url != null) {
                       launchUrl(Uri.parse(url!));

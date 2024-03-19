@@ -55,13 +55,10 @@ class Settings extends StatelessWidget {
         btnOkColor: AppThemeData.okButton,
         btnCancelColor: AppThemeData.cancelButton,
         buttonsTextStyle:
-            TextStyle(fontSize: isMobile(context) ? 13.sp : 10.sp),
+            TextStyle(fontSize: isMobile(context) ? 13.sp : 10.sp, color: Colors.white),
         body: Center(
           child: Text(
             AppTags.doYouReallyWantToLogout.tr,
-            style: isMobile(context)
-                ? AppThemeData.priceTextStyle_14.copyWith(fontFamily: 'bpg')
-                : AppThemeData.titleTextStyle_11Tab.copyWith(fontFamily: 'bpg'),
           ),
         ),
         btnOkOnPress: () {

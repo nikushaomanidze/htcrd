@@ -18,7 +18,10 @@ class UsersList extends StatefulWidget {
 
 String allWordsCapitilize(String str) {
   return str.toLowerCase().split(' ').map((word) {
-    String leftText = (word.length > 1) ? word.substring(1, word.length) : '';
+    if (word.isEmpty) {
+      return '';
+    }
+    String leftText = (word.length > 1) ? word.substring(1) : '';
     return word[0].toUpperCase() + leftText;
   }).join(' ');
 }
@@ -66,7 +69,7 @@ class _UsersListState extends State<UsersList> {
                 builder: (BuildContext context, BoxConstraints constraints) {
                   return ListView.builder(
                     scrollDirection: Axis.vertical,
-                    itemCount: jsonDta['data'].length,
+                    itemCount: jsonDta['data'] != null && jsonDta['data'].isNotEmpty ? jsonDta['data'].length : 0,
                     itemBuilder: (context, index) {
                       return Card(
                         shape: RoundedRectangleBorder(

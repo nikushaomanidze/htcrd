@@ -437,9 +437,12 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                       popUp(context);
                     },
                     child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: const Color.fromARGB(255, 232, 232, 232),
+                      ),
                       width: 37,
                       height: 37,
-                      color: const Color.fromARGB(255, 232, 232, 232),
                       child: const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Image(

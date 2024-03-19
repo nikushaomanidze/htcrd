@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -127,6 +128,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                   left: 0,
                   right: 0,
                   child: AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     title: Text(
                       AppTags.filter.tr,
                       style: const TextStyle(fontFamily: 'bpg'),
@@ -462,12 +464,16 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
                   onTap: () {
+                    HapticFeedback.lightImpact();
                     popUp(context);
                   },
                   child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: const Color.fromARGB(255, 232, 232, 232),
+                    ),
                     width: 37,
                     height: 37,
-                    color: const Color.fromARGB(255, 232, 232, 232),
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Image(
@@ -646,7 +652,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                                             decoration: BoxDecoration(
                                                 borderRadius:
                                                     const BorderRadius.all(
-                                                        Radius.circular(5)),
+                                                        Radius.circular(15)),
                                                 image: DecorationImage(
                                                     image: homeScreenContentController
                                                                 .homeDataModel
@@ -673,7 +679,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                                               decoration: const BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.all(
-                                                          Radius.circular(5)),
+                                                          Radius.circular(15)),
                                                   image: DecorationImage(
                                                     image: AssetImage(
                                                         'assets/images/shadow.png'),
