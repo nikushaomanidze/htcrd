@@ -143,7 +143,7 @@ class _MtlaHomeState extends State<MtlaHome> {
 
     Map<String, dynamic> jsonData = jsonDecode(response.body);
     final cardNumber = jsonData['data']['card_number'];
-    final userDeviceId = jsonData['data']['user_device_id'];
+    final userDeviceId = jsonData['data']['device_id'];
 
     if (response.statusCode == 200) {
       if (cardNumber == null || cardNumber == '') {
@@ -698,9 +698,7 @@ class _MtlaHomeState extends State<MtlaHome> {
                       children: [
                         GestureDetector(
                         onTap: () async {
-                          setState(() async {
                             await   _checkAndRequestLocationPermission(context, MaterialPageRoute(builder: (context) => const HomeScreenContent()));
-                          });
                   },
 
 

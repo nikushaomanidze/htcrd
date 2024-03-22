@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hot_card/src/screen/dashboard/dashboard_screen.dart';
+import 'package:hot_card/src/screen/home/mtla_home.dart';
 import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
@@ -93,18 +94,17 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
   Future<String?> _getId() async {
     var deviceInfo = DeviceInfoPlugin();
     if (Platform.isIOS) {
-      // import 'dart:io'
-      var DeviceInfo = await deviceInfo.iosInfo;
+      var iosDeviceInfo = await deviceInfo.iosInfo;
       if (kDebugMode) {
-        print('iosDeviceInfo ${DeviceInfo.identifierForVendor}');
+        print('iosDeviceInfo ${iosDeviceInfo.identifierForVendor}');
       }
-      return DeviceInfo.identifierForVendor; // unique ID on iOS
+      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
     } else if (Platform.isAndroid) {
-      var DeviceInfo = await deviceInfo.androidInfo;
+      var androidDeviceInfo = await deviceInfo.androidInfo;
       if (kDebugMode) {
-        print('androidDeviceInfo ${DeviceInfo.id}');
+        print('androidDeviceInfo ${androidDeviceInfo.id}');
       }
-      return DeviceInfo.id;
+      return androidDeviceInfo.id;
     } else {
       return null;
     }
@@ -122,7 +122,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       };
 
       final Map<String, dynamic> data = {
-        'user_device_id': deviceId,
+        'device_id': deviceId,
       };
 
       final response = await http.post(
@@ -130,6 +130,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
         headers: headers,
         body: jsonEncode(data),
       );
+      print(data);
 
       if (response.statusCode == 200) {
         // Successfully made the card active
@@ -214,7 +215,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
         "shipping": 0
       },
       "returnurl": "https://www.google.com/",
-      // "extra": "GE60TB7226145063300008",
+     // "extra": refferalCode,
       "userIpAddress": "127.0.0.1",
       "expirationMinutes": "10",
       "methods": [5],
@@ -240,6 +241,45 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
     }
   }
 
+  Future<dynamic> sendPayment(String userId, String payId, String refferalCode) async {
+    try {
+      // Create a map with user_id and payment_id
+      Map<String, String> requestBody = {
+        'user_id': userId,
+        'payment_id': payId,
+        'referral_code': refferalCode
+      };
+      print(requestBody);
+
+      // Encode the request body into JSON string
+      String requestBodyJson = jsonEncode(requestBody);
+
+      final response = await http.post(
+        Uri.parse('https://hotcard.online/api/v100/save-payment-id'),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: requestBodyJson, // Use JSON-encoded string as the body
+      );
+
+      print('Server Response: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Parse the response JSON
+        final Map<String, dynamic> responseBody = json.decode(response.body);
+
+        // Log the response for debugging
+        print('Validation Response: $responseBody');
+
+        return responseBody;
+      } else {
+        print('Error sending payment details - StatusCode: ${response.statusCode}, Body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error sending payment: $e');
+    }
+  }
+
   void processPayment() async {
     final String accessToken1 = await getToken(apiKey, clientId, clientSecret);
     final String accessToken = widget.userDataModel.data!.token;
@@ -260,6 +300,9 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
       accessToken1,
       paymentAmount,
     );
+
+    final String payId = paymentResponse['payId'];
+    sendPayment(userId, payId, inputController.text);
  //   inputController.text.isNotEmpty && inputController.text.length >= 7 ? 15 : 28
     final String secondUrl = paymentResponse['links'][1]['uri'];
     final String rec_Id = paymentResponse['recId'];
@@ -295,8 +338,8 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                     );
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);*/
 
-                    final recId = rec_Id;
-                    makeCardActive(userId, '30', accessToken, recId, inputController.text);
+                   // final recId = rec_Id;
+                 //  makeCardActive(userId, '30', accessToken, recId, inputController.text);
 
                     Navigator.pushAndRemoveUntil(
                       context,
@@ -336,7 +379,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                     );
                     HapticFeedback.mediumImpact();
 
-                    updateUserReferral(userId, inputController.text);
+                   // updateUserReferral(userId, inputController.text);
 
 
 
@@ -1010,7 +1053,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                                 borderRadius: BorderRadius.circular(20.0),
                                                                 borderSide:  const BorderSide(color: Color.fromARGB(255, 239, 127, 26)),
                                                               ),
-                                                              hintText: "რეფერალური კოდი", hintStyle: const TextStyle(fontSize: 13),
+                                                              hintText: "პრომოკოდი", hintStyle: const TextStyle(fontSize: 13),
                                                             ),
                                                           ),
                                                         const SizedBox(height: 15,),
@@ -1115,7 +1158,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                                   width: double
                                                       .infinity, // Ensure the container takes the full width
                                                   child: Text(
-                                                    'ბარათის გააქტიურება რეფერალური კოდით',
+                                                    'ბარათის გააქტიურება პრომოკოდით',
                                                     style: TextStyle(
                                                       fontFamily: 'bpg',
                                                       color: Colors.white,
@@ -2819,13 +2862,12 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                     ],
                                   ),
                                 )
-                              : const LoaderWidget(),
+                              : const CircularProgressIndicator(),
                         );
                       } else if (snapshot.hasError) {
-                        return Center(
-                            child: Column(
+                        return Column(
                           children: [
-                            Text(AppTags.sorryForinconvenience.tr,
+                            Text('დაფიქსირდა შეცდომა, გთხოვთ სცადოთ თავიდან ან გადატვირთეთ აპლიკაცია',
                                 style: const TextStyle(fontFamily: 'bpg')),
                             ElevatedButton.icon(
                                 onPressed: () {
@@ -2834,7 +2876,7 @@ class _MyWalletScreenState extends State<MyWalletScreen> {
                                 icon: const Icon(Icons.home),
                                 label: Text(AppTags.back.tr))
                           ],
-                        ));
+                        );
                       }
                       return const Center(child: CircularProgressIndicator(color: Colors.orange,));
                     },

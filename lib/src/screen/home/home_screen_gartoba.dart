@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:hot_card/src/data/local_data_helper.dart';
+import 'package:hot_card/src/screen/auth_screen/sign_up_screen.dart';
 import 'package:hot_card/src/servers/network_service.dart';
 import 'package:hot_card/src/utils/app_tags.dart';
 
@@ -37,6 +39,13 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
       Get.find<DashboardController>();
 
   final MyWalletController myWalletController = Get.put(MyWalletController());
+
+  @override
+  void initState() {
+    LocalDataHelper().getUserToken();
+    // TODO: implement initState
+    super.initState();
+  }
 
   final homeScreenContentController = Get.find<HomeScreenController>();
 
@@ -89,6 +98,7 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
     });
   }
 
+
   Future<void> popUp(BuildContext context) async {
     await showDialog<void>(
       context: context,
@@ -101,20 +111,17 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
               children: [
                 Positioned(
                   top: 100,
-                  left: 80,
-                  right: 5,
+                  left: 0,
+                  right: 0,
                   child: AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     title: Text(
                       AppTags.filter.tr,
-                      style: const TextStyle(fontFamily: 'bpg'),
+                    //  style: const TextStyle(fontFamily: 'bpg'),
                     ),
                     content: SingleChildScrollView(
                       child: ListBody(
                         children: <Widget>[
-                          Text(
-                            AppTags.category.tr,
-                            style: const TextStyle(fontFamily: 'bpg'),
-                          ),
                           // Center(
                           //   child: DropdownButton<String>(
                           //     value: selectedOption,
@@ -146,13 +153,13 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                           // ),
                           Text(
                             AppTags.distanceMeter.tr,
-                            style: const TextStyle(fontFamily: 'bpg'),
+                           // style: const TextStyle(fontFamily: 'bpg'),
                           ),
                           Slider(
                             value: _currentSliderValue,
                             max: 500,
                             divisions: _currentSliderValue <= 10 ? 500 : 100,
-                            activeColor: const Color.fromARGB(255, 221, 153, 6),
+                            activeColor: const Color.fromARGB(255, 239, 127, 26),
                             label: _currentSliderValue < 1
                                 ? "${_currentSliderValue.toStringAsFixed(1)} ${AppTags.km.tr}"
                                 : "${_currentSliderValue.round()} ${AppTags.km.tr}",
@@ -167,8 +174,9 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: const Text('Close'),
+                        child: const Text('გაფილტვრა'),
                         onPressed: () {
+                          HapticFeedback.lightImpact();
                           Navigator.of(context).pop();
                         },
                       ),
@@ -315,7 +323,7 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                                         EdgeInsets.symmetric(horizontal: 8.w),
                                     child: Text(AppTags.searchProduct.tr,
                                         style: AppThemeData.hintTextStyle_10Tab
-                                            .copyWith(fontFamily: 'bpg')),
+                                            .copyWith()),
                                   )
                                 ],
                               ),
@@ -418,10 +426,10 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                   style: isMobile(context)
                       ? AppThemeData.headerTextStyle.copyWith(
                           color: const Color.fromARGB(255, 53, 53, 53),
-                          fontFamily: 'bpg')
+                          )
                       : AppThemeData.headerTextStyleTab.copyWith(
                           color: const Color.fromARGB(255, 41, 41, 41),
-                          fontFamily: 'bpg'),
+                          ),
                 ),
               ),
             ],
@@ -434,6 +442,7 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
                     onTap: () {
+                      HapticFeedback.lightImpact();
                       popUp(context);
                     },
                     child: Container(
@@ -497,28 +506,35 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                                       EdgeInsets.only(right: 0.w, left: 1.w),
                                   child: InkWell(
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => ProductByCategory(
-                                            id: filteredCategories[index].id,
-                                            title:
-                                                filteredCategories[index].title,
-                                            imgurl: filteredCategories[index]
-                                                .banner,
-                                            number: filteredCategories[index]
-                                                .number,
-                                            soc_fb: filteredCategories[index]
-                                                .soc_fb,
-                                            soc_yt: filteredCategories[index]
-                                                .soc_yt,
-                                            soc_in: filteredCategories[index]
-                                                .soc_in,
-                                            category: AppTags.gartoba.tr,
-                                            latlong: filteredCategories[index]
-                                                .latlong,
+                                      if(LocalDataHelper().getUserToken() != null) {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                ProductByCategory(
+                                                  id: filteredCategories[index]
+                                                      .id,
+                                                  title:
+                                                  filteredCategories[index]
+                                                      .title,
+                                                  imgurl: filteredCategories[index]
+                                                      .banner,
+                                                  number: filteredCategories[index]
+                                                      .number,
+                                                  soc_fb: filteredCategories[index]
+                                                      .soc_fb,
+                                                  soc_yt: filteredCategories[index]
+                                                      .soc_yt,
+                                                  soc_in: filteredCategories[index]
+                                                      .soc_in,
+                                                  category: AppTags.gartoba.tr,
+                                                  latlong: filteredCategories[index]
+                                                      .latlong,
+                                                ),
                                           ),
-                                        ),
-                                      );
+                                        );
+                                      } else {
+                                        Get.to(() => SignupScreen());
+                                      }
                                     },
                                     child: Column(
                                       children: [
@@ -535,7 +551,7 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                                               decoration: BoxDecoration(
                                                   borderRadius:
                                                       const BorderRadius.all(
-                                                          Radius.circular(5)),
+                                                          Radius.circular(15)),
                                                   image: DecorationImage(
                                                       image: filteredCategories[
                                                                       index]
@@ -552,7 +568,7 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                                                 decoration: const BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.all(
-                                                            Radius.circular(5)),
+                                                            Radius.circular(15)),
                                                     image: DecorationImage(
                                                       image: AssetImage(
                                                           'assets/images/shadow.png'),
@@ -581,8 +597,6 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                                                           style: AppThemeData
                                                               .todayDealTitleStyle
                                                               .copyWith(
-                                                                  fontFamily:
-                                                                      'bpg',
                                                                   color: const Color
                                                                       .fromARGB(
                                                                       255,
@@ -608,8 +622,6 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                                                           style: AppThemeData
                                                               .todayDealTitleStyle
                                                               .copyWith(
-                                                                  fontFamily:
-                                                                      'bpg',
                                                                   color: const Color
                                                                       .fromARGB(
                                                                       255,
@@ -797,8 +809,6 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                                                               style: AppThemeData
                                                                   .todayDealTitleStyle
                                                                   .copyWith(
-                                                                      fontFamily:
-                                                                          'bpg',
                                                                       color: const Color
                                                                           .fromARGB(
                                                                           255,
@@ -866,8 +876,6 @@ class _HomeScreenGartobaState extends State<HomeScreenGartoba> {
                                                               style: AppThemeData
                                                                   .todayDealTitleStyle
                                                                   .copyWith(
-                                                                      fontFamily:
-                                                                          'bpg',
                                                                       color: const Color
                                                                           .fromARGB(
                                                                           255,

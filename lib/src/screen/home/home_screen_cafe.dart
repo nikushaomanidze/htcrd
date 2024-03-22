@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:hot_card/src/Providers/MapProvider.dart';
 import 'package:hot_card/src/data/local_data_helper.dart';
 import 'package:hot_card/src/models/home_data_model.dart' as data_model;
+import 'package:hot_card/src/screen/auth_screen/sign_up_screen.dart';
 import 'package:hot_card/src/servers/network_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -131,14 +132,14 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     title: Text(
                       AppTags.filter.tr,
-                      style: const TextStyle(fontFamily: 'bpg'),
+                    //  style: const TextStyle(fontFamily: 'bpg'),
                     ),
                     content: SingleChildScrollView(
                       child: ListBody(
                         children: <Widget>[
                           Text(
                             AppTags.category.tr,
-                            style: const TextStyle(fontFamily: 'bpg'),
+                          //  style: const TextStyle(fontFamily: 'bpg'),
                           ),
                           Center(
                             child: DropdownButton<String>(
@@ -171,13 +172,12 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                           ),
                           Text(
                             AppTags.distanceMeter.tr,
-                            style: const TextStyle(fontFamily: 'bpg'),
                           ),
                           Slider(
                             value: _currentSliderValue,
                             max: 500,
                             divisions: _currentSliderValue <= 10 ? 500 : 100,
-                            activeColor: const Color.fromARGB(255, 221, 153, 6),
+                            activeColor: const Color.fromARGB(255, 239, 127, 26),
                             label: _currentSliderValue < 1
                                 ? "${_currentSliderValue.toStringAsFixed(1)} ${AppTags.km.tr}"
                                 : "${_currentSliderValue.round()} ${AppTags.km.tr}",
@@ -192,8 +192,9 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: const Text('Close'),
+                        child: const Text('გაფილტვრა'),
                         onPressed: () {
+                          HapticFeedback.lightImpact();
                           Navigator.of(context).pop();
                         },
                       ),
@@ -211,6 +212,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
   @override
   void initState() {
     super.initState();
+    LocalDataHelper().getUserToken();
     setState(() {
 
     });
@@ -348,7 +350,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                                         EdgeInsets.symmetric(horizontal: 8.w),
                                     child: Text(AppTags.searchProduct.tr,
                                         style: AppThemeData.hintTextStyle_10Tab
-                                            .copyWith(fontFamily: 'bpg')),
+                                            .copyWith()),
                                   )
                                 ],
                               ),
@@ -447,10 +449,10 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                   style: isMobile(context)
                       ? AppThemeData.headerTextStyle.copyWith(
                           color: const Color.fromARGB(255, 53, 53, 53),
-                          fontFamily: 'bpg')
+                          )
                       : AppThemeData.headerTextStyleTab.copyWith(
                           color: const Color.fromARGB(255, 41, 41, 41),
-                          fontFamily: 'bpg'),
+                          ),
                 ),
               ),
             ),
@@ -533,109 +535,157 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                                 padding: EdgeInsets.only(right: 0.w, left: 1.w),
                                 child: InkWell(
                                   onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => ProductByCategory(
-                                          id: homeScreenContentController
-                                              .homeDataModel
-                                              .value
-                                              .data![popularCategoriesIndex]
-                                              .popularCategories![index]
-                                              .id,
-                                          title: homeScreenContentController
-                                              .homeDataModel
-                                              .value
-                                              .data![popularCategoriesIndex]
-                                              .popularCategories![index]
-                                              .title,
-                                          imgurl: homeScreenContentController
-                                              .homeDataModel
-                                              .value
-                                              .data![popularCategoriesIndex]
-                                              .popularCategories![index]
-                                              .banner,
-                                          number: homeScreenContentController
-                                              .homeDataModel
-                                              .value
-                                              .data![popularCategoriesIndex]
-                                              .popularCategories![index]
-                                              .number,
-                                          soc_fb: homeScreenContentController
-                                              .homeDataModel
-                                              .value
-                                              .data![popularCategoriesIndex]
-                                              .popularCategories![index]
-                                              .soc_fb,
-                                          soc_yt: homeScreenContentController
-                                              .homeDataModel
-                                              .value
-                                              .data![popularCategoriesIndex]
-                                              .popularCategories![index]
-                                              .soc_yt,
-                                          soc_in: homeScreenContentController
-                                              .homeDataModel
-                                              .value
-                                              .data![popularCategoriesIndex]
-                                              .popularCategories![index]
-                                              .soc_in,
-                                          category: homeScreenContentController
-                                                          .homeDataModel
-                                                          .value
-                                                          .data![
-                                                              popularCategoriesIndex]
-                                                          .popularCategories![
-                                                              index]
-                                                          .category_filter ==
-                                                      null ||
-                                                  homeScreenContentController
-                                                          .homeDataModel
-                                                          .value
-                                                          .data![
-                                                              popularCategoriesIndex]
-                                                          .popularCategories![
-                                                              index]
-                                                          .category_filter ==
-                                                      ''
-                                              ? ''
-                                              : homeScreenContentController.homeDataModel.value.data![popularCategoriesIndex].popularCategories![index].category_filter ==
-                                                      AppTags.traditional.tr
-                                                  ? AppTags.traditional.tr
-                                                  : homeScreenContentController.homeDataModel.value.data![popularCategoriesIndex].popularCategories![index].category_filter ==
-                                                          AppTags.sushi.tr
-                                                      ? AppTags.sushi.tr
-                                                      : homeScreenContentController
-                                                                  .homeDataModel
-                                                                  .value
-                                                                  .data![
-                                                                      popularCategoriesIndex]
-                                                                  .popularCategories![index]
-                                                                  .category_filter ==
-                                                              AppTags.pizza.tr
-                                                          ? AppTags.pizza.tr
-                                                          : homeScreenContentController.homeDataModel.value.data![popularCategoriesIndex].popularCategories![index].category_filter == AppTags.seafood.tr
-                                                              ? AppTags.seafood.tr
-                                                              : homeScreenContentController.homeDataModel.value.data![popularCategoriesIndex].popularCategories![index].category_filter == AppTags.burgers.tr
-                                                                  ? AppTags.burgers.tr
-                                                                  : homeScreenContentController.homeDataModel.value.data![popularCategoriesIndex].popularCategories![index].category_filter == AppTags.asian.tr
-                                                                      ? AppTags.asian.tr
-                                                                      : homeScreenContentController.homeDataModel.value.data![popularCategoriesIndex].popularCategories![index].category_filter == AppTags.bakery.tr
-                                                                          ? AppTags.bakery.tr
-                                                                          : homeScreenContentController.homeDataModel.value.data![popularCategoriesIndex].popularCategories![index].category_filter == AppTags.dessert.tr
-                                                                              ? AppTags.dessert.tr
-                                                                              : homeScreenContentController.homeDataModel.value.data![popularCategoriesIndex].popularCategories![index].category_filter == AppTags.mexican.tr
-                                                                                  ? AppTags.mexican.tr
-                                                                                  : homeScreenContentController.homeDataModel.value.data![popularCategoriesIndex].popularCategories![index].category_filter == AppTags.shawarma.tr
-                                                                                      ? AppTags.shawarma.tr
-                                                                                      : AppTags.vegetarian.tr,
-                                          latlong: homeScreenContentController
-                                              .homeDataModel
-                                              .value
-                                              .data![popularCategoriesIndex]
-                                              .popularCategories![index]
-                                              .latlong,
+                                    if(LocalDataHelper().getUserToken() != null) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              ProductByCategory(
+                                                id: homeScreenContentController
+                                                    .homeDataModel
+                                                    .value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .id,
+                                                title: homeScreenContentController
+                                                    .homeDataModel
+                                                    .value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .title,
+                                                imgurl: homeScreenContentController
+                                                    .homeDataModel
+                                                    .value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .banner,
+                                                number: homeScreenContentController
+                                                    .homeDataModel
+                                                    .value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .number,
+                                                soc_fb: homeScreenContentController
+                                                    .homeDataModel
+                                                    .value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .soc_fb,
+                                                soc_yt: homeScreenContentController
+                                                    .homeDataModel
+                                                    .value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .soc_yt,
+                                                soc_in: homeScreenContentController
+                                                    .homeDataModel
+                                                    .value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .soc_in,
+                                                category: homeScreenContentController
+                                                    .homeDataModel
+                                                    .value
+                                                    .data![
+                                                popularCategoriesIndex]
+                                                    .popularCategories![
+                                                index]
+                                                    .category_filter ==
+                                                    null ||
+                                                    homeScreenContentController
+                                                        .homeDataModel
+                                                        .value
+                                                        .data![
+                                                    popularCategoriesIndex]
+                                                        .popularCategories![
+                                                    index]
+                                                        .category_filter ==
+                                                        ''
+                                                    ? ''
+                                                    : homeScreenContentController
+                                                    .homeDataModel.value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .category_filter ==
+                                                    AppTags.traditional.tr
+                                                    ? AppTags.traditional.tr
+                                                    : homeScreenContentController
+                                                    .homeDataModel.value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .category_filter ==
+                                                    AppTags.sushi.tr
+                                                    ? AppTags.sushi.tr
+                                                    : homeScreenContentController
+                                                    .homeDataModel
+                                                    .value
+                                                    .data![
+                                                popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .category_filter ==
+                                                    AppTags.pizza.tr
+                                                    ? AppTags.pizza.tr
+                                                    : homeScreenContentController
+                                                    .homeDataModel.value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .category_filter ==
+                                                    AppTags.seafood.tr
+                                                    ? AppTags.seafood.tr
+                                                    : homeScreenContentController
+                                                    .homeDataModel.value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .category_filter ==
+                                                    AppTags.burgers.tr
+                                                    ? AppTags.burgers.tr
+                                                    : homeScreenContentController
+                                                    .homeDataModel.value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .category_filter ==
+                                                    AppTags.asian.tr
+                                                    ? AppTags.asian.tr
+                                                    : homeScreenContentController
+                                                    .homeDataModel.value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .category_filter ==
+                                                    AppTags.bakery.tr
+                                                    ? AppTags.bakery.tr
+                                                    : homeScreenContentController
+                                                    .homeDataModel.value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .category_filter ==
+                                                    AppTags.dessert.tr
+                                                    ? AppTags.dessert.tr
+                                                    : homeScreenContentController
+                                                    .homeDataModel.value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .category_filter ==
+                                                    AppTags.mexican.tr
+                                                    ? AppTags.mexican.tr
+                                                    : homeScreenContentController
+                                                    .homeDataModel.value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .category_filter ==
+                                                    AppTags.shawarma.tr
+                                                    ? AppTags.shawarma.tr
+                                                    : AppTags.vegetarian.tr,
+                                                latlong: homeScreenContentController
+                                                    .homeDataModel
+                                                    .value
+                                                    .data![popularCategoriesIndex]
+                                                    .popularCategories![index]
+                                                    .latlong,
+                                              ),
                                         ),
-                                      ),
-                                    );
+                                      );
+                                    } else {
+                                      Get.to(() => SignupScreen());
+                                    }
                                   },
                                   child: Column(
                                     children: [
@@ -713,8 +763,6 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                                                         style: AppThemeData
                                                             .todayDealTitleStyle
                                                             .copyWith(
-                                                                fontFamily:
-                                                                    'bpg',
                                                                 color: const Color
                                                                     .fromARGB(
                                                                     255,
@@ -748,8 +796,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                                                         style: AppThemeData
                                                             .todayDealTitleStyle
                                                             .copyWith(
-                                                                fontFamily:
-                                                                    'bpg',
+
                                                                 color: const Color
                                                                     .fromARGB(
                                                                     255,
@@ -954,8 +1001,6 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                                                             style: AppThemeData
                                                                 .todayDealTitleStyle
                                                                 .copyWith(
-                                                                    fontFamily:
-                                                                        'bpg',
                                                                     color: const Color
                                                                         .fromARGB(
                                                                         255,
@@ -991,8 +1036,6 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                                                             style: AppThemeData
                                                                 .todayDealTitleStyle
                                                                 .copyWith(
-                                                                    fontFamily:
-                                                                        'bpg',
                                                                     color: const Color
                                                                         .fromARGB(
                                                                         255,
@@ -1064,7 +1107,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
               child: Text(
                 AppTags.popularBrands.tr,
                 style: isMobile(context)
-                    ? AppThemeData.headerTextStyle.copyWith(fontFamily: 'bpg')
+                    ? AppThemeData.headerTextStyle.copyWith()
                     : AppThemeData.headerTextStyleTab,
               ),
             ),
@@ -1340,7 +1383,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                                   color: Colors.white,
                                   fontSize: 16.5,
                                   fontWeight: FontWeight.w600,
-                                  fontFamily: 'bpg'),
+                              ),
                             ))
                         : FittedBox(
                             fit: BoxFit.scaleDown,
@@ -1351,7 +1394,7 @@ class _HomeScreenCafeContentState extends State<HomeScreenCafeContent> {
                                   color: Colors.white,
                                   fontSize: 16.5,
                                   fontWeight: FontWeight.w600,
-                                  fontFamily: 'bpg'),
+                                  ),
                             ),
                           ),
               ),

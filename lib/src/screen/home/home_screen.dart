@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hot_card/src/screen/auth_screen/sign_up_screen.dart';
 import 'package:hot_card/src/utils/app_tags.dart';
 import 'package:get/get.dart';
 import 'package:hot_card/src/Providers/MapProvider.dart';
@@ -19,6 +20,7 @@ import '../../controllers/details_screen_controller.dart';
 import '../../controllers/home_screen_controller.dart';
 import '../../controllers/my_wallet_controller.dart';
 import '../../controllers/profile_content_controller.dart';
+import '../../data/local_data_helper.dart';
 import '../../screen/news/all_news_screen.dart';
 import '../../utils/app_theme_data.dart';
 import '../../utils/responsive.dart';
@@ -76,6 +78,12 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     setState(() {
       isContainerVisible = !isContainerVisible;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    LocalDataHelper().getUserToken();
   }
 
   double _currentSliderValue = 500;
@@ -169,7 +177,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: const Text('გაფილტრვა',style: TextStyle(fontWeight: FontWeight.w600, color: const Color.fromARGB(255, 239, 127, 26)),),
+                        child: const Text('გაფილტვრა',style: TextStyle(fontWeight: FontWeight.w600, color: const Color.fromARGB(255, 239, 127, 26)),),
                         onPressed: () {
                           HapticFeedback.mediumImpact();
                           Navigator.of(context).pop();
@@ -506,6 +514,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               padding: EdgeInsets.only(right: 0.w, left: 1.w),
                               child: InkWell(
                                 onTap: () {
+                                  if (LocalDataHelper().getUserToken() != null) {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (_) => ProductByCategory(
@@ -614,7 +623,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                       ),
                                     ),
                                   );
-                                },
+                                } else {
+                                    Get.to(() => SignupScreen());
+                                  }
+                                  },
                                 child: Column(
                                   children: [
                                     const SizedBox(

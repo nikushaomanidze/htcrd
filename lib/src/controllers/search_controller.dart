@@ -33,8 +33,6 @@ class SearchController extends GetxController {
         if (value.products!.isNotEmpty || value.restaurants!.isNotEmpty) {
           _searchResult.value = value;
         } else {
-          // If both products and restaurants are empty, you may want to handle this case
-          // You can set _searchResult.value to an empty SearchProductModel or take other appropriate action
         }
       } finally {
         _isSearching(false);
